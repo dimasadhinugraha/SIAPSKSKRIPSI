@@ -21,6 +21,19 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'nik',
+        'gender',
+        'birth_date',
+        'address',
+        'phone',
+        'kk_number',
+        'ktp_photo',
+        'kk_photo',
+        'role',
+        'rt_rw',
+        'is_verified',
+        'verified_at',
+        'verified_by',
     ];
 
     /**
@@ -43,6 +56,61 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'birth_date' => 'date',
+            'is_verified' => 'boolean',
+            'verified_at' => 'datetime',
         ];
+    }
+
+    // Relationships
+    public function letterRequests()
+    {
+        return $this->hasMany(LetterRequest::class);
+    }
+
+    public function letterApprovals()
+    {
+        return $this->hasMany(LetterApproval::class, 'approved_by');
+    }
+
+    public function news()
+    {
+        return $this->hasMany(News::class, 'author_id');
+    }
+
+    public function verifiedUsers()
+    {
+        return $this->hasMany(User::class, 'verified_by');
+    }
+
+    public function verifier()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    // Helper methods
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isRT()
+    {
+        return $this->role === 'rt';
+    }
+
+    public function isRW()
+    {
+        return $this->role === 'rw';
+    }
+
+    public function isUser()
+    {
+        return $this->role === 'user';
+    }
+
+    public function canApproveLetters()
+    {
+        return in_array($this->role, ['rt', 'rw', 'admin']);
     }
 }
