@@ -1,8 +1,7 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Berita & Informasi Desa') }}
-        </h2>
+        <span>{{ __('Berita & Informasi Desa') }}
+        </span>
     </x-slot>
 
     <div class="py-12">
@@ -64,7 +63,7 @@
                                             </p>
                                         @endif
                                         
-                                        <div class="flex items-center justify-between">
+                                        <div class="flex items-center justify-between w-full">
                                             <span class="text-xs text-gray-500">
                                                 Oleh: {{ $item->author->name }}
                                             </span>
@@ -109,4 +108,4 @@
             overflow: hidden;
         }
     </style>
-</x-app-layout>
+</x-sidebar-layout>

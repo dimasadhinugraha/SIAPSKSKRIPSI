@@ -8,9 +8,11 @@ use App\Http\Controllers\LetterRequestController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\Admin\NewsManagementController;
+use App\Http\Controllers\Admin\FamilyMemberApprovalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QrVerificationController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\FamilyMemberController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
@@ -34,6 +36,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('letter-requests', LetterRequestController::class)->except(['edit', 'update', 'destroy']);
     Route::get('/letter-requests/{letterRequest}/download', [LetterRequestController::class, 'download'])->name('letter-requests.download');
+
+    // Family Members routes
+    Route::resource('family-members', FamilyMemberController::class);
 });
 
 // Approval routes (for RT/RW)
@@ -71,6 +76,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // News management
     Route::resource('news', NewsManagementController::class);
+
+    // Family member approvals
+    Route::get('/family-member-approvals', [FamilyMemberApprovalController::class, 'index'])->name('family-member-approvals.index');
+    Route::get('/family-member-approvals/{familyMember}', [FamilyMemberApprovalController::class, 'show'])->name('family-member-approvals.show');
+    Route::patch('/family-member-approvals/{familyMember}/approve', [FamilyMemberApprovalController::class, 'approve'])->name('family-member-approvals.approve');
+    Route::patch('/family-member-approvals/{familyMember}/reject', [FamilyMemberApprovalController::class, 'reject'])->name('family-member-approvals.reject');
+    Route::post('/family-member-approvals/bulk-approve', [FamilyMemberApprovalController::class, 'bulkApprove'])->name('family-member-approvals.bulk-approve');
+    Route::get('/family-member-approvals/{familyMember}/download-document', [FamilyMemberApprovalController::class, 'downloadDocument'])->name('family-member-approvals.download-document');
 });
 
 require __DIR__.'/auth.php';

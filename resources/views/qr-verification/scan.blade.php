@@ -1,8 +1,7 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Scan QR Code Verifikasi') }}
-        </h2>
+        <span>{{ __('Scan QR Code Verifikasi') }}
+        </span>
     </x-slot>
 
     <div class="py-12">
@@ -158,4 +157,4 @@
             });
         }
     </script>
-</x-app-layout>
+</x-sidebar-layout>

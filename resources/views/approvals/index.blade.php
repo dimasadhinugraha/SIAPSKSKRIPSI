@@ -1,8 +1,7 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ auth()->user()->isRT() ? 'Persetujuan RT' : 'Persetujuan RW' }}
-        </h2>
+        <span>{{ auth()->user()->isRT() ? 'Persetujuan RT' : 'Persetujuan RW' }}
+        </span>
     </x-slot>
 
     <div class="py-12">
@@ -118,4 +117,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-sidebar-layout>

@@ -1,8 +1,7 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Berita') }}
-        </h2>
+        <span>{{ __('Edit Berita') }}
+        </span>
     </x-slot>
 
     <div class="py-12">
@@ -90,7 +89,7 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between w-full">
                             <a href="{{ route('admin.news.index') }}" 
                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
                                 Kembali
@@ -105,4 +104,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-sidebar-layout>

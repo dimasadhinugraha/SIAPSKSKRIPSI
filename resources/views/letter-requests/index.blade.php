@@ -1,17 +1,28 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Pengajuan Surat') }}
-            </h2>
-            <a href="{{ route('letter-requests.create') }}" 
-               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Ajukan Surat Baru
-            </a>
-        </div>
+        📄 Pengajuan Surat
     </x-slot>
 
-    <div class="py-12">
+    <!-- Page Header -->
+    <div class="bg-white shadow-sm border-b border-gray-200 mb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">📄 Pengajuan Surat</h1>
+                    <p class="text-gray-600 mt-1">Kelola pengajuan surat keterangan dan dokumen resmi</p>
+                </div>
+                <a href="{{ route('letter-requests.create') }}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Ajukan Surat Baru
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if (session('success'))
                 <div class="mb-4 bg-green-50 border border-green-200 rounded-md p-4">
@@ -127,4 +138,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-sidebar-layout>

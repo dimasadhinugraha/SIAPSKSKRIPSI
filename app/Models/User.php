@@ -88,6 +88,26 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'verified_by');
     }
 
+    public function familyMembers()
+    {
+        return $this->hasMany(FamilyMember::class);
+    }
+
+    public function activeFamilyMembers()
+    {
+        return $this->hasMany(FamilyMember::class)->where('is_active', true);
+    }
+
+    public function approvedFamilyMembers()
+    {
+        return $this->hasMany(FamilyMember::class)->where('is_active', true)->where('approval_status', 'approved');
+    }
+
+    public function pendingFamilyMembers()
+    {
+        return $this->hasMany(FamilyMember::class)->where('is_active', true)->where('approval_status', 'pending');
+    }
+
     // Helper methods
     public function isAdmin()
     {

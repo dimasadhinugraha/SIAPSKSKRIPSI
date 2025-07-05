@@ -30,6 +30,10 @@
                                 <x-nav-link :href="route('letter-requests.index')" :active="request()->routeIs('letter-requests.*')">
                                     Pengajuan Surat
                                 </x-nav-link>
+
+                                <x-nav-link :href="route('family-members.index')" :active="request()->routeIs('family-members.*')">
+                                    Anggota Keluarga
+                                </x-nav-link>
                             @endif
 
                             @if(auth()->user()->canApproveLetters())
@@ -42,6 +46,11 @@
                                 <x-nav-link :href="route('admin.user-verification.index')" :active="request()->routeIs('admin.user-verification.*')">
                                     Verifikasi User
                                 </x-nav-link>
+
+                                <x-nav-link :href="route('admin.family-member-approvals.index')" :active="request()->routeIs('admin.family-member-approvals.*')">
+                                    Persetujuan Keluarga
+                                </x-nav-link>
+
                                 <x-nav-link :href="route('admin.news.index')" :active="request()->routeIs('admin.news.*')">
                                     Kelola Berita
                                 </x-nav-link>
@@ -103,6 +112,28 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('news.index')" :active="request()->routeIs('news.*')">
+                Berita & Informasi
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('qr-verification.scan')" :active="request()->routeIs('qr-verification.*')">
+                Verifikasi QR
+            </x-responsive-nav-link>
+
+            @auth
+                @if(auth()->user()->is_verified)
+                    @if(auth()->user()->isUser())
+                        <x-responsive-nav-link :href="route('letter-requests.index')" :active="request()->routeIs('letter-requests.*')">
+                            Pengajuan Surat
+                        </x-responsive-nav-link>
+
+                        <x-responsive-nav-link :href="route('family-members.index')" :active="request()->routeIs('family-members.*')">
+                            Anggota Keluarga
+                        </x-responsive-nav-link>
+                    @endif
+                @endif
+            @endauth
         </div>
 
         <!-- Responsive Settings Options -->

@@ -1,8 +1,7 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Review Pengajuan Surat') }}
-        </h2>
+        <span>{{ __('Review Pengajuan Surat') }}
+        </span>
     </x-slot>
 
     <div class="py-12">
@@ -76,7 +75,7 @@
                             <div class="space-y-4">
                                 @foreach($letterRequest->approvals as $approval)
                                     <div class="border rounded-lg p-4">
-                                        <div class="flex items-center justify-between">
+                                        <div class="flex items-center justify-between w-full">
                                             <div>
                                                 <p class="text-sm font-medium text-gray-900">
                                                     {{ $approval->approver->name }} ({{ strtoupper($approval->approval_level) }})
@@ -214,4 +213,4 @@
             }
         }
     </script>
-</x-app-layout>
+</x-sidebar-layout>

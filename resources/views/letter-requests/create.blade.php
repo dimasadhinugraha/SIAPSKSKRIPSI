@@ -1,11 +1,29 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Ajukan Surat Baru') }}
-        </h2>
+        <span>{{ __('Ajukan Surat Baru') }}
+        </span>
     </x-slot>
 
-    <div class="py-12">
+    <!-- Page Header -->
+    <div class="bg-white shadow-sm border-b border-gray-200 mb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">📝 Ajukan Surat Baru</h1>
+                    <p class="text-gray-600 mt-1">Lengkapi form untuk mengajukan surat keterangan</p>
+                </div>
+                <a href="{{ route('letter-requests.index') }}"
+                   class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Kembali
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
@@ -165,4 +183,4 @@
             }
         });
     </script>
-</x-app-layout>
+</x-sidebar-layout>

@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register layout aliases
+        $this->app['view']->addNamespace('layouts', resource_path('views/layouts'));
+
+        // Register component aliases
+        \Illuminate\Support\Facades\Blade::component('layouts.sidebar', 'sidebar-layout');
     }
 }

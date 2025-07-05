@@ -1,33 +1,44 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Detail Pengajuan Surat') }}
-            </h2>
-            <div class="flex items-center space-x-2">
-                @php
-                    $statusConfig = [
-                        'pending_rt' => ['color' => 'yellow', 'icon' => '⏳', 'text' => 'Menunggu RT'],
-                        'pending_rw' => ['color' => 'blue', 'icon' => '⏳', 'text' => 'Menunggu RW'],
-                        'approved_final' => ['color' => 'green', 'icon' => '✅', 'text' => 'Selesai'],
-                        'rejected_rt' => ['color' => 'red', 'icon' => '❌', 'text' => 'Ditolak RT'],
-                        'rejected_rw' => ['color' => 'red', 'icon' => '❌', 'text' => 'Ditolak RW'],
-                    ];
-                    $status = $statusConfig[$letterRequest->status] ?? ['color' => 'gray', 'icon' => '❓', 'text' => 'Unknown'];
-                @endphp
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-{{ $status['color'] }}-100 text-{{ $status['color'] }}-800">
-                    {{ $status['icon'] }} {{ $status['text'] }}
-                </span>
+        📄 Detail Pengajuan Surat
+    </x-slot>
+
+    <!-- Page Header -->
+    <div class="bg-white shadow-sm border-b border-gray-200 mb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">📄 Detail Pengajuan Surat</h1>
+                    <p class="text-gray-600 mt-1">{{ $letterRequest->letterType->name }} - {{ $letterRequest->created_at->format('d F Y') }}</p>
+                </div>
+                <a href="{{ route('letter-requests.index') }}"
+                   class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Kembali
+                </a>
             </div>
         </div>
-    </x-slot>
+    </div>
+
+    @php
+        $statusConfig = [
+            'pending_rt' => ['color' => 'yellow', 'icon' => '⏳', 'text' => 'Menunggu RT'],
+            'pending_rw' => ['color' => 'blue', 'icon' => '⏳', 'text' => 'Menunggu RW'],
+            'approved_final' => ['color' => 'green', 'icon' => '✅', 'text' => 'Selesai'],
+            'rejected_rt' => ['color' => 'red', 'icon' => '❌', 'text' => 'Ditolak RT'],
+            'rejected_rw' => ['color' => 'red', 'icon' => '❌', 'text' => 'Ditolak RW'],
+        ];
+        $status = $statusConfig[$letterRequest->status] ?? ['color' => 'gray', 'icon' => '❓', 'text' => 'Unknown'];
+    @endphp
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header Card -->
             <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg shadow-lg mb-6">
                 <div class="px-6 py-8 text-white">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between w-full">
                         <div>
                             <h1 class="text-2xl font-bold">{{ $letterRequest->letterType->name }}</h1>
                             <p class="text-blue-100 mt-2">
@@ -57,7 +68,7 @@
                     </h3>
                 </div>
                 <div class="p-6">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between w-full">
                         <!-- Step 1: Pengajuan -->
                         <div class="flex flex-col items-center flex-1">
                             <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mb-2">
@@ -347,4 +358,4 @@
 
         </div>
     </div>
-</x-app-layout>
+</x-sidebar-layout>

@@ -1,8 +1,7 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ $news->title }}
-        </h2>
+        <span>{{ $news->title }}
+        </span>
     </x-slot>
 
     <div class="py-12">
@@ -70,7 +69,7 @@
 
                     <!-- Article Footer -->
                     <div class="mt-8 pt-6 border-t border-gray-200">
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between w-full">
                             <div class="text-sm text-gray-600">
                                 <p>Dipublikasikan: {{ $news->published_at->format('d F Y, H:i') }} WIB</p>
                                 @if($news->updated_at != $news->created_at)
@@ -159,4 +158,4 @@
             }
         }
     </style>
-</x-app-layout>
+</x-sidebar-layout>
