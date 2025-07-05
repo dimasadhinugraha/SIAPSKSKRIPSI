@@ -10,11 +10,10 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\Admin\NewsManagementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QrVerificationController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 

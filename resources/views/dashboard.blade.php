@@ -8,21 +8,48 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Welcome Section -->
-            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 text-white">
-                    <h3 class="text-2xl font-bold mb-2">Selamat Datang, {{ auth()->user()->name }}!</h3>
-                    <p class="text-blue-100">
-                        @if(auth()->user()->isAdmin())
-                            Anda login sebagai Administrator Desa Ciasmara
-                        @elseif(auth()->user()->isRT())
-                            Anda login sebagai {{ auth()->user()->rt_rw }}
-                        @elseif(auth()->user()->isRW())
-                            Anda login sebagai {{ auth()->user()->rt_rw }}
-                        @else
-                            Warga Desa Ciasmara - {{ auth()->user()->rt_rw }}
-                        @endif
-                    </p>
+            <div class="bg-gradient-to-r from-blue-600 to-purple-700 overflow-hidden shadow-xl sm:rounded-xl mb-8 relative">
+                <div class="absolute inset-0 bg-black opacity-10"></div>
+                <div class="relative p-8 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-3xl font-bold mb-2 flex items-center">
+                                👋 Selamat Datang, {{ auth()->user()->name }}!
+                            </h3>
+                            <p class="text-blue-100 text-lg">
+                                @if(auth()->user()->isAdmin())
+                                    🛡️ Administrator Desa Ciasmara
+                                @elseif(auth()->user()->isRT())
+                                    👨‍💼 Ketua {{ auth()->user()->rt_rw }}
+                                @elseif(auth()->user()->isRW())
+                                    👨‍💼 Ketua {{ auth()->user()->rt_rw }}
+                                @else
+                                    🏠 Warga Desa Ciasmara - {{ auth()->user()->rt_rw }}
+                                @endif
+                            </p>
+                            <p class="text-blue-200 text-sm mt-2">
+                                📅 {{ now()->translatedFormat('l, d F Y') }} • 🕐 {{ now()->format('H:i') }} WIB
+                            </p>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <span class="text-4xl">
+                                    @if(auth()->user()->isAdmin())
+                                        🛡️
+                                    @elseif(auth()->user()->canApproveLetters())
+                                        👨‍💼
+                                    @else
+                                        👤
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Floating Elements -->
+                <div class="absolute top-4 right-4 w-16 h-16 bg-white bg-opacity-10 rounded-full animate-pulse"></div>
+                <div class="absolute bottom-4 left-4 w-12 h-12 bg-yellow-300 bg-opacity-20 rounded-full animate-bounce"></div>
             </div>
 
             @if(!auth()->user()->is_verified)

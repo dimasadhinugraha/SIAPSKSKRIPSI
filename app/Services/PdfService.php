@@ -42,7 +42,29 @@ class PdfService
         $qrCodeService = app(QrCodeService::class);
         $qrCodeBase64 = $qrCodeService->generateQrCodeBase64($letterRequest);
 
-        // Use Blade template for better maintainability
+        // Prepare data for template (merge user data with form data)
+        $surat = (object) array_merge([
+            'nomor_surat' => $letterRequest->request_number . '/DESA/' . $letterRequest->created_at->format('m/Y'),
+            'nama' => $user->name,
+            'nik' => $user->nik,
+            'tempat_lahir' => $user->birth_place ?? 'Bogor',
+            'tanggal_lahir' => $user->birth_date,
+            'jeniskelamin' => $user->gender == 'L' ? 'Laki-laki' : 'Perempuan',
+            'agama' => $user->religion ?? 'Islam',
+            'pekerjaan' => $user->job ?? 'Wiraswasta',
+            'alamat' => $user->address,
+            'created_at' => $letterRequest->created_at,
+        ], $formData ?? []);
+
+        // Use specific template if available, otherwise use generic template
+        $templateName = $letterType->template ?? 'pdf.letter-template';
+
+        // Check if specific template exists in surat directory
+        if ($letterType->template && view()->exists('surat.' . $letterType->template)) {
+            return view('surat.' . $letterType->template, compact('surat', 'qrCodeBase64'))->render();
+        }
+
+        // Fallback to generic template
         return view('pdf.letter-template', compact('letterRequest', 'user', 'letterType', 'formData', 'qrCodeBase64'))->render();
     }
 

@@ -42,6 +42,21 @@
                             <!-- Fields will be loaded here based on letter type -->
                         </div>
 
+                        <!-- Field Options for Select Fields -->
+                        <div id="field-options" style="display: none;">
+                            <div data-field="jeniskelamin">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </div>
+                            <div data-field="status_usaha">
+                                <option value="">Pilih Status Usaha</option>
+                                <option value="Pemilik">Pemilik</option>
+                                <option value="Karyawan">Karyawan</option>
+                                <option value="Mitra">Mitra</option>
+                            </div>
+                        </div>
+
                         <div class="flex items-center justify-between mt-6">
                             <a href="{{ route('letter-requests.index') }}" 
                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
@@ -92,6 +107,21 @@
                         case 'date':
                             input = document.createElement('input');
                             input.type = 'date';
+                            break;
+                        case 'time':
+                            input = document.createElement('input');
+                            input.type = 'time';
+                            break;
+                        case 'select':
+                            input = document.createElement('select');
+                            // Add options based on field name
+                            if (fieldName === 'jeniskelamin') {
+                                input.innerHTML = '<option value="">Pilih Jenis Kelamin</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option>';
+                            } else if (fieldName === 'status_usaha') {
+                                input.innerHTML = '<option value="">Pilih Status Usaha</option><option value="Pemilik">Pemilik</option><option value="Karyawan">Karyawan</option><option value="Mitra">Mitra</option>';
+                            } else {
+                                input.innerHTML = '<option value="">Pilih...</option>';
+                            }
                             break;
                         default:
                             input = document.createElement('input');

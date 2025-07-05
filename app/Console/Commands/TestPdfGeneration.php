@@ -51,8 +51,8 @@ class TestPdfGeneration extends Command
             'user_id' => $user->id,
             'letter_type_id' => $letterType->id,
             'form_data' => [
-                'keperluan' => 'Test PDF Generation',
-                'alamat_domisili' => 'RT 01/RW 01 Desa Ciasmara'
+                'kampung' => 'Parabakti',
+                'keperluan' => 'Test PDF Generation'
             ],
             'status' => 'approved_final',
             'submitted_at' => now(),
