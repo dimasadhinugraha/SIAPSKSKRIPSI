@@ -113,6 +113,14 @@
             resultDiv.innerHTML = '<div class="text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div><p class="mt-2 text-sm text-gray-600">Memverifikasi...</p></div>';
             resultDiv.classList.remove('hidden');
 
+            // Check if QR content is a URL (new format)
+            if (qrContent.startsWith('http://') || qrContent.startsWith('https://')) {
+                // Direct URL - redirect immediately
+                window.location.href = qrContent;
+                return;
+            }
+
+            // Legacy format - use API verification
             fetch('{{ route("qr-verification.verify-content") }}', {
                 method: 'POST',
                 headers: {
