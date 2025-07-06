@@ -15,7 +15,7 @@
 
     <style>
         .login-bg {
-            background: #3b82f6;
+            background: #16a34a;
         }
         .glass-effect {
             background: rgba(255, 255, 255, 0.95);
@@ -86,7 +86,7 @@
                                autocomplete="username"
                                maxlength="16"
                                pattern="[0-9]{16}"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('nik') border-red-500 @enderror"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('nik') border-red-500 @enderror"
                                placeholder="Masukkan 16 digit NIK Anda">
                         @error('nik')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -107,7 +107,7 @@
                                    name="password"
                                    required
                                    autocomplete="current-password"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('password') border-red-500 @enderror"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('password') border-red-500 @enderror"
                                    placeholder="Masukkan kata sandi Anda">
                             <button type="button"
                                     onclick="togglePassword()"
@@ -129,13 +129,13 @@
                             <input id="remember_me"
                                    type="checkbox"
                                    name="remember"
-                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                   class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
                             <span class="ml-2 text-sm text-gray-600">Ingat saya</span>
                         </label>
 
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}"
-                               class="text-sm text-blue-600 hover:text-blue-800 transition-colors">
+                               class="text-sm text-green-600 hover:text-green-800 transition-colors">
                                 Lupa kata sandi?
                             </a>
                         @endif
@@ -143,8 +143,11 @@
 
                     <!-- Submit Button -->
                     <button type="submit"
-                            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-105">
-                        🚀 Masuk ke Portal
+                            class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 0v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                        </svg>
+                        <span>Masuk ke Portal</span>
                     </button>
                 </form>
 
@@ -153,7 +156,7 @@
                     <p class="text-gray-600">
                         Belum punya akun?
                         <a href="{{ route('register') }}"
-                           class="text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                           class="text-green-600 hover:text-green-800 font-medium transition-colors">
                             Daftar sekarang
                         </a>
                     </p>

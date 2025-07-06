@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QrVerificationController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\FamilyMemberController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
@@ -39,6 +40,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Family Members routes (no edit/update allowed)
     Route::resource('family-members', FamilyMemberController::class)->except(['edit', 'update']);
+
+    // Chat routes
+    Route::prefix('chat')->name('chat.')->group(function () {
+        Route::get('/', [ChatController::class, 'index'])->name('index');
+        Route::get('/create', [ChatController::class, 'create'])->name('create');
+        Route::post('/', [ChatController::class, 'store'])->name('store');
+        Route::get('/{chat}', [ChatController::class, 'show'])->name('show');
+        Route::post('/{chat}/message', [ChatController::class, 'sendMessage'])->name('send-message');
+        Route::get('/{chat}/messages', [ChatController::class, 'getMessages'])->name('get-messages');
+        Route::post('/{chat}/add-participant', [ChatController::class, 'addParticipant'])->name('add-participant');
+        Route::delete('/{chat}/remove-participant', [ChatController::class, 'removeParticipant'])->name('remove-participant');
+        Route::post('/{chat}/leave', [ChatController::class, 'leaveChat'])->name('leave');
+        Route::get('/start-private/{user}', [ChatController::class, 'startPrivateChat'])->name('start-private');
+        Route::get('/download/{message}', [ChatController::class, 'downloadFile'])->name('download-file');
+    });
 });
 
 // Approval routes (for RT/RW)
@@ -77,6 +93,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // News management
     Route::resource('news', NewsManagementController::class);
+
+    // Letter requests management
+    Route::get('/letter-requests', [App\Http\Controllers\Admin\LetterRequestManagementController::class, 'index'])->name('letter-requests.index');
+    Route::get('/letter-requests/{letterRequest}', [App\Http\Controllers\Admin\LetterRequestManagementController::class, 'show'])->name('letter-requests.show');
 
     // Family member approvals
     Route::get('/family-member-approvals', [FamilyMemberApprovalController::class, 'index'])->name('family-member-approvals.index');

@@ -128,6 +128,21 @@ class User extends Authenticatable
         return $this->hasMany(FamilyMember::class)->where('is_active', true)->where('approval_status', 'pending');
     }
 
+    public function chats()
+    {
+        return $this->belongsToMany(Chat::class, 'chat_participants', 'user_id', 'chat_id');
+    }
+
+    public function chatMessages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
+
+    public function createdChats()
+    {
+        return $this->hasMany(Chat::class, 'created_by');
+    }
+
     // Helper methods
     public function isAdmin()
     {

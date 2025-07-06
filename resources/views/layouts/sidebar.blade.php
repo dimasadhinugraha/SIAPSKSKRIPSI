@@ -46,7 +46,7 @@
                 <header class="bg-white shadow-sm border-b border-gray-200">
                     <div class="px-4 sm:px-6 lg:px-8">
                         <div class="flex justify-between h-16">
-                            <div class="flex items-center lg:ml-0 ml-12">
+                            <div class="flex items-center lg:ml-0 ml-16">
                                 <!-- Page Title -->
                                 @if (isset($header))
                                     <div class="font-semibold text-xl text-gray-800 leading-tight">

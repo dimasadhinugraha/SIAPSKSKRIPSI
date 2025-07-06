@@ -15,7 +15,7 @@
 
     <style>
         .register-bg {
-            background: #3b82f6;
+            background: #16a34a;
         }
         .glass-effect {
             background: rgba(255, 255, 255, 0.95);
@@ -71,7 +71,7 @@
                                        value="{{ old('name') }}"
                                        required
                                        autofocus
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('name') border-red-500 @enderror"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('name') border-red-500 @enderror"
                                        placeholder="Masukkan nama lengkap sesuai KTP">
                                 @error('name')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -93,9 +93,9 @@
                                        required
                                        maxlength="16"
                                        pattern="[0-9]{16}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('nik') border-red-500 @enderror"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('nik') border-red-500 @enderror"
                                        placeholder="Masukkan 16 digit NIK">
-                                <p class="mt-1 text-xs text-blue-600">
+                                <p class="mt-1 text-xs text-green-600">
                                     <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
@@ -118,7 +118,7 @@
                                        type="email"
                                        name="email"
                                        value="{{ old('email') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('email') border-red-500 @enderror"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('email') border-red-500 @enderror"
                                        placeholder="contoh@email.com (opsional)">
                                 <p class="mt-1 text-xs text-gray-500">Email untuk notifikasi dan pemulihan akun</p>
                                 @error('email')
@@ -134,7 +134,7 @@
                                 <select id="gender"
                                         name="gender"
                                         required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('gender') border-red-500 @enderror">
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('gender') border-red-500 @enderror">
                                     <option value="">Pilih Jenis Kelamin</option>
                                     <option value="L" {{ old('gender') == 'L' ? 'selected' : '' }}>👨 Laki-laki</option>
                                     <option value="P" {{ old('gender') == 'P' ? 'selected' : '' }}>👩 Perempuan</option>
@@ -155,7 +155,7 @@
                                        value="{{ old('birth_date') }}"
                                        required
                                        max="{{ date('Y-m-d') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('birth_date') border-red-500 @enderror">
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('birth_date') border-red-500 @enderror">
                                 @error('birth_date')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -171,7 +171,7 @@
                                        name="phone"
                                        value="{{ old('phone') }}"
                                        required
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('phone') border-red-500 @enderror"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('phone') border-red-500 @enderror"
                                        placeholder="08xxxxxxxxxx">
                                 @error('phone')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -188,7 +188,7 @@
                                       name="address"
                                       rows="3"
                                       required
-                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('address') border-red-500 @enderror"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('address') border-red-500 @enderror"
                                       placeholder="Masukkan alamat lengkap sesuai KTP">{{ old('address') }}</textarea>
                             @error('address')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -258,7 +258,7 @@
                                        required
                                        maxlength="16"
                                        pattern="[0-9]{16}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('kk_number') border-red-500 @enderror"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('kk_number') border-red-500 @enderror"
                                        placeholder="Masukkan 16 digit nomor KK">
                                 @error('kk_number')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -275,7 +275,7 @@
                                        name="rt_rw"
                                        value="{{ old('rt_rw') }}"
                                        required
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('rt_rw') border-red-500 @enderror"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('rt_rw') border-red-500 @enderror"
                                        placeholder="Contoh: RT 01/RW 02">
                                 @error('rt_rw')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -302,7 +302,7 @@
                                            name="ktp_photo"
                                            accept="image/*"
                                            required
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('ktp_photo') border-red-500 @enderror">
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 @error('ktp_photo') border-red-500 @enderror">
                                 </div>
                                 <p class="mt-1 text-xs text-gray-500">Format: JPG, PNG. Maksimal 2MB</p>
                                 @error('ktp_photo')
@@ -321,7 +321,7 @@
                                            name="kk_photo"
                                            accept="image/*"
                                            required
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('kk_photo') border-red-500 @enderror">
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 @error('kk_photo') border-red-500 @enderror">
                                 </div>
                                 <p class="mt-1 text-xs text-gray-500">Format: JPG, PNG. Maksimal 2MB</p>
                                 @error('kk_photo')
@@ -348,7 +348,7 @@
                                            type="password"
                                            name="password"
                                            required
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('password') border-red-500 @enderror"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('password') border-red-500 @enderror"
                                            placeholder="Minimal 8 karakter">
                                     <button type="button"
                                             onclick="togglePasswordVisibility('password', 'eye-icon-1')"
@@ -374,7 +374,7 @@
                                            type="password"
                                            name="password_confirmation"
                                            required
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('password_confirmation') border-red-500 @enderror"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors @error('password_confirmation') border-red-500 @enderror"
                                            placeholder="Ulangi kata sandi">
                                     <button type="button"
                                             onclick="togglePasswordVisibility('password_confirmation', 'eye-icon-2')"
@@ -395,7 +395,7 @@
                     <!-- Submit Button -->
                     <div class="flex items-center justify-between">
                         <a href="{{ route('login') }}"
-                           class="text-blue-600 hover:text-blue-800 font-medium transition-colors inline-flex items-center">
+                           class="text-green-600 hover:text-green-800 font-medium transition-colors inline-flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
@@ -403,8 +403,11 @@
                         </a>
 
                         <button type="submit"
-                                class="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-105">
-                            🚀 Daftar Sekarang
+                                class="bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            <span>Daftar Sekarang</span>
                         </button>
                     </div>
                 </form>
