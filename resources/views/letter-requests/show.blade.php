@@ -400,25 +400,58 @@
                             </div>
                             <div class="p-6 text-center">
                                 <div class="inline-block p-4 bg-white border-2 border-gray-200 rounded-lg shadow-sm">
-                                    <div class="w-32 h-32 mx-auto bg-gray-100 border border-gray-300 flex items-center justify-center">
-                                        <div class="text-center text-gray-600">
-                                            <div class="text-sm font-medium">QR CODE</div>
-                                            <div class="text-xs">{{ $letterRequest->request_number }}</div>
-                                            <div class="text-xs mt-1">Scan untuk verifikasi</div>
-                                            <div class="text-xs text-gray-400 mt-1">GD Extension Required</div>
+                                    @php
+                                        $qrCodeService = new \App\Services\QrCodeService();
+                                        $qrCodeBase64 = $qrCodeService->generateQrCodeBase64($letterRequest);
+                                    @endphp
+
+                                    @if($qrCodeBase64)
+                                        <div class="w-32 h-32 mx-auto">
+                                            <img src="{{ $qrCodeBase64 }}" alt="QR Code" class="w-full h-full object-contain">
                                         </div>
-                                    </div>
+                                    @else
+                                        <div class="w-32 h-32 mx-auto bg-gray-100 border border-gray-300 flex items-center justify-center">
+                                            <div class="text-center text-gray-600">
+                                                <div class="text-sm font-medium">QR CODE</div>
+                                                <div class="text-xs">{{ $letterRequest->request_number }}</div>
+                                                <div class="text-xs mt-1">Scan untuk verifikasi</div>
+                                                <div class="text-xs text-gray-400 mt-1">Generation Failed</div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <div class="mt-4 space-y-2">
                                     <p class="text-sm font-medium text-gray-900">Scan untuk Verifikasi</p>
-                                    <p class="text-xs text-gray-600">QR Code ini berisi informasi lengkap surat dan dapat digunakan untuk verifikasi keaslian dokumen</p>
+                                    <p class="text-xs text-gray-600">QR Code berisi URL verifikasi yang dapat di-scan langsung dengan camera app</p>
+
+                                    <!-- QR Code Info -->
+                                    <div class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                        <div class="text-xs text-blue-800 space-y-1">
+                                            <p><strong>📱 Cara Scan:</strong></p>
+                                            <p>• Buka camera app di smartphone</p>
+                                            <p>• Arahkan ke QR code</p>
+                                            <p>• Tap notifikasi yang muncul</p>
+                                            <p>• Halaman verifikasi akan terbuka</p>
+                                        </div>
+                                    </div>
+
                                     <div class="mt-3 p-3 bg-gray-50 rounded-lg">
                                         <p class="text-xs text-gray-700">
                                             <strong>Surat No:</strong> {{ $letterRequest->request_number }}<br>
                                             <strong>Subjek:</strong> {{ $letterRequest->subject_name }}<br>
-                                            <strong>Jenis:</strong> {{ $letterRequest->letterType->name }}
+                                            <strong>Jenis:</strong> {{ $letterRequest->letterType->name }}<br>
+                                            <strong>Status:</strong> {{ $letterRequest->status_label }}
                                         </p>
+                                    </div>
+
+                                    <!-- Direct verification link -->
+                                    <div class="mt-3">
+                                        <a href="{{ route('qr-verification.verify', ['requestNumber' => $letterRequest->request_number]) }}"
+                                           target="_blank"
+                                           class="text-xs text-blue-600 hover:text-blue-800 underline">
+                                            🔗 Buka halaman verifikasi langsung
+                                        </a>
                                     </div>
                                 </div>
                             </div>
