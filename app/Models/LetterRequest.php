@@ -12,6 +12,8 @@ class LetterRequest extends Model
     protected $fillable = [
         'request_number',
         'user_id',
+        'subject_type',
+        'subject_id',
         'letter_type_id',
         'form_data',
         'status',
@@ -50,6 +52,11 @@ class LetterRequest extends Model
         return $this->hasMany(LetterApproval::class);
     }
 
+    public function subject()
+    {
+        return $this->belongsTo(FamilyMember::class, 'subject_id');
+    }
+
     // Helper methods
     public function getStatusLabelAttribute()
     {
@@ -80,6 +87,44 @@ class LetterRequest extends Model
     public function isPending()
     {
         return in_array($this->status, ['pending_rt', 'pending_rw']);
+    }
+
+    public function getSubjectNameAttribute()
+    {
+        if ($this->subject_type === 'self') {
+            return $this->user->name;
+        } elseif ($this->subject_type === 'family_member' && $this->subject) {
+            return $this->subject->name;
+        }
+
+        return 'Tidak diketahui';
+    }
+
+    public function getSubjectDetailsAttribute()
+    {
+        if ($this->subject_type === 'self') {
+            return [
+                'name' => $this->user->name,
+                'nik' => $this->user->nik,
+                'gender' => $this->user->gender,
+                'birth_date' => $this->user->birth_date,
+                'address' => $this->user->address,
+                'phone' => $this->user->phone,
+                'relationship' => 'Pemohon'
+            ];
+        } elseif ($this->subject_type === 'family_member' && $this->subject) {
+            return [
+                'name' => $this->subject->name,
+                'nik' => $this->subject->nik,
+                'gender' => $this->subject->gender,
+                'birth_date' => $this->subject->date_of_birth,
+                'address' => $this->user->address, // Alamat sama dengan kepala keluarga
+                'phone' => $this->user->phone, // Phone sama dengan kepala keluarga
+                'relationship' => $this->subject->relationship_label
+            ];
+        }
+
+        return null;
     }
 
     // Scopes

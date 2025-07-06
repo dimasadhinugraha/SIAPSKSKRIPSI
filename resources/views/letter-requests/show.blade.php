@@ -24,13 +24,13 @@
 
     @php
         $statusConfig = [
-            'pending_rt' => ['color' => 'yellow', 'icon' => '⏳', 'text' => 'Menunggu RT'],
-            'pending_rw' => ['color' => 'blue', 'icon' => '⏳', 'text' => 'Menunggu RW'],
-            'approved_final' => ['color' => 'green', 'icon' => '✅', 'text' => 'Selesai'],
-            'rejected_rt' => ['color' => 'red', 'icon' => '❌', 'text' => 'Ditolak RT'],
-            'rejected_rw' => ['color' => 'red', 'icon' => '❌', 'text' => 'Ditolak RW'],
+            'pending_rt' => ['color' => 'yellow', 'icon' => 'clock', 'text' => 'Menunggu RT'],
+            'pending_rw' => ['color' => 'blue', 'icon' => 'clock', 'text' => 'Menunggu RW'],
+            'approved_final' => ['color' => 'green', 'icon' => 'check', 'text' => 'Selesai'],
+            'rejected_rt' => ['color' => 'red', 'icon' => 'x', 'text' => 'Ditolak RT'],
+            'rejected_rw' => ['color' => 'red', 'icon' => 'x', 'text' => 'Ditolak RW'],
         ];
-        $status = $statusConfig[$letterRequest->status] ?? ['color' => 'gray', 'icon' => '❓', 'text' => 'Unknown'];
+        $status = $statusConfig[$letterRequest->status] ?? ['color' => 'gray', 'icon' => 'question', 'text' => 'Unknown'];
     @endphp
 
     <div class="py-8">
@@ -52,7 +52,25 @@
                         </div>
                         <div class="text-right">
                             <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                                <div class="text-3xl mb-2">{{ $status['icon'] }}</div>
+                                <div class="mb-2">
+                                    @if($status['icon'] === 'clock')
+                                        <svg class="w-8 h-8 text-white mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    @elseif($status['icon'] === 'check')
+                                        <svg class="w-8 h-8 text-white mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    @elseif($status['icon'] === 'x')
+                                        <svg class="w-8 h-8 text-white mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-8 h-8 text-white mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    @endif
+                                </div>
                                 <div class="text-sm font-medium">{{ $status['text'] }}</div>
                             </div>
                         </div>
@@ -64,7 +82,10 @@
             <div class="bg-white rounded-lg shadow-lg mb-6">
                 <div class="px-6 py-4 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                        🔄 Progress Pengajuan
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Progress Pengajuan
                     </h3>
                 </div>
                 <div class="p-6">
@@ -72,7 +93,9 @@
                         <!-- Step 1: Pengajuan -->
                         <div class="flex flex-col items-center flex-1">
                             <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mb-2">
-                                ✓
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
                             </div>
                             <div class="text-center">
                                 <p class="text-sm font-medium text-gray-900">Pengajuan</p>
@@ -87,9 +110,13 @@
                         <div class="flex flex-col items-center flex-1">
                             <div class="w-10 h-10 {{ $letterRequest->rt_processed_at ? 'bg-green-500' : ($letterRequest->status == 'pending_rt' ? 'bg-yellow-500' : 'bg-gray-300') }} rounded-full flex items-center justify-center text-white font-bold mb-2">
                                 @if($letterRequest->rt_processed_at)
-                                    ✓
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
                                 @elseif($letterRequest->status == 'pending_rt')
-                                    ⏳
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
                                 @else
                                     2
                                 @endif
@@ -109,9 +136,13 @@
                         <div class="flex flex-col items-center flex-1">
                             <div class="w-10 h-10 {{ $letterRequest->rw_processed_at ? 'bg-green-500' : ($letterRequest->status == 'pending_rw' ? 'bg-yellow-500' : 'bg-gray-300') }} rounded-full flex items-center justify-center text-white font-bold mb-2">
                                 @if($letterRequest->rw_processed_at)
-                                    ✓
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
                                 @elseif($letterRequest->status == 'pending_rw')
-                                    ⏳
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
                                 @else
                                     3
                                 @endif
@@ -131,7 +162,9 @@
                         <div class="flex flex-col items-center flex-1">
                             <div class="w-10 h-10 {{ $letterRequest->final_processed_at ? 'bg-green-500' : 'bg-gray-300' }} rounded-full flex items-center justify-center text-white font-bold mb-2">
                                 @if($letterRequest->final_processed_at)
-                                    🎉
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                    </svg>
                                 @else
                                     4
                                 @endif
@@ -173,7 +206,10 @@
                     <div class="bg-white rounded-lg shadow-lg">
                         <div class="px-6 py-4 border-b border-gray-200">
                             <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                📝 Data Pengajuan
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Data Pengajuan
                             </h3>
                         </div>
                         <div class="p-6">
@@ -210,7 +246,10 @@
                         <div class="bg-white rounded-lg shadow-lg">
                             <div class="px-6 py-4 border-b border-gray-200">
                                 <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                    📋 Riwayat Persetujuan
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                                    </svg>
+                                    Riwayat Persetujuan
                                 </h3>
                             </div>
                             <div class="p-6">
@@ -266,7 +305,10 @@
                     <div class="bg-white rounded-lg shadow-lg">
                         <div class="px-6 py-4 border-b border-gray-200">
                             <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                ℹ️ Informasi Pengajuan
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Informasi Pengajuan
                             </h3>
                         </div>
                         <div class="p-6 space-y-4">
@@ -277,6 +319,16 @@
                             <div class="flex items-center justify-between py-2 border-b border-gray-100">
                                 <span class="text-sm text-gray-600">Jenis Surat</span>
                                 <span class="text-sm font-medium text-gray-900">{{ $letterRequest->letterType->name }}</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">Surat untuk</span>
+                                <span class="text-sm font-medium text-gray-900">{{ $letterRequest->subject_name }}</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">Hubungan</span>
+                                <span class="text-sm font-medium text-gray-900">
+                                    {{ $letterRequest->subject_type === 'self' ? 'Diri sendiri' : $letterRequest->subject->relationship_label }}
+                                </span>
                             </div>
                             <div class="flex items-center justify-between py-2 border-b border-gray-100">
                                 <span class="text-sm text-gray-600">Tanggal Pengajuan</span>
@@ -299,7 +351,10 @@
                     <div class="bg-white rounded-lg shadow-lg">
                         <div class="px-6 py-4 border-b border-gray-200">
                             <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                ⚡ Aksi
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                Aksi
                             </h3>
                         </div>
                         <div class="p-6 space-y-3">

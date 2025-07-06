@@ -117,68 +117,7 @@ class FamilyMemberController extends Controller
         return view('family-members.show', compact('familyMember'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(FamilyMember $familyMember)
-    {
-        $this->authorize('update', $familyMember);
-
-        return view('family-members.edit', compact('familyMember'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, FamilyMember $familyMember)
-    {
-        $this->authorize('update', $familyMember);
-
-        $validated = $request->validate([
-            'nik' => [
-                'required',
-                'string',
-                'size:16',
-                'regex:/^[0-9]{16}$/',
-                Rule::unique('family_members')->where(function ($query) {
-                    return $query->where('is_active', true);
-                })->ignore($familyMember->id)
-            ],
-            'name' => 'required|string|max:255',
-            'gender' => 'required|in:L,P',
-            'place_of_birth' => 'required|string|max:255',
-            'date_of_birth' => 'required|date|before:today',
-            'relationship' => 'required|in:' . implode(',', array_keys(FamilyMember::getRelationshipOptions())),
-            'religion' => 'required|in:' . implode(',', array_keys(FamilyMember::getReligionOptions())),
-            'education' => 'nullable|in:' . implode(',', array_keys(FamilyMember::getEducationOptions())),
-            'occupation' => 'nullable|string|max:255',
-            'marital_status' => 'required|in:' . implode(',', array_keys(FamilyMember::getMaritalStatusOptions())),
-            'nationality' => 'nullable|string|max:50',
-            'father_name' => 'nullable|string|max:255',
-            'mother_name' => 'nullable|string|max:255',
-            'notes' => 'nullable|string|max:1000'
-        ], [
-            'nik.required' => 'NIK wajib diisi',
-            'nik.size' => 'NIK harus 16 digit',
-            'nik.regex' => 'NIK harus berupa angka 16 digit',
-            'nik.unique' => 'NIK sudah terdaftar',
-            'name.required' => 'Nama wajib diisi',
-            'gender.required' => 'Jenis kelamin wajib dipilih',
-            'place_of_birth.required' => 'Tempat lahir wajib diisi',
-            'date_of_birth.required' => 'Tanggal lahir wajib diisi',
-            'date_of_birth.before' => 'Tanggal lahir harus sebelum hari ini',
-            'relationship.required' => 'Hubungan keluarga wajib dipilih',
-            'religion.required' => 'Agama wajib dipilih',
-            'marital_status.required' => 'Status perkawinan wajib dipilih'
-        ]);
-
-        $validated['nationality'] = $validated['nationality'] ?? 'WNI';
-
-        $familyMember->update($validated);
-
-        return redirect()->route('family-members.index')
-            ->with('success', 'Data anggota keluarga berhasil diperbarui!');
-    }
+    // Edit and Update methods removed - data cannot be edited after submission for data integrity
 
     /**
      * Remove the specified resource from storage.

@@ -37,8 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('letter-requests', LetterRequestController::class)->except(['edit', 'update', 'destroy']);
     Route::get('/letter-requests/{letterRequest}/download', [LetterRequestController::class, 'download'])->name('letter-requests.download');
 
-    // Family Members routes
-    Route::resource('family-members', FamilyMemberController::class);
+    // Family Members routes (no edit/update allowed)
+    Route::resource('family-members', FamilyMemberController::class)->except(['edit', 'update']);
 });
 
 // Approval routes (for RT/RW)

@@ -1,162 +1,254 @@
 <!-- Sidebar -->
-<div class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0" id="sidebar">
-    <div class="flex items-center justify-center h-20 shadow-md bg-gradient-to-r from-blue-600 to-purple-600">
-        <div class="flex items-center">
-            <img src="{{ asset('images/ciasmara.png') }}" alt="Logo Desa Ciasmara" class="w-10 h-10 mr-3">
-            <div class="text-white">
-                <h1 class="text-lg font-bold">Desa Ciasmara</h1>
-                <p class="text-xs text-blue-100">Portal Digital</p>
+<div class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl transform -translate-x-full transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0" id="sidebar">
+    <!-- Header with animated gradient -->
+    <div class="relative h-20 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 animate-gradient-x"></div>
+        <div class="relative flex items-center justify-center h-full px-4">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mr-3 backdrop-blur-sm">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                </div>
+                <div class="text-white">
+                    <h1 class="text-lg font-bold tracking-wide">Desa Ciasmara</h1>
+                    <p class="text-xs text-blue-100 font-medium">Portal Digital</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <nav class="mt-5 px-2">
+    <!-- Navigation -->
+    <nav class="mt-6 px-3 space-y-1">
         <!-- Dashboard -->
-        <a href="{{ route('dashboard') }}" 
-           class="group flex items-center px-2 py-2 text-base font-medium rounded-md {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} transition-colors">
-            <svg class="mr-4 h-6 w-6 {{ request()->routeIs('dashboard') ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z" />
-            </svg>
-            Dashboard
+        <a href="{{ route('dashboard') }}"
+           class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transform scale-105' : 'text-gray-300 hover:bg-slate-700 hover:text-white hover:transform hover:scale-105' }}">
+            <div class="flex items-center justify-center w-8 h-8 rounded-lg {{ request()->routeIs('dashboard') ? 'bg-white bg-opacity-20' : 'bg-slate-700 group-hover:bg-slate-600' }} mr-3 transition-all duration-200">
+                <svg class="h-5 w-5 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-gray-400 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z" />
+                </svg>
+            </div>
+            <span class="font-semibold">Dashboard</span>
+            @if(request()->routeIs('dashboard'))
+                <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            @endif
         </a>
 
         <!-- Divider -->
-        <div class="border-t border-gray-200 my-3"></div>
+        <div class="border-t border-slate-700 my-4"></div>
 
         <!-- User Menu -->
         @auth
             @if(auth()->user()->isUser())
+                <!-- Section Header -->
+                <div class="px-3 py-2">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center">
+                        <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        Layanan Warga
+                    </h3>
+                </div>
+
                 <!-- Family Members -->
-                <a href="{{ route('family-members.index') }}" 
-                   class="group flex items-center px-2 py-2 text-base font-medium rounded-md {{ request()->routeIs('family-members.*') ? 'bg-blue-100 text-blue-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} transition-colors">
-                    <svg class="mr-4 h-6 w-6 {{ request()->routeIs('family-members.*') ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    Anggota Keluarga
+                <a href="{{ route('family-members.index') }}"
+                   class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('family-members.*') ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg transform scale-105' : 'text-gray-300 hover:bg-slate-700 hover:text-white hover:transform hover:scale-105' }}">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg {{ request()->routeIs('family-members.*') ? 'bg-white bg-opacity-20' : 'bg-slate-700 group-hover:bg-slate-600' }} mr-3 transition-all duration-200">
+                        <svg class="h-5 w-5 {{ request()->routeIs('family-members.*') ? 'text-white' : 'text-gray-400 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </div>
+                    <span class="font-semibold">Anggota Keluarga</span>
+                    @if(request()->routeIs('family-members.*'))
+                        <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    @endif
                 </a>
 
                 <!-- Letter Requests -->
-                <a href="{{ route('letter-requests.index') }}" 
-                   class="group flex items-center px-2 py-2 text-base font-medium rounded-md {{ request()->routeIs('letter-requests.*') ? 'bg-blue-100 text-blue-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} transition-colors">
-                    <svg class="mr-4 h-6 w-6 {{ request()->routeIs('letter-requests.*') ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Pengajuan Surat
+                <a href="{{ route('letter-requests.index') }}"
+                   class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('letter-requests.*') ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg transform scale-105' : 'text-gray-300 hover:bg-slate-700 hover:text-white hover:transform hover:scale-105' }}">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg {{ request()->routeIs('letter-requests.*') ? 'bg-white bg-opacity-20' : 'bg-slate-700 group-hover:bg-slate-600' }} mr-3 transition-all duration-200">
+                        <svg class="h-5 w-5 {{ request()->routeIs('letter-requests.*') ? 'text-white' : 'text-gray-400 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <span class="font-semibold">Pengajuan Surat</span>
+                    @if(request()->routeIs('letter-requests.*'))
+                        <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    @endif
                 </a>
             @endif
 
             <!-- RT/RW Menu -->
             @if(auth()->user()->canApproveLetters())
                 <!-- Divider -->
-                <div class="border-t border-gray-200 my-3"></div>
-                <div class="px-2 py-2">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">RT/RW</h3>
+                <div class="border-t border-slate-700 my-4"></div>
+
+                <!-- Section Header -->
+                <div class="px-3 py-2">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center">
+                        <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        RT/RW Panel
+                    </h3>
                 </div>
 
                 <!-- Letter Approvals -->
-                <a href="{{ route('approvals.index') }}" 
-                   class="group flex items-center px-2 py-2 text-base font-medium rounded-md {{ request()->routeIs('approvals.*') ? 'bg-green-100 text-green-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} transition-colors">
-                    <svg class="mr-4 h-6 w-6 {{ request()->routeIs('approvals.*') ? 'text-green-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Persetujuan Surat
+                <a href="{{ route('approvals.index') }}"
+                   class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('approvals.*') ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg transform scale-105' : 'text-gray-300 hover:bg-slate-700 hover:text-white hover:transform hover:scale-105' }}">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg {{ request()->routeIs('approvals.*') ? 'bg-white bg-opacity-20' : 'bg-slate-700 group-hover:bg-slate-600' }} mr-3 transition-all duration-200">
+                        <svg class="h-5 w-5 {{ request()->routeIs('approvals.*') ? 'text-white' : 'text-gray-400 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <span class="font-semibold">Persetujuan Surat</span>
+                    @if(request()->routeIs('approvals.*'))
+                        <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    @endif
                 </a>
             @endif
 
             <!-- Admin Menu -->
             @if(auth()->user()->isAdmin())
                 <!-- Divider -->
-                <div class="border-t border-gray-200 my-3"></div>
-                <div class="px-2 py-2">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Admin</h3>
+                <div class="border-t border-slate-700 my-4"></div>
+
+                <!-- Section Header -->
+                <div class="px-3 py-2">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center">
+                        <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        Admin Panel
+                    </h3>
                 </div>
 
                 <!-- User Verification -->
-                <a href="{{ route('admin.user-verification.index') }}" 
-                   class="group flex items-center px-2 py-2 text-base font-medium rounded-md {{ request()->routeIs('admin.user-verification.*') ? 'bg-purple-100 text-purple-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} transition-colors">
-                    <svg class="mr-4 h-6 w-6 {{ request()->routeIs('admin.user-verification.*') ? 'text-purple-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                    </svg>
-                    Verifikasi User
+                <a href="{{ route('admin.user-verification.index') }}"
+                   class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.user-verification.*') ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg transform scale-105' : 'text-gray-300 hover:bg-slate-700 hover:text-white hover:transform hover:scale-105' }}">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg {{ request()->routeIs('admin.user-verification.*') ? 'bg-white bg-opacity-20' : 'bg-slate-700 group-hover:bg-slate-600' }} mr-3 transition-all duration-200">
+                        <svg class="h-5 w-5 {{ request()->routeIs('admin.user-verification.*') ? 'text-white' : 'text-gray-400 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                        </svg>
+                    </div>
+                    <span class="font-semibold">Verifikasi User</span>
+                    @if(request()->routeIs('admin.user-verification.*'))
+                        <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    @endif
                 </a>
 
                 <!-- Family Member Approvals -->
-                <a href="{{ route('admin.family-member-approvals.index') }}" 
-                   class="group flex items-center px-2 py-2 text-base font-medium rounded-md {{ request()->routeIs('admin.family-member-approvals.*') ? 'bg-purple-100 text-purple-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} transition-colors">
-                    <svg class="mr-4 h-6 w-6 {{ request()->routeIs('admin.family-member-approvals.*') ? 'text-purple-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    Persetujuan Keluarga
+                <a href="{{ route('admin.family-member-approvals.index') }}"
+                   class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.family-member-approvals.*') ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg transform scale-105' : 'text-gray-300 hover:bg-slate-700 hover:text-white hover:transform hover:scale-105' }}">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg {{ request()->routeIs('admin.family-member-approvals.*') ? 'bg-white bg-opacity-20' : 'bg-slate-700 group-hover:bg-slate-600' }} mr-3 transition-all duration-200">
+                        <svg class="h-5 w-5 {{ request()->routeIs('admin.family-member-approvals.*') ? 'text-white' : 'text-gray-400 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </div>
+                    <span class="font-semibold">Persetujuan Keluarga</span>
+                    @if(request()->routeIs('admin.family-member-approvals.*'))
+                        <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    @endif
                 </a>
 
                 <!-- News Management -->
-                <a href="{{ route('admin.news.index') }}" 
-                   class="group flex items-center px-2 py-2 text-base font-medium rounded-md {{ request()->routeIs('admin.news.*') ? 'bg-purple-100 text-purple-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} transition-colors">
-                    <svg class="mr-4 h-6 w-6 {{ request()->routeIs('admin.news.*') ? 'text-purple-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                    </svg>
-                    Kelola Berita
+                <a href="{{ route('admin.news.index') }}"
+                   class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.news.*') ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg transform scale-105' : 'text-gray-300 hover:bg-slate-700 hover:text-white hover:transform hover:scale-105' }}">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg {{ request()->routeIs('admin.news.*') ? 'bg-white bg-opacity-20' : 'bg-slate-700 group-hover:bg-slate-600' }} mr-3 transition-all duration-200">
+                        <svg class="h-5 w-5 {{ request()->routeIs('admin.news.*') ? 'text-white' : 'text-gray-400 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                        </svg>
+                    </div>
+                    <span class="font-semibold">Kelola Berita</span>
+                    @if(request()->routeIs('admin.news.*'))
+                        <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    @endif
                 </a>
             @endif
 
             <!-- Divider -->
-            <div class="border-t border-gray-200 my-3"></div>
+            <div class="border-t border-slate-700 my-4"></div>
 
             <!-- Public Pages -->
-            <div class="px-2 py-2">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Publik</h3>
+            <div class="px-3 py-2">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center">
+                    <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Layanan Publik
+                </h3>
             </div>
 
             <!-- News -->
-            <a href="{{ route('news.index') }}" 
-               class="group flex items-center px-2 py-2 text-base font-medium rounded-md {{ request()->routeIs('news.*') ? 'bg-blue-100 text-blue-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} transition-colors">
-                <svg class="mr-4 h-6 w-6 {{ request()->routeIs('news.*') ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                </svg>
-                Berita Desa
+            <a href="{{ route('news.index') }}"
+               class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('news.*') ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg transform scale-105' : 'text-gray-300 hover:bg-slate-700 hover:text-white hover:transform hover:scale-105' }}">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg {{ request()->routeIs('news.*') ? 'bg-white bg-opacity-20' : 'bg-slate-700 group-hover:bg-slate-600' }} mr-3 transition-all duration-200">
+                    <svg class="h-5 w-5 {{ request()->routeIs('news.*') ? 'text-white' : 'text-gray-400 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                    </svg>
+                </div>
+                <span class="font-semibold">Berita Desa</span>
+                @if(request()->routeIs('news.*'))
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                @endif
             </a>
 
             <!-- QR Verification -->
-            <a href="{{ route('qr-verification.scan') }}" 
-               class="group flex items-center px-2 py-2 text-base font-medium rounded-md {{ request()->routeIs('qr-verification.*') ? 'bg-blue-100 text-blue-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} transition-colors">
-                <svg class="mr-4 h-6 w-6 {{ request()->routeIs('qr-verification.*') ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                </svg>
-                Verifikasi QR
+            <a href="{{ route('qr-verification.scan') }}"
+               class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('qr-verification.*') ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg transform scale-105' : 'text-gray-300 hover:bg-slate-700 hover:text-white hover:transform hover:scale-105' }}">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg {{ request()->routeIs('qr-verification.*') ? 'bg-white bg-opacity-20' : 'bg-slate-700 group-hover:bg-slate-600' }} mr-3 transition-all duration-200">
+                    <svg class="h-5 w-5 {{ request()->routeIs('qr-verification.*') ? 'text-white' : 'text-gray-400 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                    </svg>
+                </div>
+                <span class="font-semibold">Verifikasi QR</span>
+                @if(request()->routeIs('qr-verification.*'))
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                @endif
             </a>
         @endauth
     </nav>
 
     <!-- User Info at Bottom -->
     @auth
-        <div class="absolute bottom-0 w-full p-4 bg-gray-50 border-t">
+        <div class="absolute bottom-0 w-full p-4 bg-slate-800 border-t border-slate-700">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <div class="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-                        <span class="text-white text-sm font-medium">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-sm font-bold">
                             {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
                         </span>
                     </div>
                 </div>
                 <div class="ml-3 flex-1 min-w-0">
-                    <p class="text-sm font-medium text-gray-900 truncate">
+                    <p class="text-sm font-semibold text-white truncate">
                         {{ auth()->user()->name }}
                     </p>
-                    <p class="text-xs text-gray-500 truncate">
+                    <p class="text-xs text-slate-400 truncate flex items-center">
                         @if(auth()->user()->isAdmin())
-                            🛡️ Administrator
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            Administrator
                         @elseif(auth()->user()->canApproveLetters())
-                            👨‍💼 {{ auth()->user()->rt_rw }}
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            {{ auth()->user()->rt_rw }}
                         @else
-                            👤 Warga
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Warga
                         @endif
                     </p>
                 </div>
                 <form method="POST" action="{{ route('logout') }}" class="ml-2">
                     @csrf
-                    <button type="submit" class="text-gray-400 hover:text-gray-600 transition-colors" title="Logout">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button type="submit" class="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-all duration-200" title="Logout">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
                     </button>

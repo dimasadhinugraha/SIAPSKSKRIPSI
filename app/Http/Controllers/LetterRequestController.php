@@ -14,7 +14,7 @@ class LetterRequestController extends Controller
     public function index()
     {
         $requests = auth()->user()->letterRequests()
-            ->with('letterType')
+            ->with(['letterType', 'subject'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -24,15 +24,32 @@ class LetterRequestController extends Controller
     public function create()
     {
         $letterTypes = LetterType::active()->get();
-        return view('letter-requests.create', compact('letterTypes'));
+        $familyMembers = auth()->user()->approvedFamilyMembers()->get();
+
+        return view('letter-requests.create', compact('letterTypes', 'familyMembers'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'letter_type_id' => 'required|exists:letter_types,id',
+            'subject_type' => 'required|in:self,family_member',
+            'subject_id' => 'nullable|exists:family_members,id',
             'form_data' => 'required|array',
         ]);
+
+        // Validate subject_id is required when subject_type is family_member
+        if ($request->subject_type === 'family_member') {
+            $request->validate([
+                'subject_id' => 'required|exists:family_members,id'
+            ]);
+
+            // Ensure the family member belongs to the authenticated user and is approved
+            $familyMember = auth()->user()->approvedFamilyMembers()->find($request->subject_id);
+            if (!$familyMember) {
+                return back()->withErrors(['subject_id' => 'Anggota keluarga tidak valid atau belum disetujui.']);
+            }
+        }
 
         $letterType = LetterType::findOrFail($request->letter_type_id);
 
@@ -56,6 +73,8 @@ class LetterRequestController extends Controller
         LetterRequest::create([
             'request_number' => $requestNumber,
             'user_id' => auth()->id(),
+            'subject_type' => $request->subject_type,
+            'subject_id' => $request->subject_type === 'family_member' ? $request->subject_id : null,
             'letter_type_id' => $request->letter_type_id,
             'form_data' => $request->form_data,
             'status' => 'pending_rt',
@@ -72,7 +91,7 @@ class LetterRequestController extends Controller
             abort(403);
         }
 
-        $letterRequest->load(['letterType', 'approvals.approver']);
+        $letterRequest->load(['letterType', 'approvals.approver', 'subject']);
 
         return view('letter-requests.show', compact('letterRequest'));
     }
