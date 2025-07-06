@@ -12,12 +12,8 @@ class QrCodeService
             // Prepare data for QR Code
             $qrData = $this->prepareQrData($letterRequest);
 
-            // Create QR Code using the installed library
+            // Simple approach - just create QR code with basic settings
             $qrCode = new \Endroid\QrCode\QrCode($qrData);
-            $qrCode->setSize(200);
-            $qrCode->setMargin(10);
-
-            // Generate PNG
             $writer = new \Endroid\QrCode\Writer\PngWriter();
             $result = $writer->write($qrCode);
 
@@ -48,12 +44,8 @@ class QrCodeService
         $qrData = $this->prepareQrData($letterRequest);
 
         try {
-            // Use the installed QR code library
+            // Simple approach - just create QR code with basic settings
             $qrCode = new \Endroid\QrCode\QrCode($qrData);
-            $qrCode->setSize(200);
-            $qrCode->setMargin(10);
-
-            // Generate PNG
             $writer = new \Endroid\QrCode\Writer\PngWriter();
             $result = $writer->write($qrCode);
 
