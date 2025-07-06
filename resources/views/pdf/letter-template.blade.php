@@ -190,13 +190,17 @@
 
             <!-- QR CODE DIGITAL SIGNATURE -->
             <div class="qr-code">
-                <div style="width: 120px; height: 120px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background: #f9f9f9;">
-                    <div style="text-align: center; font-size: 10px; color: #666;">
-                        <div>QR CODE</div>
-                        <div style="font-size: 8px;">{{ $letterRequest->request_number }}</div>
-                        <div style="font-size: 7px;">Scan untuk verifikasi</div>
+                @if($qrCodeBase64)
+                    <img src="{{ $qrCodeBase64 }}" alt="QR Code" style="width: 120px; height: 120px;">
+                @else
+                    <div style="width: 120px; height: 120px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background: #f9f9f9;">
+                        <div style="text-align: center; font-size: 10px; color: #666;">
+                            <div>QR CODE</div>
+                            <div style="font-size: 8px;">{{ $letterRequest->request_number }}</div>
+                            <div style="font-size: 7px;">Scan untuk verifikasi</div>
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
 
             <p><strong>[Nama Kepala Desa]</strong></p>

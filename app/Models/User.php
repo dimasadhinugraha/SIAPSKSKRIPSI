@@ -43,7 +43,7 @@ class User extends Authenticatable
      */
     public function getAuthIdentifierName()
     {
-        return 'nik';
+        return 'nik'; // Keep NIK for authentication
     }
 
     /**
@@ -53,7 +53,7 @@ class User extends Authenticatable
      */
     public function getAuthIdentifier()
     {
-        return $this->getAttribute('nik');
+        return $this->getAttribute('nik'); // Keep NIK for authentication
     }
 
     /**
@@ -167,5 +167,17 @@ class User extends Authenticatable
     public function canApproveLetters()
     {
         return in_array($this->role, ['rt', 'rw', 'admin']);
+    }
+
+    public function getRoleLabelAttribute()
+    {
+        $roles = [
+            'admin' => 'Administrator',
+            'rt' => 'Ketua RT',
+            'rw' => 'Ketua RW',
+            'user' => 'Warga'
+        ];
+
+        return $roles[$this->role] ?? 'Unknown';
     }
 }

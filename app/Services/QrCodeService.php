@@ -8,30 +8,17 @@ class QrCodeService
 {
     public function generateLetterQrCode(LetterRequest $letterRequest): string
     {
-        // Check if GD extension is available
-        if (!extension_loaded('gd')) {
-            \Log::warning('QR Code generation skipped: GD extension not available');
-            return '';
-        }
-
         try {
             // Prepare data for QR Code
             $qrData = $this->prepareQrData($letterRequest);
 
-            // Dynamically load QR code classes
-            if (!class_exists('Endroid\QrCode\QrCode')) {
-                \Log::warning('QR Code generation skipped: QrCode class not available');
-                return '';
-            }
-
-            $qrCodeClass = 'Endroid\QrCode\QrCode';
-            $writerClass = 'Endroid\QrCode\Writer\PngWriter';
-
-            // Create QR Code (simple approach)
-            $qrCode = new $qrCodeClass($qrData);
+            // Create QR Code using the installed library
+            $qrCode = new \Endroid\QrCode\QrCode($qrData);
+            $qrCode->setSize(200);
+            $qrCode->setMargin(10);
 
             // Generate PNG
-            $writer = new $writerClass();
+            $writer = new \Endroid\QrCode\Writer\PngWriter();
             $result = $writer->write($qrCode);
 
             // Save QR Code to storage
@@ -49,7 +36,7 @@ class QrCodeService
             return $filename;
         } catch (\Exception $e) {
             // Log the error for debugging
-            \Log::warning('QR Code generation failed: ' . $e->getMessage());
+            \Log::error('QR Code generation failed: ' . $e->getMessage());
             // Return empty string if QR generation fails
             return '';
         }
@@ -57,33 +44,24 @@ class QrCodeService
     
     public function generateQrCodeBase64(LetterRequest $letterRequest): string
     {
-        // Check if GD extension is available
-        if (!extension_loaded('gd')) {
-            return $this->createPlaceholderQrCode($letterRequest);
-        }
-
         // Prepare data for QR Code
         $qrData = $this->prepareQrData($letterRequest);
 
         try {
-            // Dynamically load QR code classes only if GD is available
-            if (!class_exists('Endroid\QrCode\QrCode')) {
-                return $this->createPlaceholderQrCode($letterRequest);
-            }
-
-            $qrCodeClass = 'Endroid\QrCode\QrCode';
-            $writerClass = 'Endroid\QrCode\Writer\PngWriter';
-
-            // Create QR Code (simple approach)
-            $qrCode = new $qrCodeClass($qrData);
+            // Use the installed QR code library
+            $qrCode = new \Endroid\QrCode\QrCode($qrData);
+            $qrCode->setSize(200);
+            $qrCode->setMargin(10);
 
             // Generate PNG
-            $writer = new $writerClass();
+            $writer = new \Endroid\QrCode\Writer\PngWriter();
             $result = $writer->write($qrCode);
 
             // Return as base64 for embedding in PDF
             return 'data:image/png;base64,' . base64_encode($result->getString());
         } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('QR Code generation failed: ' . $e->getMessage());
             // Fallback: create a simple placeholder image
             return $this->createPlaceholderQrCode($letterRequest);
         }

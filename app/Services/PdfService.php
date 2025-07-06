@@ -39,8 +39,9 @@ class PdfService
         $formData = $letterRequest->form_data;
         $subjectDetails = $letterRequest->subject_details;
 
-        // Generate QR Code for digital signature (disabled for now due to GD extension requirement)
-        $qrCodeBase64 = null;
+        // Generate QR Code for digital signature
+        $qrCodeService = new \App\Services\QrCodeService();
+        $qrCodeBase64 = $qrCodeService->generateQrCodeBase64($letterRequest);
 
         // Prepare data for template (merge user data with subject data and form data)
         $surat = (object) array_merge([
