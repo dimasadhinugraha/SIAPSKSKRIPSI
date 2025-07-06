@@ -47,11 +47,17 @@
 
                 <!-- Messages Container -->
                 <div class="h-96 overflow-y-auto p-6" id="messagesContainer">
-                    @foreach($messages as $message)
-                        @if($message->user_id == auth()->id())
+                    @forelse($messages as $message)
+                        @php
+                            $currentUserName = auth()->user()->name;
+                            $messageUserName = $message->user->name;
+                            $isMyMessage = ($messageUserName === $currentUserName);
+                        @endphp
+
+                        @if($isMyMessage)
                             <!-- My Messages (Right Side) -->
-                            <div class="w-full flex justify-end mb-4">
-                                <div class="max-w-xs lg:max-w-md ml-auto">
+                            <div class="w-full mb-4" style="display: flex; justify-content: flex-end;">
+                                <div class="max-w-xs lg:max-w-md" style="margin-left: auto;">
                                     <div class="px-4 py-2 rounded-lg bg-green-600 text-white rounded-br-none">
                                         @if($message->type === 'image')
                                             <img src="{{ $message->getFileUrl() }}" alt="{{ $message->file_name }}" class="max-w-full h-auto rounded mb-2">
@@ -76,8 +82,8 @@
                             </div>
                         @else
                             <!-- Other Messages (Left Side) -->
-                            <div class="w-full flex justify-start mb-4">
-                                <div class="max-w-xs lg:max-w-md mr-auto">
+                            <div class="w-full mb-4" style="display: flex; justify-content: flex-start;">
+                                <div class="max-w-xs lg:max-w-md" style="margin-right: auto;">
                                     <div class="flex items-center space-x-2 mb-1">
                                         <div class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
                                             <span class="text-xs font-medium text-gray-600">
@@ -110,7 +116,14 @@
                                 </div>
                             </div>
                         @endif
-                    @endforeach
+                    @empty
+                        <div class="text-center py-8 text-gray-500">
+                            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            <p>Belum ada pesan. Mulai percakapan!</p>
+                        </div>
+                    @endforelse
                 </div>
 
                 <!-- Message Input -->
@@ -273,7 +286,8 @@
                 if (data.success) {
                     messageInput.value = '';
                     removeFile();
-                    loadMessages();
+                    // Reload page once to show new message
+                    location.reload();
                 }
             })
             .catch(error => {
@@ -282,18 +296,13 @@
         }
 
         function loadMessages() {
-            fetch('{{ route("chat.get-messages", $chat) }}')
-                .then(response => response.json())
-                .then(messages => {
-                    updateMessagesDisplay(messages);
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                });
+            // Only reload after sending a message, not for auto-refresh
+            // We'll implement proper message loading later if needed
         }
 
         function updateMessagesDisplay(messages) {
-            // This would update the messages display
-            // For now, we'll just reload the page
-            location.reload();
+            // Disabled auto-update to prevent constant reloading
+            // Messages will update when page is refreshed manually
         }
 
         function handleFileSelect(event) {
@@ -317,7 +326,7 @@
             document.getElementById('infoModal').classList.add('hidden');
         }
 
-        // Auto-refresh messages every 5 seconds
-        setInterval(loadMessages, 5000);
+        // Auto-refresh disabled to prevent constant page reloading
+        // setInterval(loadMessages, 5000);
     </script>
 </x-sidebar-layout>
