@@ -9,10 +9,29 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900">{{ $letterRequest->letterType->name }}</h3>
-                        <p class="mt-1 text-sm text-gray-600">
-                            Nomor Pengajuan: {{ $letterRequest->request_number }}
-                        </p>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900">{{ $letterRequest->letterType->name }}</h3>
+                                <p class="mt-1 text-sm text-gray-600">
+                                    Nomor Pengajuan: {{ $letterRequest->request_number }} |
+                                    Tanggal: {{ $letterRequest->created_at->format('d/m/Y H:i') }}
+                                </p>
+                            </div>
+                            <div>
+                                @php
+                                    $statusColors = [
+                                        'pending_rt' => 'bg-yellow-100 text-yellow-800',
+                                        'pending_rw' => 'bg-blue-100 text-blue-800',
+                                        'approved_final' => 'bg-green-100 text-green-800',
+                                        'rejected_rt' => 'bg-red-100 text-red-800',
+                                        'rejected_rw' => 'bg-red-100 text-red-800',
+                                    ];
+                                @endphp
+                                <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full {{ $statusColors[$letterRequest->status] ?? 'bg-gray-100 text-gray-800' }}">
+                                    {{ $letterRequest->status_label }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -99,26 +118,63 @@
 
                     <!-- Action Buttons -->
                     <div class="mt-8 flex items-center justify-between">
-                        <a href="{{ route('approvals.index') }}" 
-                           class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
-                            Kembali
-                        </a>
-
                         <div class="flex space-x-3">
-                            <!-- Reject Button -->
-                            <button type="button" 
-                                    onclick="openRejectModal()"
-                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                Tolak
-                            </button>
+                            <a href="{{ route('approvals.index') }}"
+                               class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                </svg>
+                                <span>Kembali ke Pending</span>
+                            </a>
 
-                            <!-- Approve Button -->
-                            <button type="button" 
-                                    onclick="openApproveModal()"
-                                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                Setujui
-                            </button>
+                            <a href="{{ route('approvals.history') }}"
+                               class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>Lihat Riwayat</span>
+                            </a>
                         </div>
+
+                        @php
+                            $canApprove = false;
+                            if (auth()->user()->isRT() && $letterRequest->status === 'pending_rt') {
+                                $canApprove = true;
+                            } elseif (auth()->user()->isRW() && $letterRequest->status === 'pending_rw') {
+                                $canApprove = true;
+                            }
+                        @endphp
+
+                        @if($canApprove)
+                            <div class="flex space-x-3">
+                                <!-- Reject Button -->
+                                <button type="button"
+                                        onclick="openRejectModal()"
+                                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    <span>Tolak</span>
+                                </button>
+
+                                <!-- Approve Button -->
+                                <button type="button"
+                                        onclick="openApproveModal()"
+                                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <span>Setujui</span>
+                                </button>
+                            </div>
+                        @else
+                            <div class="flex items-center space-x-2 text-gray-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="text-sm font-medium">Surat telah diproses</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

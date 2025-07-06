@@ -37,6 +37,26 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get the name of the unique identifier for the user.
+     *
+     * @return string
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'nik';
+    }
+
+    /**
+     * Get the unique identifier for the user.
+     *
+     * @return mixed
+     */
+    public function getAuthIdentifier()
+    {
+        return $this->getAttribute('nik');
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>

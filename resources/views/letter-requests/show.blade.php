@@ -367,7 +367,7 @@
                                     <span>Download Surat PDF</span>
                                 </a>
 
-                                <a href="{{ route('qr-verification.verify', $letterRequest->request_number) }}"
+                                <a href="{{ route('qr-verification.verify', ['requestNumber' => $letterRequest->request_number]) }}"
                                    target="_blank"
                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -387,8 +387,46 @@
                         </div>
                     </div>
 
+                    <!-- QR Code Card -->
+                    @if($letterRequest->isApproved())
+                        <div class="bg-white rounded-lg shadow-lg">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                                    </svg>
+                                    QR Code Verifikasi
+                                </h3>
+                            </div>
+                            <div class="p-6 text-center">
+                                <div class="inline-block p-4 bg-white border-2 border-gray-200 rounded-lg shadow-sm">
+                                    <div class="w-32 h-32 mx-auto bg-gray-100 border border-gray-300 flex items-center justify-center">
+                                        <div class="text-center text-gray-600">
+                                            <div class="text-sm font-medium">QR CODE</div>
+                                            <div class="text-xs">{{ $letterRequest->request_number }}</div>
+                                            <div class="text-xs mt-1">Scan untuk verifikasi</div>
+                                            <div class="text-xs text-gray-400 mt-1">GD Extension Required</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 space-y-2">
+                                    <p class="text-sm font-medium text-gray-900">Scan untuk Verifikasi</p>
+                                    <p class="text-xs text-gray-600">QR Code ini berisi informasi lengkap surat dan dapat digunakan untuk verifikasi keaslian dokumen</p>
+                                    <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                                        <p class="text-xs text-gray-700">
+                                            <strong>Surat No:</strong> {{ $letterRequest->request_number }}<br>
+                                            <strong>Subjek:</strong> {{ $letterRequest->subject_name }}<br>
+                                            <strong>Jenis:</strong> {{ $letterRequest->letterType->name }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- Help Card -->
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg shadow-lg">
+                    <div class="bg-blue-50 rounded-lg shadow-lg">
                         <div class="p-6">
                             <div class="flex items-center space-x-3 mb-4">
                                 <div class="flex-shrink-0">

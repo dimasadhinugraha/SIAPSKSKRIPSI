@@ -1,7 +1,8 @@
 <x-sidebar-layout>
     <x-slot name="header">
-        <span>{{ auth()->user()->isRT() ? 'Persetujuan RT' : 'Persetujuan RW' }}
-        </span>
+        <div class="flex items-center justify-between">
+            <span>{{ auth()->user()->isRT() ? 'Persetujuan RT' : 'Persetujuan RW' }}</span>
+        </div>
     </x-slot>
 
     <div class="py-12">

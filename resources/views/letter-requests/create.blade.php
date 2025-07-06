@@ -33,7 +33,7 @@
             <!-- Form Container with Better Layout -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-xl border border-gray-200">
                 <!-- Header Section -->
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6">
+                <div class="bg-blue-600 px-8 py-6">
                     <div class="flex items-center">
                         <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mr-4">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,7 +259,7 @@
                                 Kembali
                             </a>
 
-                            <button type="submit" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white btn-gradient focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <button type="submit" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                                 </svg>
@@ -273,80 +273,28 @@
     </div>
 
     <style>
-        /* Custom animations and transitions */
+        /* Simple transitions without animations */
         .form-step {
-            transition: all 0.3s ease-in-out;
+            transition: box-shadow 0.2s ease;
         }
 
         .form-step:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        /* Custom radio button styling */
-        .radio-card {
-            transition: all 0.2s ease-in-out;
-        }
-
-        .radio-card:hover {
-            transform: translateY(-1px);
             box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
         }
 
-        /* Gradient background animation */
-        .gradient-bg {
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+        /* Radio button styling */
+        .radio-card {
+            transition: all 0.2s ease;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .radio-card:hover {
+            box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.1);
         }
 
         /* Form field focus effects */
         .form-field:focus {
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
             border-color: #3b82f6;
-        }
-
-        /* Step animation */
-        .step-enter {
-            animation: slideInUp 0.5s ease-out;
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Progress indicator animation */
-        .progress-step {
-            transition: all 0.3s ease-in-out;
-        }
-
-        .progress-step.active {
-            transform: scale(1.1);
-        }
-
-        /* Button hover effects */
-        .btn-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: all 0.3s ease;
-        }
-
-        .btn-gradient:hover {
-            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
     </style>
 

@@ -51,7 +51,7 @@
 
                     @if($letterRequest)
                         <!-- Letter Information -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <!-- Letter Details -->
                             <div class="space-y-4">
                                 <h4 class="font-medium text-gray-900">Informasi Surat</h4>
@@ -93,6 +93,31 @@
                                         <p class="mt-1 text-sm text-gray-900">{{ $letterRequest->final_processed_at->format('d F Y, H:i') }} WIB</p>
                                     </div>
                                 @endif
+                            </div>
+
+                            <!-- Subject Details -->
+                            <div class="space-y-4">
+                                <h4 class="font-medium text-gray-900">Data Subjek Surat</h4>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                                    <p class="mt-1 text-sm text-gray-900">{{ $letterRequest->subject_name }}</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">NIK</label>
+                                    <p class="mt-1 text-sm text-gray-900">{{ $letterRequest->subject_details['nik'] }}</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Hubungan</label>
+                                    <p class="mt-1 text-sm text-gray-900">{{ $letterRequest->subject_details['relationship'] }}</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Alamat</label>
+                                    <p class="mt-1 text-sm text-gray-900">{{ $letterRequest->subject_details['address'] }}</p>
+                                </div>
                             </div>
 
                             <!-- Applicant Details -->

@@ -6,8 +6,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Welcome Section -->
-            <div class="bg-gradient-to-r from-blue-600 to-purple-700 overflow-hidden shadow-xl sm:rounded-xl mb-8 relative">
-                <div class="absolute inset-0 bg-black opacity-10"></div>
+            <div class="bg-blue-600 overflow-hidden shadow-xl sm:rounded-xl mb-8 relative">
                 <div class="relative p-8 text-white">
                     <div class="flex items-center justify-between">
                         <div>

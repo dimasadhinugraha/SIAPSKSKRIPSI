@@ -15,28 +15,21 @@
 
     <style>
         .login-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #3b82f6;
         }
         .glass-effect {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .floating-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
     </style>
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen login-bg flex items-center justify-center relative overflow-hidden">
         <!-- Background Elements -->
-        <div class="absolute top-20 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full floating-animation"></div>
-        <div class="absolute bottom-20 right-10 w-32 h-32 bg-yellow-300 bg-opacity-20 rounded-full floating-animation" style="animation-delay: -2s;"></div>
-        <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-300 bg-opacity-20 rounded-full floating-animation" style="animation-delay: -4s;"></div>
+        <div class="absolute top-20 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full"></div>
+        <div class="absolute bottom-20 right-10 w-32 h-32 bg-yellow-300 bg-opacity-20 rounded-full"></div>
+        <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-300 bg-opacity-20 rounded-full"></div>
 
         <div class="w-full max-w-md mx-4">
             <!-- Logo & Header -->
@@ -76,20 +69,28 @@
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
 
-                    <!-- Email Address -->
+                    <!-- NIK -->
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                            📧 Alamat Email
+                        <label for="nik" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                            </svg>
+                            NIK (Nomor Induk Kependudukan)
                         </label>
-                        <input id="email"
-                               type="email"
-                               name="email"
-                               value="{{ old('email') }}"
+                        <input id="nik"
+                               type="text"
+                               name="nik"
+                               value="{{ old('nik') }}"
                                required
                                autofocus
                                autocomplete="username"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('email') border-red-500 @enderror"
-                               placeholder="Masukkan alamat email Anda">
+                               maxlength="16"
+                               pattern="[0-9]{16}"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('nik') border-red-500 @enderror"
+                               placeholder="Masukkan 16 digit NIK Anda">
+                        @error('nik')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                         @error('email')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror

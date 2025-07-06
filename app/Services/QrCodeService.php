@@ -3,26 +3,35 @@
 namespace App\Services;
 
 use App\Models\LetterRequest;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\RoundBlockSizeMode;
-use Endroid\QrCode\Color\Color;
 
 class QrCodeService
 {
     public function generateLetterQrCode(LetterRequest $letterRequest): string
     {
-        // Prepare data for QR Code
-        $qrData = $this->prepareQrData($letterRequest);
+        // Check if GD extension is available
+        if (!extension_loaded('gd')) {
+            \Log::warning('QR Code generation skipped: GD extension not available');
+            return '';
+        }
 
         try {
+            // Prepare data for QR Code
+            $qrData = $this->prepareQrData($letterRequest);
+
+            // Dynamically load QR code classes
+            if (!class_exists('Endroid\QrCode\QrCode')) {
+                \Log::warning('QR Code generation skipped: QrCode class not available');
+                return '';
+            }
+
+            $qrCodeClass = 'Endroid\QrCode\QrCode';
+            $writerClass = 'Endroid\QrCode\Writer\PngWriter';
+
             // Create QR Code (simple approach)
-            $qrCode = new QrCode($qrData);
+            $qrCode = new $qrCodeClass($qrData);
 
             // Generate PNG
-            $writer = new PngWriter();
+            $writer = new $writerClass();
             $result = $writer->write($qrCode);
 
             // Save QR Code to storage
@@ -39,6 +48,8 @@ class QrCodeService
 
             return $filename;
         } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::warning('QR Code generation failed: ' . $e->getMessage());
             // Return empty string if QR generation fails
             return '';
         }
@@ -46,46 +57,80 @@ class QrCodeService
     
     public function generateQrCodeBase64(LetterRequest $letterRequest): string
     {
+        // Check if GD extension is available
+        if (!extension_loaded('gd')) {
+            return $this->createPlaceholderQrCode($letterRequest);
+        }
+
         // Prepare data for QR Code
         $qrData = $this->prepareQrData($letterRequest);
 
         try {
+            // Dynamically load QR code classes only if GD is available
+            if (!class_exists('Endroid\QrCode\QrCode')) {
+                return $this->createPlaceholderQrCode($letterRequest);
+            }
+
+            $qrCodeClass = 'Endroid\QrCode\QrCode';
+            $writerClass = 'Endroid\QrCode\Writer\PngWriter';
+
             // Create QR Code (simple approach)
-            $qrCode = new QrCode($qrData);
+            $qrCode = new $qrCodeClass($qrData);
 
             // Generate PNG
-            $writer = new PngWriter();
+            $writer = new $writerClass();
             $result = $writer->write($qrCode);
 
             // Return as base64 for embedding in PDF
             return 'data:image/png;base64,' . base64_encode($result->getString());
         } catch (\Exception $e) {
-            // Fallback: return a simple text placeholder
-            return 'data:text/plain;base64,' . base64_encode('QR Code: ' . $letterRequest->request_number);
+            // Fallback: create a simple placeholder image
+            return $this->createPlaceholderQrCode($letterRequest);
         }
+    }
+
+    private function createPlaceholderQrCode(LetterRequest $letterRequest): string
+    {
+        // Create a simple SVG placeholder
+        $svg = '<?xml version="1.0" encoding="UTF-8"?>
+        <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#f3f4f6" stroke="#d1d5db" stroke-width="2"/>
+            <text x="100" y="80" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">QR CODE</text>
+            <text x="100" y="100" text-anchor="middle" font-family="Arial" font-size="10" fill="#6b7280">' . $letterRequest->request_number . '</text>
+            <text x="100" y="120" text-anchor="middle" font-family="Arial" font-size="8" fill="#9ca3af">Scan untuk verifikasi</text>
+            <text x="100" y="140" text-anchor="middle" font-family="Arial" font-size="8" fill="#9ca3af">GD Extension Required</text>
+        </svg>';
+
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
     
     private function prepareQrData(LetterRequest $letterRequest): string
     {
         $user = $letterRequest->user;
         $letterType = $letterRequest->letterType;
-        
+
+        // Get subject details (who the letter is for)
+        $subjectDetails = $letterRequest->subject_details;
+
         // Create structured data for QR Code
         $qrData = [
             'surat_id' => $letterRequest->request_number,
             'jenis_surat' => $letterType->name,
             'nama_pengaju' => $user->name,
-            'nik' => $user->nik,
+            'nik_pengaju' => $user->nik,
+            'nama_subjek' => $subjectDetails['name'],
+            'nik_subjek' => $subjectDetails['nik'],
+            'hubungan' => $subjectDetails['relationship'],
             'alamat' => $user->address,
             'rt_rw' => $user->rt_rw,
-            'tanggal_pengajuan' => $letterRequest->created_at->format('Y-m-d'),
-            'tanggal_selesai' => $letterRequest->final_processed_at ? $letterRequest->final_processed_at->format('Y-m-d') : null,
+            'tanggal_pengajuan' => $letterRequest->created_at->format('d/m/Y'),
+            'tanggal_selesai' => $letterRequest->final_processed_at ? $letterRequest->final_processed_at->format('d/m/Y') : null,
             'status' => $letterRequest->status,
-            'verifikasi_url' => url('/verify-letter/' . $letterRequest->request_number),
+            'verifikasi_url' => route('qr-verification.verify', ['requestNumber' => $letterRequest->request_number]),
             'desa' => 'Desa Ciasmara',
             'timestamp' => now()->timestamp
         ];
-        
+
         // Convert to JSON for QR Code content
         return json_encode($qrData, JSON_UNESCAPED_UNICODE);
     }
@@ -120,5 +165,10 @@ class QrCodeService
         } catch (\Exception $e) {
             return ['valid' => false, 'message' => 'Error parsing QR Code: ' . $e->getMessage()];
         }
+    }
+
+    public function getQrCodeDataUrl(LetterRequest $letterRequest): string
+    {
+        return $this->generateQrCodeBase64($letterRequest);
     }
 }

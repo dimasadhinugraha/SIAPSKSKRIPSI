@@ -16,20 +16,6 @@
 
         <!-- Custom Sidebar Styles -->
         <style>
-            @keyframes gradient-x {
-                0%, 100% {
-                    background-position: 0% 50%;
-                }
-                50% {
-                    background-position: 100% 50%;
-                }
-            }
-
-            .animate-gradient-x {
-                background-size: 200% 200%;
-                animation: gradient-x 6s ease infinite;
-            }
-
             /* Custom scrollbar for sidebar */
             .sidebar-scroll::-webkit-scrollbar {
                 width: 4px;
@@ -46,20 +32,6 @@
 
             .sidebar-scroll::-webkit-scrollbar-thumb:hover {
                 background: rgba(255, 255, 255, 0.5);
-            }
-
-            /* Smooth transitions for all sidebar elements */
-            .sidebar-item {
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .sidebar-item:hover {
-                transform: translateX(4px);
-            }
-
-            /* Glow effect for active items */
-            .sidebar-active {
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
             }
         </style>
     </head>

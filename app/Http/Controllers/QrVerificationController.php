@@ -11,7 +11,7 @@ class QrVerificationController extends Controller
     public function verify($requestNumber)
     {
         $letterRequest = LetterRequest::where('request_number', $requestNumber)
-            ->with(['user', 'letterType', 'approvals.approver'])
+            ->with(['user', 'letterType', 'approvals.approver', 'subject'])
             ->first();
 
         if (!$letterRequest) {

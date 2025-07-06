@@ -44,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Approval routes (for RT/RW)
 Route::middleware(['auth', 'verified', 'role:rt,rw'])->prefix('approvals')->name('approvals.')->group(function () {
     Route::get('/', [ApprovalController::class, 'index'])->name('index');
+    Route::get('/history', [ApprovalController::class, 'history'])->name('history');
     Route::get('/{letterRequest}', [ApprovalController::class, 'show'])->name('show');
     Route::patch('/{letterRequest}/approve', [ApprovalController::class, 'approve'])->name('approve');
     Route::patch('/{letterRequest}/reject', [ApprovalController::class, 'reject'])->name('reject');

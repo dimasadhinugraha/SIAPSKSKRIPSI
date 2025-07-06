@@ -113,35 +113,41 @@
     <!-- KONTEN SURAT -->
     <div class="content">
         <p>Yang bertanda tangan di bawah ini, Kepala Desa Ciasmara, Kecamatan [Nama Kecamatan], Kabupaten [Nama Kabupaten], dengan ini menerangkan bahwa:</p>
-        
-        <!-- DATA PEMOHON -->
+
+        <!-- DATA SUBJEK SURAT -->
         <div class="data-table">
             <table>
                 <tr>
                     <td>Nama Lengkap</td>
-                    <td>: {{ $user->name }}</td>
+                    <td>: {{ $subjectDetails['name'] }}</td>
                 </tr>
                 <tr>
                     <td>NIK</td>
-                    <td>: {{ $user->nik }}</td>
+                    <td>: {{ $subjectDetails['nik'] }}</td>
                 </tr>
                 <tr>
                     <td>Jenis Kelamin</td>
-                    <td>: {{ $user->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                    <td>: {{ $subjectDetails['gender'] == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
                 </tr>
                 <tr>
                     <td>Tanggal Lahir</td>
-                    <td>: {{ $user->birth_date->format('d F Y') }}</td>
+                    <td>: {{ \Carbon\Carbon::parse($subjectDetails['birth_date'])->format('d F Y') }}</td>
                 </tr>
                 <tr>
                     <td>Alamat</td>
-                    <td>: {{ $user->address }}</td>
+                    <td>: {{ $subjectDetails['address'] }}</td>
                 </tr>
                 <tr>
                     <td>RT/RW</td>
                     <td>: {{ $user->rt_rw }}</td>
                 </tr>
-                
+                @if($subjectDetails['relationship'] !== 'Pemohon')
+                <tr>
+                    <td>Hubungan dengan Pemohon</td>
+                    <td>: {{ $subjectDetails['relationship'] }}</td>
+                </tr>
+                @endif
+
                 <!-- DATA FORM DINAMIS -->
                 @if($formData)
                     @foreach($formData as $key => $value)
@@ -153,6 +159,14 @@
                 @endif
             </table>
         </div>
+
+        @if($subjectDetails['relationship'] !== 'Pemohon')
+        <!-- INFO PEMOHON -->
+        <p style="margin-top: 20px; font-style: italic; font-size: 10pt;">
+            <strong>Catatan:</strong> Surat ini diajukan oleh {{ $user->name }} (NIK: {{ $user->nik }})
+            sebagai {{ strtolower($subjectDetails['relationship']) }} dari yang bersangkutan.
+        </p>
+        @endif
 
         <!-- KONTEN KHUSUS PER JENIS SURAT -->
         @if($letterType->name == 'Surat Keterangan Domisili')
@@ -176,7 +190,13 @@
 
             <!-- QR CODE DIGITAL SIGNATURE -->
             <div class="qr-code">
-                <img src="{{ $qrCodeBase64 }}" alt="QR Code Verifikasi">
+                <div style="width: 120px; height: 120px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background: #f9f9f9;">
+                    <div style="text-align: center; font-size: 10px; color: #666;">
+                        <div>QR CODE</div>
+                        <div style="font-size: 8px;">{{ $letterRequest->request_number }}</div>
+                        <div style="font-size: 7px;">Scan untuk verifikasi</div>
+                    </div>
+                </div>
             </div>
 
             <p><strong>[Nama Kepala Desa]</strong></p>
@@ -187,6 +207,7 @@
                 <p><strong>Tanda Tangan Digital</strong></p>
                 <p>Scan QR Code untuk verifikasi</p>
                 <p>Surat No: {{ $letterRequest->request_number }}</p>
+                <p>Subjek: {{ $subjectDetails['name'] }}</p>
                 <p>Tanggal: {{ $letterRequest->final_processed_at ? $letterRequest->final_processed_at->format('d/m/Y H:i') : now()->format('d/m/Y H:i') }}</p>
             </div>
         </div>

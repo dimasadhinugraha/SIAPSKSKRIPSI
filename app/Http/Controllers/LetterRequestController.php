@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LetterRequest;
 use App\Models\LetterType;
+use App\Services\QrCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
