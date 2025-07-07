@@ -6,6 +6,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Masuk - Portal Desa Ciasmara</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/ciasmara.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/ciasmara.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/ciasmara.png') }}">
+    <link rel="shortcut icon" href="{{ asset('images/ciasmara.png') }}">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -15,32 +21,33 @@
 
     <style>
         .login-bg {
-            background: #16a34a;
+            background: #ffffff;
         }
         .glass-effect {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen login-bg flex items-center justify-center relative overflow-hidden">
         <!-- Background Elements -->
-        <div class="absolute top-20 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full"></div>
-        <div class="absolute bottom-20 right-10 w-32 h-32 bg-yellow-300 bg-opacity-20 rounded-full"></div>
-        <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-300 bg-opacity-20 rounded-full"></div>
+        <div class="absolute top-20 left-10 w-20 h-20 bg-blue-100 bg-opacity-50 rounded-full"></div>
+        <div class="absolute bottom-20 right-10 w-32 h-32 bg-green-100 bg-opacity-50 rounded-full"></div>
+        <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-purple-100 bg-opacity-50 rounded-full"></div>
 
-        <div class="w-full max-w-md mx-4">
+        <div class="w-full mx-2 sm:mx-4 sm:max-w-md sm:mx-auto">
             <!-- Logo & Header -->
             <div class="text-center mb-8">
                 <div class="flex justify-center mb-6">
-                    <div class="w-24 h-24 bg-white rounded-full shadow-lg flex items-center justify-center">
+                    <div class="w-24 h-24 bg-blue-600 rounded-full shadow-lg flex items-center justify-center">
                         <img src="{{ asset('images/ciasmara.png') }}" alt="Logo Desa Ciasmara" class="w-20 h-20 object-contain">
                     </div>
                 </div>
-                <h1 class="text-3xl font-bold text-white mb-2">Portal Desa Ciasmara</h1>
-                <p class="text-blue-100">Masuk ke akun Anda untuk mengakses layanan digital desa</p>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Portal Desa Ciasmara</h1>
+                <p class="text-gray-600">Masuk ke akun Anda untuk mengakses layanan digital desa</p>
             </div>
 
             <!-- Login Form -->

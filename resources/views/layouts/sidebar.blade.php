@@ -5,7 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ isset($title) ? $title . ' - ' . config('app.name', 'SIAP Desa Ciasmara') : config('app.name', 'SIAP Desa Ciasmara') }}</title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/ciasmara.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/ciasmara.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/ciasmara.png') }}">
+        <link rel="shortcut icon" href="{{ asset('images/ciasmara.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -139,7 +145,7 @@
                 <!-- Main Content Area -->
                 <main class="flex-1 overflow-y-auto">
                     <div class="py-6">
-                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="w-full mx-auto px-2 sm:px-4 lg:px-6">
                             <!-- Flash Messages -->
                             @if(session('success'))
                                 <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">

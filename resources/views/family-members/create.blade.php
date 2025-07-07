@@ -23,7 +23,7 @@
     </div>
 
     <div class="py-8">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="w-full mx-auto px-2 sm:px-4 lg:px-6">
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                 <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600">
                     <h3 class="text-lg font-semibold text-white">Form Tambah Anggota Keluarga</h3>

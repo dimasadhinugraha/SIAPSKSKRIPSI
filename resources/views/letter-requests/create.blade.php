@@ -1,81 +1,82 @@
 <x-sidebar-layout>
+    <x-slot name="title">Ajukan Surat Baru</x-slot>
     <x-slot name="header">
         <span>{{ __('Ajukan Surat Baru') }}
         </span>
     </x-slot>
 
-    <!-- Page Header -->
-    <div class="bg-white shadow-sm border-b border-gray-200 mb-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-6">
+    <!-- Compact Page Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg mb-4">
+        <div class="w-full mx-auto px-2 sm:px-4 lg:px-6">
+            <div class="flex justify-between items-center py-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900 flex items-center">
-                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <h1 class="text-lg font-bold text-white flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                         Ajukan Surat Baru
                     </h1>
-                    <p class="text-gray-600 mt-1">Lengkapi form untuk mengajukan surat keterangan</p>
+                    <p class="text-blue-100 text-sm mt-1">Lengkapi form untuk mengajukan surat</p>
                 </div>
                 <a href="{{ route('letter-requests.index') }}"
-                   class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="bg-white text-blue-600 hover:bg-blue-50 font-medium py-2 px-3 rounded-lg transition-colors inline-flex items-center text-sm">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
-                    Kembali
+                    <span class="hidden sm:inline">Kembali</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Form Container with Better Layout -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-xl border border-gray-200">
-                <!-- Header Section -->
-                <div class="bg-green-600 px-8 py-6">
+    <div class="py-4">
+        <div class="w-full mx-auto px-2 sm:px-4 lg:px-6">
+            <!-- Compact Form Container -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200">
+                <!-- Compact Header Section -->
+                <div class="bg-green-600 px-4 py-3">
                     <div class="flex items-center">
-                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mr-4">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white">Form Pengajuan Surat</h3>
-                            <p class="text-blue-100 text-sm mt-1">
-                                Lengkapi informasi berikut untuk mengajukan surat keterangan
+                            <h3 class="text-sm font-bold text-white">Form Pengajuan Surat</h3>
+                            <p class="text-blue-100 text-xs mt-1">
+                                Lengkapi informasi untuk mengajukan surat
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Progress Indicator -->
-                <div class="bg-white border-b border-gray-200 px-8 py-4">
+                <!-- Compact Progress Indicator -->
+                <div class="bg-white border-b border-gray-200 px-4 py-3">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
                             <div class="flex items-center" data-step="1">
-                                <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold" data-step-number="1">1</div>
-                                <span class="ml-2 text-sm font-medium text-blue-600" data-step-text="1">Pilih Subjek</span>
+                                <div class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold" data-step-number="1">1</div>
+                                <span class="ml-1 text-xs font-medium text-blue-600 hidden sm:inline" data-step-text="1">Pilih Subjek</span>
                             </div>
-                            <div class="w-8 h-0.5 bg-gray-300"></div>
+                            <div class="w-4 h-0.5 bg-gray-300"></div>
                             <div class="flex items-center" data-step="2">
-                                <div class="w-8 h-8 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-bold" data-step-number="2">2</div>
-                                <span class="ml-2 text-sm font-medium text-gray-500" data-step-text="2">Jenis Surat</span>
+                                <div class="w-6 h-6 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-xs font-bold" data-step-number="2">2</div>
+                                <span class="ml-1 text-xs font-medium text-gray-500 hidden sm:inline" data-step-text="2">Jenis Surat</span>
                             </div>
-                            <div class="w-8 h-0.5 bg-gray-300"></div>
+                            <div class="w-4 h-0.5 bg-gray-300"></div>
                             <div class="flex items-center" data-step="3">
-                                <div class="w-8 h-8 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-bold" data-step-number="3">3</div>
-                                <span class="ml-2 text-sm font-medium text-gray-500" data-step-text="3">Lengkapi Data</span>
+                                <div class="w-6 h-6 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-xs font-bold" data-step-number="3">3</div>
+                                <span class="ml-1 text-xs font-medium text-gray-500 hidden sm:inline" data-step-text="3">Lengkapi Data</span>
                             </div>
                         </div>
-                        <div class="text-sm text-gray-500" data-step-counter>
+                        <div class="text-xs text-gray-500" data-step-counter>
                             <span class="font-medium">Langkah 1</span> dari 3
                         </div>
                     </div>
                 </div>
 
-                <!-- Form Content -->
-                <div class="p-8">
+                <!-- Compact Form Content -->
+                <div class="p-4">
                     <form method="POST" action="{{ route('letter-requests.store') }}" id="letterForm" class="space-y-8">
                         @csrf
 

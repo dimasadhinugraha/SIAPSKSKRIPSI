@@ -1,11 +1,12 @@
 <x-sidebar-layout>
+    <x-slot name="title">Verifikasi Surat</x-slot>
     <x-slot name="header">
         <span>{{ __('Verifikasi Surat') }}
         </span>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="w-full mx-auto px-2 sm:px-4 lg:px-6">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <!-- Verification Status -->
