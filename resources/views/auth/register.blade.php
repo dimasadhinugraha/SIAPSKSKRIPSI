@@ -203,48 +203,6 @@
                         </div>
                     </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- NIK -->
-            <div>
-                <x-input-label for="nik" value="NIK (16 digit)" />
-                <x-text-input id="nik" class="block mt-1 w-full" type="text" name="nik" :value="old('nik')" required maxlength="16" />
-                <x-input-error :messages="$errors->get('nik')" class="mt-2" />
-            </div>
-
-            <!-- Gender -->
-            <div>
-                <x-input-label for="gender" value="Jenis Kelamin" />
-                <select id="gender" name="gender" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                    <option value="">Pilih Jenis Kelamin</option>
-                    <option value="L" {{ old('gender') == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                    <option value="P" {{ old('gender') == 'P' ? 'selected' : '' }}>Perempuan</option>
-                </select>
-                <x-input-error :messages="$errors->get('gender')" class="mt-2" />
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Birth Date -->
-            <div>
-                <x-input-label for="birth_date" value="Tanggal Lahir" />
-                <x-text-input id="birth_date" class="block mt-1 w-full" type="date" name="birth_date" :value="old('birth_date')" required />
-                <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
-            </div>
-
-            <!-- Phone -->
-            <div>
-                <x-input-label for="phone" value="Nomor Handphone" />
-                <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" required />
-                <x-input-error :messages="$errors->get('phone')" class="mt-2" />
-            </div>
-        </div>
-
-        <!-- Address -->
-        <div>
-            <x-input-label for="address" value="Alamat Lengkap" />
-            <textarea id="address" name="address" rows="3" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>{{ old('address') }}</textarea>
-            <x-input-error :messages="$errors->get('address')" class="mt-2" />
-        </div>
 
                     <!-- Data Keluarga -->
                     <div class="bg-gray-50 rounded-xl p-6">

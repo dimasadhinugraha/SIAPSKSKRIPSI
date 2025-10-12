@@ -37,10 +37,24 @@ class UserVerificationController extends Controller
                 ->with('error', 'User sudah terverifikasi.');
         }
 
+        // Ensure the current authenticated user exists and is valid to avoid FK violations
+        $verifiedBy = null;
+        if (auth()->check()) {
+            $authId = auth()->id();
+            // double-check that a user with this id exists (guard against external auth inconsistencies)
+            $exists = User::where('id', $authId)->exists();
+            if ($exists) {
+                $verifiedBy = $authId;
+            } else {
+                // optional: log this unexpected state for investigation
+                logger()->warning('Authenticated user id not found in users table when verifying user.', ['auth_id' => $authId, 'target_user' => $user->id]);
+            }
+        }
+
         $user->update([
             'is_verified' => true,
             'verified_at' => now(),
-            'verified_by' => auth()->id(),
+            'verified_by' => $verifiedBy,
         ]);
 
         return redirect()->route('admin.user-verification.index')
