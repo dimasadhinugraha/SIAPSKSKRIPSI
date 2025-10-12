@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<div class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl transform -translate-x-full transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0" id="sidebar">
+<div aria-hidden="true" aria-labelledby="sidebar-label" role="navigation" tabindex="-1" class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl transform -translate-x-full transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0" id="sidebar">
     <!-- Header with solid color -->
     <div class="h-20 bg-green-600">
         <div class="flex items-center justify-center h-full px-4">
@@ -300,23 +300,25 @@
 </div>
 
 <!-- Mobile sidebar overlay -->
-<div class="fixed inset-0 bg-gray-600 bg-opacity-75 z-40 lg:hidden hidden" id="sidebar-overlay"></div>
+<div aria-hidden="true" class="fixed inset-0 bg-gray-600 bg-opacity-75 z-40 lg:hidden hidden" id="sidebar-overlay"></div>
 
 <!-- Mobile menu button -->
 <div class="lg:hidden fixed top-4 z-50 transition-all duration-300 ease-in-out" id="mobile-menu-container">
-    <button type="button"
-            class="bg-white p-2 rounded-md text-gray-600 hover:text-green-600 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500 shadow-lg transition-colors"
-            id="mobile-menu-button">
-        <span class="sr-only" id="menu-button-text">Open sidebar</span>
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="menu-icon">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" id="hamburger-icon"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" id="close-icon" style="display: none;"/>
-        </svg>
-    </button>
+        <button type="button"
+                aria-expanded="false"
+                aria-controls="sidebar"
+                class="bg-white p-2 rounded-md text-gray-600 hover:text-green-600 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500 shadow-lg transition-colors"
+                id="mobile-menu-button">
+            <span class="sr-only" id="menu-button-text">Open sidebar</span>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="menu-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" id="hamburger-icon"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" id="close-icon" style="display: none;"/>
+            </svg>
+        </button>
 </div>
 
 <script>
-    // Mobile sidebar toggle
+    // Improved mobile sidebar toggle: dynamic width, ARIA updates, and resize handling
     document.addEventListener('DOMContentLoaded', function() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
@@ -326,50 +328,116 @@
         const hamburgerIcon = document.getElementById('hamburger-icon');
         const closeIcon = document.getElementById('close-icon');
 
-        function openSidebar() {
+        let isOpen = false;
+
+        function sidebarWidth() {
+            // Compute the computed width of the sidebar to position the button
+            const style = window.getComputedStyle(sidebar);
+            const width = parseFloat(style.width) || 256; // fallback
+            return Math.round(width);
+        }
+
+        function showSidebar() {
             sidebar.classList.remove('-translate-x-full');
+            sidebar.setAttribute('aria-hidden', 'false');
             overlay.classList.remove('hidden');
-
-            // Move button to the right (sidebar width + some padding)
-            menuContainer.style.left = '272px'; // 256px (sidebar width) + 16px (padding)
-
-            // Change icon to close
+            overlay.setAttribute('aria-hidden', 'false');
+            menuButton.setAttribute('aria-expanded', 'true');
+            menuButtonText.textContent = 'Close sidebar';
             hamburgerIcon.style.display = 'none';
             closeIcon.style.display = 'block';
-            menuButtonText.textContent = 'Close sidebar';
+
+            // Position the button to the right edge of opened sidebar with small padding
+            const leftPos = sidebarWidth() + 16; // sidebar width + 16px
+            menuContainer.style.left = leftPos + 'px';
+            isOpen = true;
+
+            // Move focus to first focusable element inside sidebar for accessibility
+            const focusable = sidebar.querySelector('a, button, input, [tabindex]:not([tabindex="-1"])');
+            if (focusable) focusable.focus();
         }
 
-        function closeSidebar() {
+        function hideSidebar() {
             sidebar.classList.add('-translate-x-full');
+            sidebar.setAttribute('aria-hidden', 'true');
             overlay.classList.add('hidden');
-
-            // Move button back to left
-            menuContainer.style.left = '16px'; // 1rem = 16px
-
-            // Change icon back to hamburger
+            overlay.setAttribute('aria-hidden', 'true');
+            menuButton.setAttribute('aria-expanded', 'false');
+            menuButtonText.textContent = 'Open sidebar';
             hamburgerIcon.style.display = 'block';
             closeIcon.style.display = 'none';
-            menuButtonText.textContent = 'Open sidebar';
+
+            // Reset button position to default
+            menuContainer.style.left = '16px';
+            isOpen = false;
+
+            // Return focus to menu button
+            menuButton.focus();
         }
 
-        // Initialize button position
-        menuContainer.style.left = '16px';
+        function toggleSidebar() {
+            if (isOpen) hideSidebar(); else showSidebar();
+        }
 
-        menuButton.addEventListener('click', function() {
-            if (sidebar.classList.contains('-translate-x-full')) {
-                openSidebar();
+        // Initialize state according to current breakpoint
+        function initialize() {
+            // If we're on large screens, ensure sidebar is visible and mobile UI hidden/neutral
+            if (window.innerWidth >= 1024) { // tailwind lg breakpoint
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.setAttribute('aria-hidden', 'false');
+                overlay.classList.add('hidden');
+                overlay.setAttribute('aria-hidden', 'true');
+                menuContainer.style.left = '16px';
+                menuButton.setAttribute('aria-expanded', 'false');
+                hamburgerIcon.style.display = 'block';
+                closeIcon.style.display = 'none';
+                isOpen = false;
             } else {
-                closeSidebar();
+                // mobile: ensure closed by default
+                sidebar.classList.add('-translate-x-full');
+                sidebar.setAttribute('aria-hidden', 'true');
+                overlay.classList.add('hidden');
+                overlay.setAttribute('aria-hidden', 'true');
+                menuContainer.style.left = '16px';
+                menuButton.setAttribute('aria-expanded', 'false');
+                hamburgerIcon.style.display = 'block';
+                closeIcon.style.display = 'none';
+                isOpen = false;
             }
+        }
+
+        // Event listeners
+        menuButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleSidebar();
         });
 
-        overlay.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', function() {
+            if (isOpen) hideSidebar();
+        });
 
-        // Close sidebar on escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeSidebar();
-            }
+            if (e.key === 'Escape' && isOpen) hideSidebar();
         });
+
+        // Handle resize: if moving to large screens, reset mobile state
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                // If we resized to large, ensure sidebar present and mobile UI reset
+                if (window.innerWidth >= 1024) {
+                    initialize();
+                } else {
+                    // if sidebar is open, recompute button position
+                    if (isOpen) {
+                        menuContainer.style.left = (sidebarWidth() + 16) + 'px';
+                    }
+                }
+            }, 120);
+        });
+
+        // init
+        initialize();
     });
 </script>
