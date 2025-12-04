@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\LetterType;
 use App\Models\News;
+use App\Models\Biodata;
+use Database\Seeders\RwUserSeeder;
+use Database\Seeders\RtUserSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -17,74 +20,51 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Create Admin User
-        User::create([
+        $adminUser = User::create([
             'name' => 'Admin Desa Ciasmara',
             'email' => 'admin@ciasmara.desa.id',
             'password' => Hash::make('password'),
             'nik' => '1234567890123456',
+            'role' => 'admin',
+        ]);
+
+        Biodata::create([
+            'user_id' => $adminUser->id,
             'gender' => 'L',
             'birth_date' => '1980-01-01',
             'address' => 'Kantor Desa Ciasmara',
             'phone' => '081234567890',
             'kk_number' => '1234567890123456',
-            'role' => 'admin',
-            'rt_rw' => null,
             'is_verified' => true,
             'verified_at' => now(),
         ]);
 
-        // Create RT User
-        User::create([
-            'name' => 'RT 01 Ciasmara',
-            'email' => 'rt01@ciasmara.desa.id',
-            'password' => Hash::make('password'),
-            'nik' => '1234567890123457',
-            'gender' => 'L',
-            'birth_date' => '1975-01-01',
-            'address' => 'RT 01 Desa Ciasmara',
-            'phone' => '081234567891',
-            'kk_number' => '1234567890123457',
-            'role' => 'rt',
-            'rt_rw' => 'RT 01/RW 01',
-            'is_verified' => true,
-            'verified_at' => now(),
-            'verified_by' => 1,
-        ]);
+        // Create RW and RT Users from Seeders
+        $this->call(RwUserSeeder::class);
+        $this->call(RtUserSeeder::class);
 
-        // Create RW User
-        User::create([
-            'name' => 'RW 01 Ciasmara',
-            'email' => 'rw01@ciasmara.desa.id',
-            'password' => Hash::make('password'),
-            'nik' => '1234567890123458',
-            'gender' => 'L',
-            'birth_date' => '1970-01-01',
-            'address' => 'RW 01 Desa Ciasmara',
-            'phone' => '081234567892',
-            'kk_number' => '1234567890123458',
-            'role' => 'rw',
-            'rt_rw' => 'RW 01',
-            'is_verified' => true,
-            'verified_at' => now(),
-            'verified_by' => 1,
-        ]);
-
-        // Create Sample User
-        User::create([
+        // Create Sample User linked to an RT and RW
+        $wargaUser = User::create([
             'name' => 'Warga Desa Ciasmara',
             'email' => 'warga@example.com',
             'password' => Hash::make('password'),
             'nik' => '1234567890123459',
+            'role' => 'user',
+        ]);
+
+        Biodata::create([
+            'user_id' => $wargaUser->id,
             'gender' => 'P',
             'birth_date' => '1990-01-01',
             'address' => 'RT 01/RW 01 Desa Ciasmara',
             'phone' => '081234567893',
             'kk_number' => '1234567890123459',
-            'role' => 'user',
             'rt_rw' => 'RT 01/RW 01',
+            'rt_id' => 7, // Link to the first created RT user (ID 7)
+            'rw_id' => 2, // Link to the first created RW user (ID 2)
             'is_verified' => true,
             'verified_at' => now(),
-            'verified_by' => 1,
+            'verified_by' => $adminUser->id,
         ]);
 
         // Create Letter Types

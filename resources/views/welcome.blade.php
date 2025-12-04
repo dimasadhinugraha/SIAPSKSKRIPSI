@@ -1,584 +1,167 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $villageProfile['name'] }} - Portal Desa Digital</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
-    <style>
-        .hero-bg {
-            background: #16a34a;
-        }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .mobile-menu {
-            transition: all 0.3s ease;
-        }
-    </style>
+@extends('layouts.public-bootstrap')
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuButton = document.querySelector('.mobile-menu-button');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            const hamburgerIcon = document.querySelector('.hamburger-icon');
-            const closeIcon = document.querySelector('.close-icon');
+@section('title', 'SIAP SK - Sistem Informasi Desa Ciasmara')
 
-            mobileMenuButton.addEventListener('click', function() {
-                const isOpen = !mobileMenu.classList.contains('hidden');
+@push('styles')
+<style>
+    body {
+        padding-top: 0;
+    }
+    .carousel-item img {
+      width: 100%;
+      height: 100vh;
+      object-fit: cover;
+    }
+    .navbar {
+      background-color: rgba(255,255,255,0.95) !important;
+      transition: background-color 0.3s ease-in-out;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .navbar.scrolled {
+      background-color: rgba(255,255,255,0.95) !important;
+    }
+    .navbar .navbar-brand,
+    .navbar .nav-link {
+      color: #0d6efd !important; /* primary blue */
+      text-shadow: none;
+    }
+</style>
+@endpush
 
-                if (isOpen) {
-                    // Close menu
-                    mobileMenu.classList.add('hidden');
-                    hamburgerIcon.classList.remove('hidden');
-                    closeIcon.classList.add('hidden');
-                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+@section('content')
+  <!-- Carousel Hero -->
+  <section id="home">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      </div>
+
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="{{ asset('images/Gambar1Carousel.jpg') }}" class="d-block w-100" alt="Desa Ciasmara">
+          <div class="carousel-caption d-none d-md-block text-center">
+            <h1 class="display-3 fw-bold">SIAP SK Desa Ciasmara</h1>
+            <p class="lead">Layanan administrasi digital untuk kemudahan warga.</p>
+            <a href="{{ route('register') }}" class="btn btn-primary btn-lg">Daftar Sekarang</a>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="{{ asset('images/Gambar2Carousel.jpg') }}" class="d-block w-100" alt="Pelayanan Mudah">
+           <div class="carousel-caption d-none d-md-block text-center">
+            <h1 class="display-3 fw-bold">Pelayanan Cepat & Mudah</h1>
+            <p class="lead">Ajukan surat keterangan dari mana saja, kapan saja.</p>
+            <a href="#about" class="btn btn-light btn-lg">Pelajari Lebih Lanjut</a>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="{{ asset('images/Gambar3Carousel.jpg') }}" class="d-block w-100" alt="Kegiatan Warga">
+           <div class="carousel-caption d-none d-md-block text-center">
+            <h1 class="display-3 fw-bold">Informasi Desa Terkini</h1>
+            <p class="lead">Jangan lewatkan berita dan pengumuman penting dari desa.</p>
+            <a href="#galeri-berita" class="btn btn-info btn-lg">Lihat Berita</a>
+          </div>
+        </div>
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Sebelumnya</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Berikutnya</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Tentang -->
+  <section id="about" class="py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <h2 class="display-5 fw-bold">Tentang Desa Ciasmara</h2>
+          <p class="text-muted">Desa Ciasmara adalah sebuah desa yang terletak di wilayah Kecamatan Pamijahan, Kabupaten Bogor, Jawa Barat. Penduduknya terdiri dari berbagai kelompok masyarakat, dengan sebagian besar bermata pencaharian sebagai petani, pedagang, dan pekerja sektor lainnya.</p>
+        </div>
+        <div class="col-lg-6">
+          <img src="{{ asset('images/desaciasmara.jpg') }}" alt="Desa Ciasmara" class="img-fluid rounded shadow" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section id="galeri-berita" class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5 display-5">Berita & Informasi Terbaru</h2>
+    <div class="row g-4">
+        @forelse($latestNews as $item)
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm news-card">
+                    @if($item->featured_image)
+                        <img src="{{ Storage::url($item->featured_image) }}" class="card-img-top" alt="{{ $item->title }}" style="height: 200px; object-fit: cover;">
+                    @else
+                        <div class="bg-secondary card-img-top d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-image fa-2x text-white"></i>
+                        </div>
+                    @endif
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                             @php
+                                $categoryColors = ['news' => 'bg-primary', 'announcement' => 'bg-info text-dark', 'event' => 'bg-success'];
+                                $categoryLabels = ['news' => 'Berita', 'announcement' => 'Pengumuman', 'event' => 'Kegiatan'];
+                            @endphp
+                            <span class="badge rounded-pill {{ $categoryColors[$item->category] ?? 'bg-secondary' }}">
+                                {{ $categoryLabels[$item->category] ?? ucfirst($item->category) }}
+                            </span>
+                            <small class="text-muted">{{ ($item->published_at ?? $item->created_at)->format('d M Y') }}</small>
+                        </div>
+                        <h5 class="card-title fw-bold">{{ $item->title }}</h5>
+                        <p class="card-text small text-muted">{{ Str::limit($item->excerpt ?? $item->content, 100) }}</p>
+                        <div class="mt-auto text-end">
+                            <a href="{{ route('news.show', $item) }}" class="btn btn-sm btn-outline-primary">
+                                Baca Selengkapnya &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <p class="text-muted">Belum ada berita yang dipublikasikan.</p>
+                </div>
+            </div>
+        @endforelse
+    </div>
+    @if($latestNews->count() > 0)
+    <div class="text-center mt-5">
+        <a href="{{ route('news.index') }}" class="btn btn-primary btn-lg">Lihat Semua Berita</a>
+    </div>
+    @endif
+  </div>
+</section>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            // Function to handle scroll event
+            const handleScroll = () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
                 } else {
-                    // Open menu
-                    mobileMenu.classList.remove('hidden');
-                    hamburgerIcon.classList.add('hidden');
-                    closeIcon.classList.remove('hidden');
-                    mobileMenuButton.setAttribute('aria-expanded', 'true');
+                    navbar.classList.remove('scrolled');
                 }
-            });
+            };
 
-            // Close menu when clicking outside
-            document.addEventListener('click', function(event) {
-                const isClickInsideNav = mobileMenuButton.contains(event.target) || mobileMenu.contains(event.target);
+            // Add scroll event listener
+            window.addEventListener('scroll', handleScroll);
 
-                if (!isClickInsideNav && !mobileMenu.classList.contains('hidden')) {
-                    mobileMenu.classList.add('hidden');
-                    hamburgerIcon.classList.remove('hidden');
-                    closeIcon.classList.add('hidden');
-                    mobileMenuButton.setAttribute('aria-expanded', 'false');
-                }
-            });
-
-            // Close menu when window is resized to desktop
-            window.addEventListener('resize', function() {
-                if (window.innerWidth >= 768) {
-                    mobileMenu.classList.add('hidden');
-                    hamburgerIcon.classList.remove('hidden');
-                    closeIcon.classList.add('hidden');
-                    mobileMenuButton.setAttribute('aria-expanded', 'false');
-                }
-            });
-        });
-    </script>
-</head>
-<body class="font-sans antialiased bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <!-- Logo -->
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
-                        <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center mr-3">
-                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                            </svg>
-                        </div>
-                        <h1 class="text-lg sm:text-xl font-bold text-green-600">{{ $villageProfile['name'] }}</h1>
-                    </div>
-                </div>
-
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="{{ route('news.index') }}" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                        Berita
-                    </a>
-                    <a href="{{ route('qr-verification.scan') }}" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                        📱 Verifikasi QR
-                    </a>
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            Masuk
-                        </a>
-                        <a href="{{ route('register') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            Daftar
-                        </a>
-                    @endauth
-                </div>
-
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500" aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="sr-only">Open main menu</span>
-                        <!-- Hamburger icon -->
-                        <svg class="hamburger-icon block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        <!-- Close icon -->
-                        <svg class="close-icon hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile menu -->
-        <div class="mobile-menu hidden md:hidden">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
-                <a href="{{ route('news.index') }}" class="text-gray-700 hover:text-green-600 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors">
-                    Berita
-                </a>
-                <a href="{{ route('qr-verification.scan') }}" class="text-gray-700 hover:text-green-600 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors">
-                    📱 Verifikasi QR
-                </a>
-                @auth
-                    <a href="{{ route('dashboard') }}" class="bg-green-600 hover:bg-green-700 text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">
-                        Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="text-gray-700 hover:text-green-600 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors">
-                        Masuk
-                    </a>
-                    <a href="{{ route('register') }}" class="bg-green-600 hover:bg-green-700 text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">
-                        Daftar
-                    </a>
-                @endauth
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-bg relative overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-20"></div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-            <div class="text-center">
-                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
-                    Selamat Datang di<br>
-                    <span class="text-yellow-300">{{ $villageProfile['name'] }}</span>
-                </h1>
-                <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                    {{ $villageProfile['visi'] }}
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    @auth
-                        <a href="{{ route('letter-requests.create') }}" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-colors inline-flex items-center justify-center">
-                            📄 Ajukan Surat Online
-                        </a>
-                    @else
-                        <a href="{{ route('register') }}" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-colors inline-flex items-center justify-center">
-                            📝 Daftar Sekarang
-                        </a>
-                    @endauth
-                    <a href="#profil-desa" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-colors inline-flex items-center justify-center">
-                        Profil Desa
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Floating Elements -->
-        <div class="absolute top-20 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full animate-pulse"></div>
-        <div class="absolute bottom-20 right-10 w-32 h-32 bg-yellow-300 bg-opacity-20 rounded-full animate-bounce"></div>
-        <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-green-300 bg-opacity-20 rounded-full animate-ping"></div>
-    </section>
-
-    <!-- Quick Stats -->
-    <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">{{ $villageProfile['jumlah_penduduk'] }}</div>
-                    <div class="text-gray-600 font-medium">Penduduk</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-bold text-green-600 mb-2">{{ $villageProfile['jumlah_kk'] }}</div>
-                    <div class="text-gray-600 font-medium">Kepala Keluarga</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-bold text-purple-600 mb-2">{{ $villageProfile['luas_wilayah'] }}</div>
-                    <div class="text-gray-600 font-medium">Luas Wilayah</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-bold text-orange-600 mb-2">{{ count($letterTypes) }}</div>
-                    <div class="text-gray-600 font-medium">Layanan Surat</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    Layanan Digital Desa
-                </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Nikmati kemudahan layanan administrasi desa secara online dengan sistem yang modern dan terpercaya
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach($letterTypes->take(6) as $letterType)
-                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
-                        <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $letterType->name }}</h3>
-                        <p class="text-gray-600 mb-4">{{ $letterType->description }}</p>
-                        @auth
-                            <a href="{{ route('letter-requests.create') }}?type={{ $letterType->id }}" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center">
-                                Ajukan Sekarang →
-                            </a>
-                        @else
-                            <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center">
-                                Daftar untuk Mengajukan →
-                            </a>
-                        @endauth
-                    </div>
-                @endforeach
-            </div>
-            
-            @if($letterTypes->count() > 6)
-                <div class="text-center mt-8">
-                    @auth
-                        <a href="{{ route('letter-requests.create') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                            Lihat Semua Layanan ({{ $letterTypes->count() }})
-                        </a>
-                    @else
-                        <a href="{{ route('register') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                            Daftar untuk Akses Semua Layanan
-                        </a>
-                    @endauth
-                </div>
-            @endif
-        </div>
-    </section>
-
-    <!-- Village Profile Section -->
-    <section id="profil-desa" class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    Profil {{ $villageProfile['name'] }}
-                </h2>
-                <p class="text-xl text-gray-600">
-                    Mengenal lebih dekat desa kami yang penuh potensi dan keindahan
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-                <!-- Village Info -->
-                <div class="space-y-6">
-                    <div class="bg-green-50 rounded-xl p-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                            Informasi Umum
-                        </h3>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Nama Desa:</span>
-                                <span class="font-medium text-gray-900">{{ $villageProfile['name'] }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Kecamatan:</span>
-                                <span class="font-medium text-gray-900">{{ $villageProfile['kecamatan'] }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Kabupaten:</span>
-                                <span class="font-medium text-gray-900">{{ $villageProfile['kabupaten'] }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Provinsi:</span>
-                                <span class="font-medium text-gray-900">{{ $villageProfile['provinsi'] }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Kode Pos:</span>
-                                <span class="font-medium text-gray-900">{{ $villageProfile['kode_pos'] }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Kepala Desa:</span>
-                                <span class="font-medium text-gray-900">{{ $villageProfile['kepala_desa'] }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-green-50 rounded-xl p-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                            📞 Kontak & Pelayanan
-                        </h3>
-                        <div class="space-y-3">
-                            <div class="flex items-start">
-                                <span class="text-gray-600 w-20">Alamat:</span>
-                                <span class="font-medium text-gray-900 flex-1">{{ $villageProfile['alamat_kantor'] }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Telepon:</span>
-                                <span class="font-medium text-gray-900">{{ $villageProfile['telepon'] }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Email:</span>
-                                <span class="font-medium text-blue-600">{{ $villageProfile['email'] }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Website:</span>
-                                <span class="font-medium text-blue-600">{{ $villageProfile['website'] }}</span>
-                            </div>
-                            <div class="flex items-start">
-                                <span class="text-gray-600 w-20">Jam:</span>
-                                <span class="font-medium text-gray-900 flex-1">{{ $villageProfile['jam_pelayanan'] }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vision & Mission -->
-                <div class="space-y-6">
-                    <div class="bg-yellow-50 rounded-xl p-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                            🎯 Visi Desa
-                        </h3>
-                        <p class="text-gray-700 text-lg leading-relaxed">
-                            {{ $villageProfile['visi'] }}
-                        </p>
-                    </div>
-
-                    <div class="bg-purple-50 rounded-xl p-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                            🚀 Misi Desa
-                        </h3>
-                        <ul class="space-y-2">
-                            @foreach($villageProfile['misi'] as $index => $misi)
-                                <li class="flex items-start">
-                                    <span class="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
-                                        {{ $index + 1 }}
-                                    </span>
-                                    <span class="text-gray-700">{{ $misi }}</span>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-
-                    <div class="bg-indigo-50 rounded-xl p-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                            🏢 Fasilitas Desa
-                        </h3>
-                        <div class="grid grid-cols-2 gap-2">
-                            @foreach($villageProfile['fasilitas'] as $fasilitas)
-                                <div class="flex items-center">
-                                    <span class="text-green-600 mr-2">✓</span>
-                                    <span class="text-gray-700 text-sm">{{ $fasilitas }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- News Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    Berita & Informasi Terkini
-                </h2>
-                <p class="text-xl text-gray-600">
-                    Tetap update dengan berita dan pengumuman terbaru dari desa
-                </p>
-            </div>
-
-            @if($latestNews->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-                    @foreach($latestNews as $news)
-                        <article class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                            @if($news->featured_image)
-                                <div class="h-48 bg-gray-200 overflow-hidden">
-                                    <img src="{{ Storage::url($news->featured_image) }}"
-                                         alt="{{ $news->title }}"
-                                         class="w-full h-full object-cover">
-                                </div>
-                            @else
-                                <div class="h-48 bg-green-500 flex items-center justify-center">
-                                    <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
-                                    </svg>
-                                </div>
-                            @endif
-
-                            <div class="p-6">
-                                @php
-                                    $categoryColors = [
-                                        'news' => 'bg-green-100 text-green-800',
-                                        'announcement' => 'bg-yellow-100 text-yellow-800',
-                                        'event' => 'bg-green-100 text-green-800',
-                                    ];
-                                    $categoryLabels = [
-                                        'news' => 'Berita',
-                                        'announcement' => 'Pengumuman',
-                                        'event' => 'Kegiatan',
-                                    ];
-                                @endphp
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $categoryColors[$news->category] ?? 'bg-gray-100 text-gray-800' }}">
-                                    {{ $categoryLabels[$news->category] ?? ucfirst($news->category) }}
-                                </span>
-
-                                <h3 class="text-xl font-bold text-gray-900 mt-3 mb-2 line-clamp-2">
-                                    {{ $news->title }}
-                                </h3>
-
-                                @if($news->excerpt)
-                                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-                                        {{ $news->excerpt }}
-                                    </p>
-                                @endif
-
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-gray-500">
-                                        {{ $news->published_at->format('d F Y') }}
-                                    </span>
-                                    <a href="{{ route('news.show', $news) }}"
-                                       class="text-blue-600 hover:text-blue-800 font-medium text-sm">
-                                        Baca Selengkapnya →
-                                    </a>
-                                </div>
-                            </div>
-                        </article>
-                    @endforeach
-                </div>
-
-                <div class="text-center">
-                    <a href="{{ route('news.index') }}"
-                       class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                        Lihat Semua Berita
-                    </a>
-                </div>
-            @else
-                <div class="text-center py-12">
-                    <div class="text-gray-400 text-6xl mb-4">📰</div>
-                    <h3 class="text-xl font-medium text-gray-900 mb-2">Belum Ada Berita</h3>
-                    <p class="text-gray-600">Berita dan pengumuman akan ditampilkan di sini</p>
-                </div>
-            @endif
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-16 bg-green-600">
-        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Siap Menggunakan Layanan Digital Desa?
-            </h2>
-            <p class="text-xl text-green-100 mb-8">
-                Daftar sekarang dan nikmati kemudahan mengurus administrasi desa secara online
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                @auth
-                    <a href="{{ route('letter-requests.create') }}"
-                       class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-colors">
-                        📄 Ajukan Surat Sekarang
-                    </a>
-                    <a href="{{ route('dashboard') }}"
-                       class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-colors">
-                        🏠 Ke Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('register') }}"
-                       class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-colors">
-                        📝 Daftar Gratis
-                    </a>
-                    <a href="{{ route('login') }}"
-                       class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-colors">
-                        🔑 Masuk
-                    </a>
-                @endauth
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <div class="flex items-center mb-4">
-                        <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center mr-3">
-                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold">{{ $villageProfile['name'] }}</h3>
-                    </div>
-                    <p class="text-gray-400 mb-4">
-                        Portal digital resmi {{ $villageProfile['name'] }} untuk pelayanan administrasi yang modern dan terpercaya.
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">📘</a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">📷</a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">🐦</a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">📺</a>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Layanan</h4>
-                    <ul class="space-y-2">
-                        @foreach($letterTypes->take(5) as $letterType)
-                            <li>
-                                <a href="{{ auth()->check() ? route('letter-requests.create') : route('register') }}"
-                                   class="text-gray-400 hover:text-white transition-colors">
-                                    {{ $letterType->name }}
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Kontak</h4>
-                    <div class="space-y-2 text-gray-400">
-                        <p>📍 {{ $villageProfile['alamat_kantor'] }}</p>
-                        <p>📞 {{ $villageProfile['telepon'] }}</p>
-                        <p>✉️ {{ $villageProfile['email'] }}</p>
-                        <p>🌐 {{ $villageProfile['website'] }}</p>
-                        <p>🕒 {{ $villageProfile['jam_pelayanan'] }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
-                <p class="text-gray-400">
-                    © {{ date('Y') }} {{ $villageProfile['name'] }}. Semua hak dilindungi.
-                    <span class="text-blue-400">Dibuat dengan ❤️ untuk kemajuan desa</span>
-                </p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+            // Also run on page load
+            handleScroll();
+        }
+    });
+</script>
+@endpush

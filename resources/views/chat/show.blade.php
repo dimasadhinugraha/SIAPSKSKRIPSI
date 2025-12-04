@@ -49,10 +49,12 @@
                 <div class="h-96 overflow-y-auto p-6" id="messagesContainer">
                     @forelse($messages as $message)
                         @php
-                            $currentUserName = auth()->user()->name;
-                            $messageUserName = $message->user->name;
-                            $isMyMessage = ($messageUserName === $currentUserName);
+                            $currentUserId = auth()->user()->getKey(); // Get primary key
+                            $messageUserId = $message->user_id;
+                            $isMyMessage = ($messageUserId == $currentUserId);
                         @endphp
+                        
+                        {{-- Debug: User {{ $currentUserId }} vs Message {{ $messageUserId }} = {{ $isMyMessage ? 'MINE' : 'OTHER' }} --}}
 
                         @if($isMyMessage)
                             <!-- My Messages (Right Side) -->
@@ -282,17 +284,45 @@
                 }
             })
             .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+                .then(data => {
+                    if (data.success) {
+                        messageInput.value = '';
+                        messageInput.focus();
+                        removeFile();
+                        // Append the new message to container without full reload
+                        const msg = data.message;
+                        const container = document.getElementById('messagesContainer');
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'w-full mb-4';
+                        wrapper.style.display = 'flex';
+                        wrapper.style.justifyContent = 'flex-end';
+
+                        const inner = document.createElement('div');
+                        inner.className = 'max-w-xs lg:max-w-md';
+                        inner.style.marginLeft = 'auto';
+
+                        const bubble = document.createElement('div');
+                        bubble.className = 'px-4 py-2 rounded-lg bg-green-600 text-white rounded-br-none';
+                        bubble.innerHTML = msg.message ? '<p class="text-sm">'+msg.message+'</p>' : '';
+
+                        inner.appendChild(bubble);
+                        const time = document.createElement('div');
+                        time.className = 'text-xs text-gray-400 mt-1 text-right';
+                        time.textContent = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        inner.appendChild(time);
+
+                        wrapper.appendChild(inner);
+                        container.appendChild(wrapper);
+                        container.scrollTop = container.scrollHeight;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     messageInput.value = '';
-                    removeFile();
-                    // Reload page once to show new message
-                    location.reload();
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+                });
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
 
         function loadMessages() {
@@ -326,7 +356,64 @@
             document.getElementById('infoModal').classList.add('hidden');
         }
 
-        // Auto-refresh disabled to prevent constant page reloading
-        // setInterval(loadMessages, 5000);
+        // Start polling for new messages (every 3s)
+        let showPoll = setInterval(() => {
+            fetch('{{ route('chat.get-messages', $chat) }}')
+                .then(r => r.json())
+                .then(messages => {
+                    const container = document.getElementById('messagesContainer');
+                    // simple approach: re-render if new messages found
+                    const existingIds = Array.from(container.querySelectorAll('[data-message-id]')).map(el => parseInt(el.getAttribute('data-message-id')));
+                    const maxExisting = existingIds.length ? Math.max(...existingIds) : 0;
+                    const newMessages = messages.filter(m => m.id > maxExisting);
+                    if (newMessages.length) {
+                        newMessages.forEach(message => {
+                            const isMyMessage = message.user.id === {{ auth()->user()->getKey() }};
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'w-full mb-4';
+                            wrapper.setAttribute('data-message-id', message.id);
+                            wrapper.style.display = 'flex';
+                            wrapper.style.justifyContent = isMyMessage ? 'flex-end' : 'flex-start';
+
+                            const inner = document.createElement('div');
+                            inner.className = 'max-w-xs lg:max-w-md';
+                            if (isMyMessage) inner.style.marginLeft = 'auto'; else inner.style.marginRight = 'auto';
+
+                            const bubble = document.createElement('div');
+                            bubble.className = isMyMessage ? 'px-4 py-2 rounded-lg bg-green-600 text-white rounded-br-none' : 'px-4 py-2 rounded-lg bg-gray-200 text-gray-900 rounded-bl-none';
+                            if (message.type === 'image') {
+                                const img = document.createElement('img');
+                                img.src = message.file_url || message.file_path || '';
+                                img.alt = message.file_name || '';
+                                img.className = 'max-w-full h-auto rounded mb-2';
+                                bubble.appendChild(img);
+                            } else if (message.type === 'file') {
+                                const fileDiv = document.createElement('div');
+                                fileDiv.className = 'flex items-center space-x-2 mb-2';
+                                fileDiv.innerHTML = `<a href="/chat/download/${message.id}" class="underline ${isMyMessage ? 'text-white' : 'text-gray-700'}">${message.file_name}</a>`;
+                                bubble.appendChild(fileDiv);
+                            }
+
+                            if (message.message) {
+                                const p = document.createElement('p');
+                                p.className = 'text-sm';
+                                p.textContent = message.message;
+                                bubble.appendChild(p);
+                            }
+
+                            inner.appendChild(bubble);
+                            const time = document.createElement('div');
+                            time.className = 'text-xs text-gray-400 mt-1 ' + (isMyMessage ? 'text-right' : 'text-left');
+                            time.textContent = new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            inner.appendChild(time);
+
+                            wrapper.appendChild(inner);
+                            container.appendChild(wrapper);
+                        });
+                        container.scrollTop = container.scrollHeight;
+                    }
+                })
+                .catch(err => console.error('Polling error', err));
+        }, 500);
     </script>
 </x-sidebar-layout>

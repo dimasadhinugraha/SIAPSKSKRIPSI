@@ -1,207 +1,179 @@
-<x-sidebar-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between w-full">
-            <span>Detail Anggota Keluarga
-            </span>
+@extends('layouts.app-bootstrap')
+
+@section('title', 'Detail Anggota Keluarga ' . $familyMember->name)
+
+@section('content')
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="card bg-primary bg-gradient text-white mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h4 mb-0"><i class="fas fa-users me-2"></i>Detail Anggota Keluarga</h1>
+                    <p class="mb-0 small">{{ $familyMember->name }} (NIK: {{ $familyMember->nik }})</p>
+                </div>
+                <a href="{{ route('family-members.index') }}" class="btn btn-light text-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali ke Daftar
+                </a>
+            </div>
         </div>
-    </x-slot>
+    </div>
 
-    <div class="py-8">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <!-- Notice -->
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-                <div class="flex items-center">
-                    <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <p class="text-sm text-blue-700">
-                        <strong>Informasi:</strong> Data anggota keluarga tidak dapat diedit setelah disubmit untuk menjaga integritas data.
-                    </p>
-                </div>
-            </div>
-            <!-- Profile Header -->
-            <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg mb-6 overflow-hidden">
-                <div class="px-6 py-8 text-white">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                                <span class="text-white text-2xl font-bold">
-                                    {{ strtoupper(substr($familyMember->name, 0, 2)) }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="ml-6">
-                            <h1 class="text-3xl font-bold">{{ $familyMember->name }}</h1>
-                            <p class="text-blue-100 text-lg">{{ $familyMember->relationship_label }}</p>
-                            <p class="text-blue-200 text-sm">NIK: {{ $familyMember->nik }}</p>
-                        </div>
-                        <div class="ml-auto text-right">
-                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-2">
-                                @if($familyMember->gender === 'L')
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                @else
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                @endif
-                            </div>
-                            <p class="text-blue-100 text-sm">{{ $familyMember->age }} tahun</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Notice -->
+    <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+        <i class="fas fa-info-circle me-2"></i>
+        <div>
+            <strong>Informasi:</strong> Data anggota keluarga tidak dapat diedit setelah disubmit untuk menjaga integritas data.
+        </div>
+    </div>
 
-            <!-- Detail Information -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Data Pribadi -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="px-6 py-4 bg-gray-50 border-b">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                            👤 Data Pribadi
-                        </h3>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-600">Nama Lengkap</span>
-                            <span class="text-sm font-medium text-gray-900">{{ $familyMember->name }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-600">NIK</span>
-                            <span class="text-sm font-medium text-gray-900">{{ $familyMember->nik }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-600">Jenis Kelamin</span>
-                            <span class="text-sm font-medium text-gray-900">
-                                @if($familyMember->gender === 'L')
-                                    👨 {{ $familyMember->gender_label }}
-                                @else
-                                    👩 {{ $familyMember->gender_label }}
-                                @endif
-                            </span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-600">Tempat Lahir</span>
-                            <span class="text-sm font-medium text-gray-900">{{ $familyMember->place_of_birth }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-600">Tanggal Lahir</span>
-                            <span class="text-sm font-medium text-gray-900">{{ $familyMember->formatted_date_of_birth }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-600">Umur</span>
-                            <span class="text-sm font-medium text-gray-900">{{ $familyMember->age }} tahun</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-sm text-gray-600">Hubungan Keluarga</span>
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                @if($familyMember->relationship === 'kepala_keluarga') bg-blue-100 text-blue-800
-                                @elseif(in_array($familyMember->relationship, ['istri', 'suami'])) bg-green-100 text-green-800
-                                @elseif($familyMember->relationship === 'anak') bg-purple-100 text-purple-800
-                                @else bg-gray-100 text-gray-800 @endif">
+    <div class="row">
+        <div class="col-lg-7">
+            <!-- Data Pribadi -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Data Pribadi</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Nama Lengkap</dt>
+                        <dd class="col-sm-8">{{ $familyMember->name }}</dd>
+
+                        <dt class="col-sm-4">NIK</dt>
+                        <dd class="col-sm-8">{{ $familyMember->nik }}</dd>
+
+                        <dt class="col-sm-4">Jenis Kelamin</dt>
+                        <dd class="col-sm-8">
+                            @if($familyMember->gender === 'L')
+                                <i class="fas fa-male me-1"></i>
+                            @else
+                                <i class="fas fa-female me-1"></i>
+                            @endif
+                            {{ $familyMember->gender_label }}
+                        </dd>
+
+                        <dt class="col-sm-4">Tempat, Tanggal Lahir</dt>
+                        <dd class="col-sm-8">{{ $familyMember->place_of_birth }}, {{ $familyMember->formatted_date_of_birth }} ({{ $familyMember->age }} tahun)</dd>
+                        
+                        <dt class="col-sm-4">Hubungan Keluarga</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge 
+                                @if($familyMember->relationship === 'kepala_keluarga') bg-primary
+                                @elseif(in_array($familyMember->relationship, ['istri', 'suami'])) bg-success
+                                @elseif($familyMember->relationship === 'anak') bg-info
+                                @else bg-secondary @endif">
                                 {{ $familyMember->relationship_label }}
                             </span>
-                        </div>
-                    </div>
+                        </dd>
+                    </dl>
                 </div>
+            </div>
 
-                <!-- Data Tambahan -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="px-6 py-4 bg-gray-50 border-b">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                            📋 Data Tambahan
-                        </h3>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-600">Agama</span>
-                            <span class="text-sm font-medium text-gray-900">{{ $familyMember->religion_label }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-600">Status Perkawinan</span>
-                            <span class="text-sm font-medium text-gray-900">{{ $familyMember->marital_status_label }}</span>
-                        </div>
+            <!-- Data Tambahan -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Data Tambahan</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Agama</dt>
+                        <dd class="col-sm-8">{{ $familyMember->religion_label }}</dd>
+
+                        <dt class="col-sm-4">Status Perkawinan</dt>
+                        <dd class="col-sm-8">{{ $familyMember->marital_status_label }}</dd>
+
                         @if($familyMember->education)
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-sm text-gray-600">Pendidikan</span>
-                                <span class="text-sm font-medium text-gray-900">{{ $familyMember->education_label }}</span>
-                            </div>
+                            <dt class="col-sm-4">Pendidikan</dt>
+                            <dd class="col-sm-8">{{ $familyMember->education_label }}</dd>
                         @endif
+
                         @if($familyMember->occupation)
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-sm text-gray-600">Pekerjaan</span>
-                                <span class="text-sm font-medium text-gray-900">{{ $familyMember->occupation }}</span>
-                            </div>
+                            <dt class="col-sm-4">Pekerjaan</dt>
+                            <dd class="col-sm-8">{{ $familyMember->occupation }}</dd>
                         @endif
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-600">Kewarganegaraan</span>
-                            <span class="text-sm font-medium text-gray-900">{{ $familyMember->nationality }}</span>
-                        </div>
+
+                        <dt class="col-sm-4">Kewarganegaraan</dt>
+                        <dd class="col-sm-8">{{ $familyMember->nationality }}</dd>
+
                         @if($familyMember->father_name)
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-sm text-gray-600">Nama Ayah</span>
-                                <span class="text-sm font-medium text-gray-900">{{ $familyMember->father_name }}</span>
-                            </div>
+                            <dt class="col-sm-4">Nama Ayah</dt>
+                            <dd class="col-sm-8">{{ $familyMember->father_name }}</dd>
                         @endif
+
                         @if($familyMember->mother_name)
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-sm text-gray-600">Nama Ibu</span>
-                                <span class="text-sm font-medium text-gray-900">{{ $familyMember->mother_name }}</span>
-                            </div>
+                            <dt class="col-sm-4">Nama Ibu</dt>
+                            <dd class="col-sm-8">{{ $familyMember->mother_name }}</dd>
                         @endif
+
                         @if($familyMember->notes)
-                            <div class="py-2">
-                                <span class="text-sm text-gray-600 block mb-2">Catatan</span>
-                                <div class="bg-gray-50 rounded-lg p-3">
-                                    <span class="text-sm text-gray-900">{{ $familyMember->notes }}</span>
-                                </div>
-                            </div>
+                            <dt class="col-sm-12">Catatan</dt>
+                            <dd class="col-sm-12">{{ $familyMember->notes }}</dd>
                         @endif
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <!-- Status Persetujuan -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-check-double me-2"></i>Status & Dokumen</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold">Status Persetujuan:</span>
+                        <span class="badge 
+                            @if($familyMember->approval_status === 'pending') bg-warning text-dark
+                            @elseif($familyMember->approval_status === 'approved') bg-success
+                            @else bg-danger @endif">
+                            {{ $familyMember->approval_status_label }}
+                        </span>
                     </div>
+
+                    @if($familyMember->approval_status === 'rejected' && $familyMember->rejection_reason)
+                        <div class="alert alert-danger mt-3" role="alert">
+                            <h6 class="alert-heading"><i class="fas fa-times-circle me-2"></i>Alasan Ditolak:</h6>
+                            <p class="mb-0">{{ $familyMember->rejection_reason }}</p>
+                        </div>
+                    @endif
+
+                    @if($familyMember->supporting_document)
+                        <hr>
+                        <h6 class="mt-3"><i class="fas fa-file-alt me-2"></i>Dokumen Pendukung:</h6>
+                        <a href="{{ Storage::url($familyMember->supporting_document) }}" target="_blank" class="btn btn-info btn-sm">
+                            <i class="fas fa-eye me-2"></i>Lihat Dokumen
+                        </a>
+                    @endif
                 </div>
             </div>
 
             <!-- Action Buttons -->
-            <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                    Aksi
-                </h3>
-                <div class="flex items-center space-x-4">
-                    <form action="{{ route('family-members.destroy', $familyMember) }}" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" 
-                                class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center"
-                                onclick="return confirm('Apakah Anda yakin ingin menghapus data anggota keluarga ini?')">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                            Hapus Data
-                        </button>
-                    </form>
-                    <a href="{{ route('family-members.index') }}"
-                       class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                        Kembali ke Daftar
-                    </a>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Aksi</h5>
                 </div>
-            </div>
-
-            <!-- Metadata -->
-            <div class="mt-6 bg-gray-50 rounded-xl p-4">
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                    <span>Data ditambahkan: {{ $familyMember->created_at->format('d F Y, H:i') }} WIB</span>
-                    @if($familyMember->updated_at != $familyMember->created_at)
-                        <span>Terakhir diupdate: {{ $familyMember->updated_at->format('d F Y, H:i') }} WIB</span>
-                    @endif
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        @if($familyMember->approval_status == 'rejected')
+                            <a href="{{ route('family-members.create') }}" class="btn btn-warning">
+                                <i class="fas fa-redo me-2"></i>Ajukan Ulang
+                            </a>
+                        @endif
+                        <a href="{{ route('transfer-requests.create', $familyMember) }}" class="btn btn-primary">
+                            <i class="fas fa-exchange-alt me-2"></i>Ajukan Permohonan Pindah
+                        </a>
+                        <form action="{{ route('family-members.destroy', $familyMember) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data anggota keluarga ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-trash-alt me-2"></i>Hapus Data
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</x-sidebar-layout>
+</div>
+@endsection

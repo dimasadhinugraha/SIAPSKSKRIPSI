@@ -25,9 +25,10 @@ class GenerateLetterPdf implements ShouldQueue
      */
     public function handle(PdfService $pdfService): void
     {
-        // Only generate PDF for approved letters
+        // PDF generation is now on-demand and not persisted.
+        // This job is kept for compatibility but will no longer write files.
         if ($this->letterRequest->status === 'approved_final') {
-            $pdfService->generateLetterPdf($this->letterRequest);
+            \Log::info('GenerateLetterPdf job invoked, but generation is now on-demand. LetterRequest id: ' . $this->letterRequest->id);
         }
     }
 }

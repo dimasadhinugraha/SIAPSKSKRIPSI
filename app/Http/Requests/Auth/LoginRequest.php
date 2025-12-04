@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nik' => ['required', 'string', 'size:16', 'regex:/^[0-9]{16}$/'],
+            'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,11 +41,30 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('nik', 'password'), $this->boolean('remember'))) {
+        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'nik' => trans('auth.failed'),
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
+        // At this point the user is authenticated via session
+        $user = Auth::user();
+
+        // Require email verification first
+        if (method_exists($user, 'hasVerifiedEmail') && ! $user->hasVerifiedEmail()) {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => 'Silakan verifikasi email Anda terlebih dahulu. Cek inbox untuk tautan verifikasi.',
+            ]);
+        }
+
+        // Require admin approval on users table
+        if (isset($user->is_approved) && ! $user->is_approved) {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => 'Akun Anda masih menunggu persetujuan admin. Silakan tunggu pemberitahuan lewat email.',
             ]);
         }
 
@@ -68,7 +87,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'nik' => trans('auth.throttle', [
+            'email' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,6 +99,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('nik')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
 }

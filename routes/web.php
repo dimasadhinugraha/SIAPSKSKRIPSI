@@ -14,9 +14,20 @@ use App\Http\Controllers\QrVerificationController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\FamilyMemberController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\Api\FamilySearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+
+// API Routes for family search
+Route::prefix('api')->group(function () {
+    Route::get('/families/search', [FamilySearchController::class, 'search'])->name('api.families.search');
+    Route::get('/families/{id}', [FamilySearchController::class, 'show'])->name('api.families.show');
+});
+
+// Email verification helper pages
+Route::get('/verify-email', [VerificationController::class, 'showVerifyEmailForm'])->name('verify.email');
+Route::post('/verify-email/send', [VerificationController::class, 'sendVerificationEmail'])->name('verify.email.send');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -31,6 +42,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/profile/upload-photo', [ProfileController::class, 'uploadPhoto'])->name('profile.upload-photo');
+    Route::delete('/profile/delete-photo', [ProfileController::class, 'deletePhoto'])->name('profile.delete-photo');
+    
+    // Mark notification as read
+    Route::post('/notifications/{id}/read', function($id) {
+        $notification = auth()->user()->notifications()->find($id);
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return response()->json(['success' => true]);
+    });
 });
 
 // Letter Request routes (for verified users)
@@ -44,6 +66,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Chat routes
     Route::prefix('chat')->name('chat.')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('index');
+        Route::get('/with/{user}', [ChatController::class, 'getChatWithUser'])->name('with');
+        Route::post('/send', [ChatController::class, 'sendMessage'])->name('send');
         Route::get('/create', [ChatController::class, 'create'])->name('create');
         Route::post('/', [ChatController::class, 'store'])->name('store');
         Route::get('/{chat}', [ChatController::class, 'show'])->name('show');
@@ -55,6 +79,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/start-private/{user}', [ChatController::class, 'startPrivateChat'])->name('start-private');
         Route::get('/download/{message}', [ChatController::class, 'downloadFile'])->name('download-file');
     });
+
+    // Transfer requests (user)
+    Route::get('/family-members/{familyMember}/transfer-requests/create', [App\Http\Controllers\TransferRequestController::class, 'create'])->name('transfer-requests.create');
+    Route::post('/family-members/{familyMember}/transfer-requests', [App\Http\Controllers\TransferRequestController::class, 'store'])->name('transfer-requests.store');
+    Route::resource('transfer-requests', App\Http\Controllers\TransferRequestController::class)->only(['index', 'show']);
 });
 
 // Approval routes (for RT/RW)
@@ -78,10 +107,17 @@ Route::post('/verify-qr-content', [QrVerificationController::class, 'verifyQrCon
 // Test PDF route (for development)
 Route::get('/test-pdf/{id}', function($id) {
     $letterRequest = \App\Models\LetterRequest::findOrFail($id);
-    if (!$letterRequest->letter_file || !file_exists(storage_path('app/public/' . $letterRequest->letter_file))) {
-        abort(404, 'PDF file not found');
+    if (!$letterRequest->isApproved()) {
+        abort(404, 'PDF belum tersedia (surat belum disetujui)');
     }
-    return response()->file(storage_path('app/public/' . $letterRequest->letter_file));
+
+    // Generate on-demand for testing
+    $pdfService = new \App\Services\PdfService();
+    $pdfBinary = $pdfService->generateLetterPdfBinary($letterRequest);
+
+    return response()->streamDownload(function () use ($pdfBinary) {
+        echo $pdfBinary;
+    }, 'Surat_' . $letterRequest->request_number . '.pdf', ['Content-Type' => 'application/pdf']);
 })->name('test.pdf');
 
 // Admin routes
@@ -105,6 +141,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/family-member-approvals/{familyMember}/reject', [FamilyMemberApprovalController::class, 'reject'])->name('family-member-approvals.reject');
     Route::post('/family-member-approvals/bulk-approve', [FamilyMemberApprovalController::class, 'bulkApprove'])->name('family-member-approvals.bulk-approve');
     Route::get('/family-member-approvals/{familyMember}/download-document', [FamilyMemberApprovalController::class, 'downloadDocument'])->name('family-member-approvals.download-document');
+    
+    // Transfer requests management (admin)
+    Route::get('/transfer-requests', [\App\Http\Controllers\Admin\TransferRequestManagementController::class, 'index'])->name('transfer-requests.index');
+    Route::get('/transfer-requests/{transferRequest}', [\App\Http\Controllers\Admin\TransferRequestManagementController::class, 'show'])->name('transfer-requests.show');
+    Route::patch('/transfer-requests/{transferRequest}/approve', [\App\Http\Controllers\Admin\TransferRequestManagementController::class, 'approve'])->name('transfer-requests.approve');
+    Route::patch('/transfer-requests/{transferRequest}/reject', [\App\Http\Controllers\Admin\TransferRequestManagementController::class, 'reject'])->name('transfer-requests.reject');
 });
 
 require __DIR__.'/auth.php';

@@ -16,8 +16,11 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $user->load('biodata');
+        
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
@@ -35,6 +38,50 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Upload profile photo
+     */
+    public function uploadPhoto(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'profile_photo' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+        
+        // Delete old photo if exists
+        if ($user->biodata && $user->biodata->profile_photo) {
+            \Storage::disk('public')->delete($user->biodata->profile_photo);
+        }
+
+        // Upload new photo
+        $path = $request->file('profile_photo')->store('profile-photos', 'public');
+        
+        // Update biodata
+        if ($user->biodata) {
+            $user->biodata->update(['profile_photo' => $path]);
+        } else {
+            $user->biodata()->create(['profile_photo' => $path]);
+        }
+
+        return Redirect::route('profile.edit')->with('status', 'Photo profile berhasil diupload!');
+    }
+
+    /**
+     * Delete profile photo
+     */
+    public function deletePhoto(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        
+        if ($user->biodata && $user->biodata->profile_photo) {
+            \Storage::disk('public')->delete($user->biodata->profile_photo);
+            $user->biodata->update(['profile_photo' => null]);
+        }
+
+        return Redirect::route('profile.edit')->with('status', 'Photo profile berhasil dihapus!');
     }
 
     /**

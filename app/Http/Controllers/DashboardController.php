@@ -25,26 +25,16 @@ class DashboardController extends Controller
                 'published_news' => News::where('status', 'published')->count(),
             ];
         } elseif ($user->isRT()) {
+            // RT can see all pending RT letters
             $stats = [
-                'pending_letters' => LetterRequest::where('status', 'pending_rt')
-                    ->whereHas('user', function($query) use ($user) {
-                        $query->where('rt_rw', 'like', '%' . explode('/', $user->rt_rw)[0] . '%');
-                    })->count(),
-                'approved_letters' => LetterRequest::where('status', '!=', 'pending_rt')
-                    ->whereHas('user', function($query) use ($user) {
-                        $query->where('rt_rw', 'like', '%' . explode('/', $user->rt_rw)[0] . '%');
-                    })->count(),
+                'pending_letters' => LetterRequest::where('status', 'pending_rt')->count(),
+                'approved_letters' => LetterRequest::where('status', '!=', 'pending_rt')->count(),
             ];
         } elseif ($user->isRW()) {
+            // RW can see all pending RW letters
             $stats = [
-                'pending_letters' => LetterRequest::where('status', 'pending_rw')
-                    ->whereHas('user', function($query) use ($user) {
-                        $query->where('rt_rw', 'like', '%' . explode('/', $user->rt_rw)[0] . '%');
-                    })->count(),
-                'approved_letters' => LetterRequest::where('status', 'approved_final')
-                    ->whereHas('user', function($query) use ($user) {
-                        $query->where('rt_rw', 'like', '%' . explode('/', $user->rt_rw)[0] . '%');
-                    })->count(),
+                'pending_letters' => LetterRequest::where('status', 'pending_rw')->count(),
+                'approved_letters' => LetterRequest::where('status', 'approved_final')->count(),
             ];
         } else {
             $stats = [

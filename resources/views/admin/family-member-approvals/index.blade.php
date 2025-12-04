@@ -1,302 +1,235 @@
-<x-sidebar-layout>
-    <x-slot name="header">
-        🔍 Persetujuan Anggota Keluarga
-    </x-slot>
+@extends('layouts.app-bootstrap')
 
-    <!-- Page Header -->
-    <div class="bg-white shadow-sm border-b border-gray-200 mb-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-6">
+@section('title', 'Persetujuan Anggota Keluarga')
+
+@section('content')
+<div class="container-fluid">
+    <div class="card bg-primary bg-gradient text-white mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">🔍 Persetujuan Anggota Keluarga</h1>
-                    <p class="text-gray-600 mt-1">Review dan setujui pengajuan anggota keluarga</p>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <span class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                        {{ $familyMembers->total() }} total pengajuan
-                    </span>
+                    <h1 class="h4 mb-0 text-white"><i class="fas fa-users-cog me-2"></i>Persetujuan Anggota Keluarga</h1>
+                    <p class="mb-0 small">Review dan setujui pengajuan anggota keluarga</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(session('success'))
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-                        </div>
-                    </div>
-                </div>
-            @endif
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
-            <!-- Statistics Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <div class="flex items-center">
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <span class="text-blue-600 text-2xl">📊</span>
+                            <div class="bg-primary bg-opacity-10 rounded p-3">
+                                <i class="fas fa-users fa-2x text-primary"></i>
                             </div>
                         </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">Total Pengajuan</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                                <span class="text-yellow-600 text-2xl">⏳</span>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">Menunggu Review</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $stats['pending'] }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <span class="text-green-600 text-2xl">✅</span>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">Disetujui</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $stats['approved'] }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                                <span class="text-red-600 text-2xl">❌</span>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">Ditolak</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $stats['rejected'] }}</p>
+                        <div class="ms-3">
+                            <p class="text-muted mb-0 small">Total Pengajuan</p>
+                            <h3 class="mb-0">{{ $stats['total'] }}</h3>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Filters -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <form method="GET" action="{{ route('admin.family-member-approvals.index') }}" class="flex flex-col md:flex-row gap-4">
-                    <div class="flex-1">
-                        <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Cari</label>
-                        <input type="text" 
-                               name="search" 
-                               id="search" 
-                               value="{{ request('search') }}"
-                               placeholder="Cari nama, NIK, atau nama pengaju..."
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded p-3">
+                                <i class="fas fa-clock fa-2x text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <p class="text-muted mb-0 small">Menunggu Review</p>
+                            <h3 class="mb-0">{{ $stats['pending'] }}</h3>
+                        </div>
                     </div>
-                    <div class="w-full md:w-48">
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                        <select name="status" 
-                                id="status" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Semua Status</option>
-                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu</option>
-                            <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Disetujui</option>
-                            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Ditolak</option>
-                        </select>
-                    </div>
-                    <div class="flex items-end">
-                        <button type="submit" 
-                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
-                            🔍 Filter
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded p-3">
+                                <i class="fas fa-check-circle fa-2x text-success"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <p class="text-muted mb-0 small">Disetujui</p>
+                            <h3 class="mb-0">{{ $stats['approved'] }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-danger bg-opacity-10 rounded p-3">
+                                <i class="fas fa-times-circle fa-2x text-danger"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <p class="text-muted mb-0 small">Ditolak</p>
+                            <h3 class="mb-0">{{ $stats['rejected'] }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Filters -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ route('admin.family-member-approvals.index') }}" class="row g-3">
+                <div class="col-md-4">
+                    <label for="status" class="form-label">Filter Status</label>
+                    <select name="status" id="status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu Review</option>
+                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Disetujui</option>
+                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="search" class="form-label">Cari</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Cari nama atau NIK..." value="{{ request('search') }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i> Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
             @if($familyMembers->count() > 0)
-                <!-- Family Members Table -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-900">Daftar Pengajuan Anggota Keluarga</h3>
-                        
-                        @if($familyMembers->where('approval_status', 'pending')->count() > 0)
-                            <form action="{{ route('admin.family-member-approvals.bulk-approve') }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" 
-                                        onclick="return confirm('Setujui semua pengajuan yang dipilih?')"
-                                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
-                                    ✅ Setujui Terpilih
-                                </button>
-                            </form>
-                        @endif
-                    </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Anggota Keluarga</th>
+                                <th>Kepala Keluarga</th>
+                                <th>Hubungan</th>
+                                <th>Status</th>
+                                <th>Tanggal Pengajuan</th>
+                                <th width="150">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($familyMembers as $member)
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <input type="checkbox" id="select-all" class="rounded border-gray-300">
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Anggota Keluarga
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Pengaju
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Hubungan
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Tanggal
-                                    </th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Aksi
-                                    </th>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar avatar-sm me-3">
+                                                <span class="avatar-title rounded-circle bg-primary-subtle text-primary-emphasis">
+                                                    {{ strtoupper(substr($member->name, 0, 2)) }}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ $member->name }}</div>
+                                                <div class="small text-muted">NIK: {{ $member->nik }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if($member->user)
+                                            <div class="fw-bold">{{ $member->user->name }}</div>
+                                            <div class="small text-muted">NIK: {{ $member->user->nik }}</div>
+                                        @else
+                                            <div class="text-muted fst-italic">Akun belum terhubung</div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge 
+                                            @if($member->relationship === 'kepala_keluarga') bg-primary
+                                            @elseif($member->relationship === 'istri' || $member->relationship === 'suami') bg-info
+                                            @elseif($member->relationship === 'anak') bg-success
+                                            @else bg-secondary
+                                            @endif">
+                                            {{ ucwords(str_replace('_', ' ', $member->relationship)) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if($member->approval_status === 'pending')
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-clock me-1"></i>Menunggu Review
+                                            </span>
+                                        @elseif($member->approval_status === 'approved')
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Disetujui
+                                            </span>
+                                        @elseif($member->approval_status === 'rejected')
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Ditolak
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="text-muted small">
+                                        {{ $member->created_at->format('d/m/Y H:i') }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.family-member-approvals.show', $member) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye me-1"></i>Detail
+                                        </a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach($familyMembers as $member)
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            @if($member->approval_status === 'pending')
-                                                <input type="checkbox" name="family_member_ids[]" value="{{ $member->id }}" class="rounded border-gray-300 member-checkbox">
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10">
-                                                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                                                        <span class="text-white font-medium text-sm">
-                                                            {{ strtoupper(substr($member->name, 0, 2)) }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">{{ $member->name }}</div>
-                                                    <div class="text-sm text-gray-500">NIK: {{ $member->nik }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-gray-900">{{ $member->user->name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $member->user->rt_rw }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                @if($member->relationship === 'kepala_keluarga') bg-blue-100 text-blue-800
-                                                @elseif(in_array($member->relationship, ['istri', 'suami'])) bg-green-100 text-green-800
-                                                @elseif($member->relationship === 'anak') bg-purple-100 text-purple-800
-                                                @else bg-gray-100 text-gray-800 @endif">
-                                                {{ $member->relationship_label }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $member->status_badge_color }}">
-                                                @if($member->approval_status === 'pending')
-                                                    ⏳ {{ $member->approval_status_label }}
-                                                @elseif($member->approval_status === 'approved')
-                                                    ✅ {{ $member->approval_status_label }}
-                                                @else
-                                                    ❌ {{ $member->approval_status_label }}
-                                                @endif
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $member->created_at->format('d/m/Y H:i') }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <div class="flex items-center justify-end space-x-2">
-                                                <a href="{{ route('admin.family-member-approvals.show', $member) }}" 
-                                                   class="text-blue-600 hover:text-blue-900 transition-colors">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                    </svg>
-                                                </a>
-                                                
-                                                @if($member->approval_status === 'pending')
-                                                    <form action="{{ route('admin.family-member-approvals.approve', $member) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <button type="submit" 
-                                                                onclick="return confirm('Setujui anggota keluarga ini?')"
-                                                                class="text-green-600 hover:text-green-900 transition-colors">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                            </svg>
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Pagination -->
-                    <div class="px-6 py-4 border-t border-gray-200">
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                @if($familyMembers->hasPages())
+                    <div class="mt-3">
                         {{ $familyMembers->links() }}
                     </div>
-                </div>
+                @endif
             @else
-                <!-- Empty State -->
-                <div class="bg-white rounded-xl shadow-lg p-12 text-center">
-                    <div class="text-gray-400 text-6xl mb-4">👨‍👩‍👧‍👦</div>
-                    <h3 class="text-xl font-medium text-gray-900 mb-2">Tidak Ada Pengajuan</h3>
-                    <p class="text-gray-600">Belum ada pengajuan anggota keluarga yang perlu direview.</p>
+                <div class="text-center p-5">
+                    <i class="fas fa-users display-4 text-muted mb-3"></i>
+                    <h4 class="mb-2">Tidak ada data</h4>
+                    <p class="text-muted mb-3">
+                        @if(request('search') || request('status'))
+                            Tidak ada pengajuan yang sesuai dengan filter.
+                        @else
+                            Belum ada pengajuan anggota keluarga.
+                        @endif
+                    </p>
+                    @if(request('search') || request('status'))
+                        <a href="{{ route('admin.family-member-approvals.index') }}" class="btn btn-primary">
+                            <i class="fas fa-redo me-1"></i>Reset Filter
+                        </a>
+                    @endif
                 </div>
             @endif
         </div>
     </div>
-
-    <script>
-        // Select all functionality
-        document.getElementById('select-all').addEventListener('change', function() {
-            const checkboxes = document.querySelectorAll('.member-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
-        });
-
-        // Update bulk approve form
-        document.addEventListener('change', function(e) {
-            if (e.target.classList.contains('member-checkbox')) {
-                const form = document.querySelector('form[action*="bulk-approve"]');
-                const checkedBoxes = document.querySelectorAll('.member-checkbox:checked');
-                
-                // Update form with selected IDs
-                const existingInputs = form.querySelectorAll('input[name="family_member_ids[]"]');
-                existingInputs.forEach(input => input.remove());
-                
-                checkedBoxes.forEach(checkbox => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'family_member_ids[]';
-                    input.value = checkbox.value;
-                    form.appendChild(input);
-                });
-            }
-        });
-    </script>
-</x-sidebar-layout>
+</div>
+@endsection

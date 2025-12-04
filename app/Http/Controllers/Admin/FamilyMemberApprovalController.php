@@ -60,7 +60,7 @@ class FamilyMemberApprovalController extends Controller
 
         $familyMember->update([
             'approval_status' => 'approved',
-            'approved_by' => Auth::id(),
+            'approved_by' => Auth::user()->id,
             'approved_at' => now(),
             'rejection_reason' => null
         ]);
@@ -79,7 +79,7 @@ class FamilyMemberApprovalController extends Controller
 
         $familyMember->update([
             'approval_status' => 'rejected',
-            'approved_by' => Auth::id(),
+            'approved_by' => Auth::user()->id,
             'approved_at' => now(),
             'rejection_reason' => $request->rejection_reason
         ]);
@@ -99,7 +99,7 @@ class FamilyMemberApprovalController extends Controller
             ->where('approval_status', 'pending')
             ->update([
                 'approval_status' => 'approved',
-                'approved_by' => Auth::id(),
+                'approved_by' => Auth::user()->id,
                 'approved_at' => now(),
                 'rejection_reason' => null
             ]);

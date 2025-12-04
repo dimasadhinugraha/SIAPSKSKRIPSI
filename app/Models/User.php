@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -19,22 +19,28 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'nik',
         'email',
         'password',
-        'nik',
-        'gender',
-        'birth_date',
+        'role',
+        'rt',
+        'rw',
         'address',
         'phone',
-        'kk_number',
-        'ktp_photo',
-        'kk_photo',
-        'role',
-        'rt_rw',
         'is_verified',
-        'verified_at',
-        'verified_by',
+        'is_approved',
+        'email_verified_at',
+        'family_id',
+        'is_head_of_family',
     ];
+
+    /**
+     * The biodata associated with the user.
+     */
+    public function biodata()
+    {
+        return $this->hasOne(Biodata::class);
+    }
 
     /**
      * Get the name of the unique identifier for the user.
@@ -76,9 +82,6 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'birth_date' => 'date',
-            'is_verified' => 'boolean',
-            'verified_at' => 'datetime',
         ];
     }
 
@@ -98,18 +101,18 @@ class User extends Authenticatable
         return $this->hasMany(News::class, 'author_id');
     }
 
-    public function verifiedUsers()
+    /**
+     * Get the biodatas that this user has verified.
+     */
+    public function verifiedBiodatas()
     {
-        return $this->hasMany(User::class, 'verified_by');
-    }
-
-    public function verifier()
-    {
-        return $this->belongsTo(User::class, 'verified_by');
+        return $this->hasMany(Biodata::class, 'verified_by');
     }
 
     public function familyMembers()
     {
+        // This might need adjustment if it relies on biodata fields.
+        // For now, assuming it's based on user_id which is fine.
         return $this->hasMany(FamilyMember::class);
     }
 
@@ -118,14 +121,28 @@ class User extends Authenticatable
         return $this->hasMany(FamilyMember::class)->where('is_active', true);
     }
 
-    public function approvedFamilyMembers()
+    /**
+     * Get the family this user belongs to
+     */
+    public function family()
     {
-        return $this->hasMany(FamilyMember::class)->where('is_active', true)->where('approval_status', 'approved');
+        return $this->belongsTo(Family::class);
     }
 
-    public function pendingFamilyMembers()
+    /**
+     * Get other family members (excluding self)
+     */
+    public function siblings()
     {
-        return $this->hasMany(FamilyMember::class)->where('is_active', true)->where('approval_status', 'pending');
+        return $this->hasMany(User::class, 'family_id', 'family_id')
+                    ->where('id', '!=', $this->id);
+    }
+
+    public function approvedFamilyMembers()
+    {
+        return $this->hasMany(FamilyMember::class)
+            ->where('is_active', true)
+            ->where('approval_status', 'approved');
     }
 
     public function chats()
@@ -169,6 +186,11 @@ class User extends Authenticatable
         return in_array($this->role, ['rt', 'rw', 'admin']);
     }
 
+    public function getInitialsAttribute()
+    {
+        return strtoupper(substr($this->name, 0, 2));
+    }
+
     public function getRoleLabelAttribute()
     {
         $roles = [
@@ -179,5 +201,15 @@ class User extends Authenticatable
         ];
 
         return $roles[$this->role] ?? 'Unknown';
+    }
+
+    public function getRtRwAttribute()
+    {
+        if ($this->rt && $this->rw) {
+            return "RT {$this->rt} / RW {$this->rw}";
+        } elseif ($this->rw) {
+            return "RW {$this->rw}";
+        }
+        return '-';
     }
 }

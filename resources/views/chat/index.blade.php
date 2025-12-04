@@ -1,91 +1,284 @@
-<x-sidebar-layout>
-    <x-slot name="header">
-        💬 Chat & Komunikasi
-    </x-slot>
+@extends('layouts.app-bootstrap')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Header Actions -->
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">💬 Chat dengan Warga</h2>
-                <p class="text-gray-600 mt-1">Pilih warga yang ingin Anda ajak chat</p>
+@section('title', 'Chat & Komunikasi')
+
+@push('styles')
+<style>
+    .avatar {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .avatar-title {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
+    .list-group-item.active {
+        background-color: var(--bs-primary-bg-subtle);
+        border-color: var(--bs-primary-border-subtle);
+    }
+    #messages-container .card {
+        border-radius: 1rem;
+    }
+</style>
+@endpush
+
+@section('content')
+<div class="container-fluid">
+    <div class="row" style="height: calc(100vh - 88px);">
+        <!-- User List -->
+        <div class="col-md-4 border-end">
+            <div class="p-3 border-bottom">
+                <h4 class="mb-0">Percakapan</h4>
             </div>
-
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    @if($users->count() > 0)
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            @foreach($users as $user)
-                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer"
-                                     onclick="startChat({{ $user->id }})">
-                                    <div class="flex items-center space-x-4">
-                                        <!-- User Avatar -->
-                                        <div class="flex-shrink-0">
-                                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                                <span class="text-lg font-semibold text-green-600">
-                                                    {{ strtoupper(substr($user->name, 0, 2)) }}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <!-- User Info -->
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center justify-between">
-                                                <h3 class="text-lg font-medium text-gray-900 truncate">{{ $user->name }}</h3>
-                                                @if($user->unread_count > 0)
-                                                    <span class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 rounded-full">
-                                                        {{ $user->unread_count > 99 ? '99+' : $user->unread_count }}
-                                                    </span>
-                                                @endif
-                                            </div>
-
-                                            <div class="flex items-center space-x-2 mt-1">
-                                                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                                    {{ $user->role_label }}
-                                                </span>
-                                                <span class="text-xs text-gray-500">{{ $user->rt_rw }}</span>
-                                            </div>
-
-                                            @if($user->last_message)
-                                                <div class="mt-2">
-                                                    <p class="text-sm text-gray-600 truncate">
-                                                        @if($user->last_message->type === 'file' || $user->last_message->type === 'image')
-                                                            📎 {{ $user->last_message->file_name }}
-                                                        @else
-                                                            {{ $user->last_message->message }}
-                                                        @endif
-                                                    </p>
-                                                    <p class="text-xs text-gray-400 mt-1">
-                                                        {{ $user->last_message->created_at->diffForHumans() }}
-                                                    </p>
-                                                </div>
-                                            @else
-                                                <p class="text-sm text-gray-500 mt-2">Belum ada percakapan</p>
-                                            @endif
-                                        </div>
-                                    </div>
+            <div class="list-group list-group-flush overflow-auto" style="height: calc(100% - 60px);">
+                @forelse($users as $user)
+                    <a href="#" class="list-group-item list-group-item-action" onclick="openChat({{ $user->id }})">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="avatar avatar-online">
+                                    <span class="avatar-title rounded-circle bg-success-subtle text-success-emphasis">
+                                        {{ $user->initials }}
+                                    </span>
                                 </div>
-                            @endforeach
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">{{ $user->name }}</h6>
+                                    @if($user->unread_count > 0)
+                                        <span class="badge bg-danger rounded-pill">{{ $user->unread_count }}</span>
+                                    @endif
+                                </div>
+                                @if($user->last_message)
+                                    <small class="text-muted text-truncate">{{ $user->last_message->message }}</small>
+                                @else
+                                    <small class="text-muted">Belum ada percakapan</small>
+                                @endif
+                            </div>
                         </div>
-                    @else
-                        <!-- Empty State -->
-                        <div class="text-center py-12">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada warga lain</h3>
-                            <p class="mt-1 text-sm text-gray-500">Belum ada warga lain yang terdaftar di sistem.</p>
+                    </a>
+                @empty
+                    <div class="p-4 text-center text-muted">
+                        Belum ada pengguna lain.
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="col-md-8 d-flex flex-column">
+            <div id="chat-window" class="card flex-grow-1" style="display: none;">
+                <!-- Chat Header -->
+                <div class="card-header d-flex align-items-center p-3">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="avatar avatar-online">
+                            <span id="chat-user-initial" class="avatar-title rounded-circle bg-primary-subtle text-primary-emphasis"></span>
                         </div>
-                    @endif
+                    </div>
+                    <div>
+                        <h5 id="chat-user-name" class="mb-0"></h5>
+                        <small class="text-muted">Online</small>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div id="messages-container" class="card-body overflow-auto p-4" style="background-color: #f5f5f5;">
+                    <!-- Messages will be loaded here -->
+                </div>
+
+                <!-- Message Input -->
+                <div class="card-footer p-3">
+                    <form id="message-form" class="d-flex align-items-center">
+                        <input type="hidden" id="chat-id" name="chat_id">
+                        <input type="text" id="message-input" name="message" placeholder="Ketik pesan..." class="form-control form-control-lg rounded-pill">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-circle ms-3">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div id="select-chat-placeholder" class="d-flex flex-grow-1 align-items-center justify-content-center">
+                <div class="text-center text-muted">
+                    <i class="fas fa-comments fa-4x mb-4"></i>
+                    <h4>Pilih percakapan untuk memulai</h4>
+                    <p>Pilih pengguna dari daftar di sebelah kiri untuk melihat pesan.</p>
                 </div>
             </div>
         </div>
     </div>
+</div>
+@endsection
 
-    <script>
-        function startChat(userId) {
-            // Redirect to start private chat route
-            window.location.href = `/chat/start-private/${userId}`;
+@push('scripts')
+<script>
+    let currentUserId = null;
+    let pollInterval = null;
+    let lastMessageId = 0;
+
+    function openChat(userId) {
+        if (currentUserId) {
+            document.querySelector(`[onclick="openChat(${currentUserId})"]`).classList.remove('active');
         }
-    </script>
-</x-sidebar-layout>
+        currentUserId = userId;
+        document.querySelector(`[onclick="openChat(${userId})"]`).classList.add('active');
+
+        document.getElementById('select-chat-placeholder').style.display = 'none';
+        document.getElementById('chat-window').style.display = 'flex';
+
+        fetch(`/chat/with/${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('chat-user-name').textContent = data.user.name;
+                document.getElementById('chat-user-initial').textContent = data.user.initials;
+                document.getElementById('chat-id').value = data.chat_id;
+
+                const messagesContainer = document.getElementById('messages-container');
+                messagesContainer.innerHTML = ''; // Clear previous messages
+
+                data.messages.forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('d-flex', 'mb-4', message.user.id === {{ auth()->id() }} ? 'justify-content-end' : 'justify-content-start');
+                    
+                    let content = `
+                        <div class="card w-75 ${ message.user.id === {{ auth()->id() }} ? 'bg-primary text-white' : '' }">
+                            <div class="card-body p-3">
+                                <p class="mb-0">${message.message}</p>
+                                <small class="text-muted d-block text-end">${new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+                            </div>
+                        </div>
+                    `;
+
+                    if(message.user.id !== {{ auth()->id() }}) {
+                         content = `
+                            <div class="flex-shrink-0 me-3">
+                                <div class="avatar avatar-online">
+                                    <span class="avatar-title rounded-circle bg-secondary-subtle text-secondary-emphasis">
+                                        ${message.user.name.substring(0, 2).toUpperCase()}
+                                    </span>
+                                </div>
+                            </div>
+                        ` + content;
+                    }
+
+                    messageElement.innerHTML = content;
+                    messagesContainer.appendChild(messageElement);
+                });
+
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                // set lastMessageId to the max id we received
+                if (data.messages.length) {
+                    lastMessageId = Math.max(...data.messages.map(m => m.id));
+                } else {
+                    lastMessageId = 0;
+                }
+
+                // start polling for new messages
+                startPolling(data.chat_id);
+            });
+    }
+
+    function startPolling(chatId) {
+        stopPolling();
+        pollInterval = setInterval(() => {
+            fetch(`/chat/${chatId}/messages`)
+                .then(r => r.json())
+                .then(messages => {
+                    const container = document.getElementById('messages-container');
+                    const newMessages = messages.filter(m => m.id > lastMessageId);
+                    if (newMessages.length) {
+                        newMessages.forEach(message => {
+                            const messageElement = document.createElement('div');
+                            messageElement.classList.add('d-flex', 'mb-4', message.user.id === {{ auth()->user()->getKey() }} ? 'justify-content-end' : 'justify-content-start');
+                            let content = `
+                                <div class="card w-75 ${ message.user.id === {{ auth()->user()->getKey() }} ? 'bg-primary text-white' : '' }">
+                                    <div class="card-body p-3">
+                                        <p class="mb-0">${message.message}</p>
+                                        <small class="text-muted d-block text-end">${new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+                                    </div>
+                                </div>
+                            `;
+
+                            if(message.user.id !== {{ auth()->user()->getKey() }}) {
+                                content = `
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="avatar avatar-online">
+                                            <span class="avatar-title rounded-circle bg-secondary-subtle text-secondary-emphasis">
+                                                ${message.user.name.substring(0, 2).toUpperCase()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ` + content;
+                            }
+
+                            messageElement.innerHTML = content;
+                            container.appendChild(messageElement);
+                        });
+
+                        // update lastMessageId and scroll
+                        lastMessageId = Math.max(...messages.map(m => m.id));
+                        container.scrollTop = container.scrollHeight;
+                    }
+                })
+                .catch(err => console.error('Polling error', err));
+        }, 500);
+    }
+
+    function stopPolling() {
+        if (pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+        }
+    }
+
+    document.getElementById('message-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const chatId = document.getElementById('chat-id').value;
+        const messageInput = document.getElementById('message-input');
+        const message = messageInput.value;
+
+        if (!message.trim()) return;
+
+        fetch('/chat/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                message: message
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const messagesContainer = document.getElementById('messages-container');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('d-flex', 'justify-content-end', 'mb-4');
+            messageElement.innerHTML = `
+                <div class="card w-75 bg-primary text-white">
+                    <div class="card-body p-3">
+                        <p class="mb-0">${data.message.message}</p>
+                        <small class="text-white d-block text-end">${new Date(data.message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            messageInput.value = '';
+            messageInput.focus();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            messageInput.value = '';
+        });
+    });
+</script>
+@endpush

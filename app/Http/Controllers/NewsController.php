@@ -23,6 +23,14 @@ class NewsController extends Controller
             abort(404);
         }
 
-        return view('news.show', compact('news'));
+        // Get related news
+        $relatedNews = News::published()
+            ->where('id', '!=', $news->id)
+            ->where('category', $news->category)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('news.show', compact('news', 'relatedNews'));
     }
 }

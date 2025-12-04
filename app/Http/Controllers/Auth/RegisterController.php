@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\FamilyMember;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 
@@ -45,6 +47,44 @@ class RegisterController extends Controller
             $kkPath = $request->file('kk_photo')->store('documents/kk', 'public');
         }
 
+        // Check: apakah NIK tersebut sudah terdaftar dalam anggota keluarga di KK yang sama?
+        $existsInKK = FamilyMember::where('nik', $request->nik)
+            ->whereHas('user', function ($q) use ($request) {
+                $q->where('kk_number', $request->kk_number);
+            })->exists();
+
+        if (! $existsInKK) {
+            return back()->withInput($request->except(['password', 'password_confirmation']))
+                ->withErrors(['kk_number' => 'NIK tidak ditemukan dalam Kartu Keluarga yang Anda masukkan. Pastikan NIK dan No. KK benar atau tambahkan anggota keluarga terlebih dahulu.']);
+        }
+
+        // Validate that the provided RT/RW exists as an account (role rt or rw)
+        $rtRwExists = \App\Models\User::whereIn('role', ['rt', 'rw'])
+            ->where('rt_rw', $request->rt_rw)
+            ->exists();
+
+        if (! $rtRwExists) {
+            return back()->withInput($request->except(['password', 'password_confirmation']))
+                ->withErrors(['rt_rw' => 'RT/RW yang Anda masukkan tidak ditemukan. Pastikan Anda memilih RT/RW yang valid.']);
+        }
+
+        // Resolve RT and RW user ids from the provided rt_rw string
+        $rtId = null;
+        $rwId = null;
+        $parts = explode('/', $request->rt_rw);
+        $rtPart = isset($parts[0]) ? trim($parts[0]) : null;
+        $rwPart = isset($parts[1]) ? trim($parts[1]) : null;
+
+        if ($rtPart) {
+            $rtUser = User::where('role', 'rt')->where('rt_rw', 'like', "%{$rtPart}%")->first();
+            if ($rtUser) $rtId = $rtUser->id;
+        }
+
+        if ($rwPart) {
+            $rwUser = User::where('role', 'rw')->where('rt_rw', 'like', "%{$rwPart}%")->first();
+            if ($rwUser) $rwId = $rwUser->id;
+        }
+
         // Create user
         $user = User::create([
             'name' => $request->name,
@@ -57,13 +97,26 @@ class RegisterController extends Controller
             'phone' => $request->phone,
             'kk_number' => $request->kk_number,
             'rt_rw' => $request->rt_rw,
+            'rt_id' => $rtId,
+            'rw_id' => $rwId,
             'ktp_photo' => $ktpPath,
             'kk_photo' => $kkPath,
             'role' => 'user',
             'is_verified' => false,
+            'is_approved' => false,
         ]);
 
-        return redirect()->route('verification.notice')
-            ->with('success', 'Pendaftaran berhasil! Akun Anda menunggu verifikasi dari admin.');
+        // Login the newly registered user so we can show the verification notice
+        Auth::login($user);
+
+        // Send email verification link
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            logger()->warning('Failed to send verification email to new user', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+        }
+
+        // Redirect to verification notice so the user is prompted to verify their email
+        return redirect()->route('verification.notice');
     }
 }

@@ -17,18 +17,21 @@ class ApprovalController extends Controller
         $user = auth()->user();
 
         if ($user->isRT()) {
-            $requests = LetterRequest::with(['user', 'letterType'])
+            // RT hanya lihat surat dari warga di wilayahnya
+            $requests = LetterRequest::with(['user', 'letterType', 'subject'])
                 ->where('status', 'pending_rt')
                 ->whereHas('user', function($query) use ($user) {
-                    $query->where('rt_rw', 'like', '%' . explode('/', $user->rt_rw)[0] . '%');
+                    $query->where('rt', $user->rt)
+                          ->where('rw', $user->rw);
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
         } elseif ($user->isRW()) {
-            $requests = LetterRequest::with(['user', 'letterType'])
+            // RW hanya lihat surat dari warga di wilayahnya
+            $requests = LetterRequest::with(['user', 'letterType', 'subject'])
                 ->where('status', 'pending_rw')
                 ->whereHas('user', function($query) use ($user) {
-                    $query->where('rt_rw', 'like', '%' . explode('/', $user->rt_rw)[0] . '%');
+                    $query->where('rw', $user->rw);
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
@@ -50,9 +53,6 @@ class ApprovalController extends Controller
                     $query->where('approved_by', $user->id)
                           ->where('approval_level', 'rt');
                 })
-                ->whereHas('user', function($query) use ($user) {
-                    $query->where('rt_rw', 'like', '%' . explode('/', $user->rt_rw)[0] . '%');
-                })
                 ->whereIn('status', ['pending_rw', 'approved_final', 'rejected_rt'])
                 ->orderBy('rt_processed_at', 'desc')
                 ->paginate(10);
@@ -62,9 +62,6 @@ class ApprovalController extends Controller
                 ->whereHas('approvals', function($query) use ($user) {
                     $query->where('approved_by', $user->id)
                           ->where('approval_level', 'rw');
-                })
-                ->whereHas('user', function($query) use ($user) {
-                    $query->where('rt_rw', 'like', '%' . explode('/', $user->rt_rw)[0] . '%');
                 })
                 ->whereIn('status', ['approved_final', 'rejected_rw'])
                 ->orderBy('rw_processed_at', 'desc')
@@ -84,36 +81,26 @@ class ApprovalController extends Controller
         $canView = false;
 
         if ($user->isRT()) {
-            // RT can view pending requests or requests they have processed
-            $canView = $letterRequest->status === 'pending_rt' ||
+            // RT can view pending_rt requests or requests they have processed
+            $canView = in_array($letterRequest->status, ['pending_rt', 'pending_rw', 'approved_final', 'rejected_rt']) ||
                       $letterRequest->approvals()->where('approved_by', $user->id)
                                                  ->where('approval_level', 'rt')
                                                  ->exists();
         }
 
         if ($user->isRW()) {
-            // RW can view pending requests or requests they have processed
-            $canView = $letterRequest->status === 'pending_rw' ||
+            // RW can view pending_rw requests or requests they have processed
+            $canView = in_array($letterRequest->status, ['pending_rw', 'approved_final', 'rejected_rw']) ||
                       $letterRequest->approvals()->where('approved_by', $user->id)
                                                  ->where('approval_level', 'rw')
                                                  ->exists();
-        }
-
-        // Also check if the request is from their area
-        if ($canView) {
-            $userRtRw = explode('/', $user->rt_rw)[0];
-            $requestUserRtRw = $letterRequest->user->rt_rw;
-
-            if (!str_contains($requestUserRtRw, $userRtRw)) {
-                $canView = false;
-            }
         }
 
         if (!$canView) {
             abort(403);
         }
 
-        $letterRequest->load(['user', 'letterType', 'approvals.approver', 'subject']);
+        $letterRequest->load(['user.biodata', 'letterType', 'approvals.approver', 'subject']);
 
         return view('approvals.show', compact('letterRequest'));
     }
@@ -162,13 +149,8 @@ class ApprovalController extends Controller
                 'final_processed_at' => now(),
             ]);
 
-            // Generate PDF immediately
-            try {
-                $pdfService = app(PdfService::class);
-                $pdfService->generateLetterPdf($letterRequest);
-            } catch (\Exception $e) {
-                \Log::error('PDF Generation failed: ' . $e->getMessage());
-            }
+            // PDFs are generated on-demand when a user/admin requests download.
+            // No pre-generation or storage happens here.
         }
 
         return redirect()->route('approvals.index')

@@ -12,21 +12,30 @@ class UserVerificationController extends Controller
 
     public function index()
     {
-        $pendingUsers = User::where('is_verified', false)
+        // Tampilkan user yang belum diverifikasi admin ATAU yang belum verify email
+        $pendingUsers = User::where(function($query) {
+                $query->where('is_verified', false)
+                      ->orWhereNull('email_verified_at');
+            })
             ->where('role', 'user')
+            ->with('biodata')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('admin.user-verification.index', compact('pendingUsers'));
+        // Statistics
+        $stats = [
+            'pending' => User::where('is_verified', false)->where('role', 'user')->count(),
+            'verified' => User::where('is_verified', true)->where('role', 'user')->count(),
+            'total' => User::where('role', 'user')->count(),
+            'today' => User::where('role', 'user')->whereDate('created_at', today())->count(),
+        ];
+
+        return view('admin.user-verification.index', compact('pendingUsers', 'stats'));
     }
 
     public function show(User $user)
     {
-        if ($user->is_verified) {
-            return redirect()->route('admin.user-verification.index')
-                ->with('error', 'User sudah terverifikasi.');
-        }
-
+        $user->load('biodata');
         return view('admin.user-verification.show', compact('user'));
     }
 
@@ -37,28 +46,34 @@ class UserVerificationController extends Controller
                 ->with('error', 'User sudah terverifikasi.');
         }
 
-        // Ensure the current authenticated user exists and is valid to avoid FK violations
-        $verifiedBy = null;
-        if (auth()->check()) {
-            $authId = auth()->id();
-            // double-check that a user with this id exists (guard against external auth inconsistencies)
-            $exists = User::where('id', $authId)->exists();
-            if ($exists) {
-                $verifiedBy = $authId;
-            } else {
-                // optional: log this unexpected state for investigation
-                logger()->warning('Authenticated user id not found in users table when verifying user.', ['auth_id' => $authId, 'target_user' => $user->id]);
-            }
+        // Cek apakah user sudah verify email
+        if (!$user->hasVerifiedEmail()) {
+            return redirect()->back()
+                ->with('error', 'User belum melakukan verifikasi email. Tidak dapat disetujui.');
         }
 
-        $user->update([
-            'is_verified' => true,
-            'verified_at' => now(),
-            'verified_by' => $verifiedBy,
+        // Mark email/admin verification and approval
+        $user->is_verified = true;
+        $user->is_approved = true;
+        $user->save();
+
+        // Log for debugging
+        \Log::info('User verified', [
+            'user_id' => $user->id,
+            'is_verified' => $user->is_verified,
+            'is_approved' => $user->is_approved,
+            'email_verified_at' => $user->email_verified_at
         ]);
 
+        // Send activation notification to the user
+        try {
+            $user->notify(new \App\Notifications\AccountActivated());
+        } catch (\Throwable $e) {
+            logger()->warning('Failed to send account activation notification', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+        }
+
         return redirect()->route('admin.user-verification.index')
-            ->with('success', "User {$user->name} berhasil diverifikasi.");
+            ->with('success', "User {$user->name} berhasil disetujui dan notifikasi telah dikirim.");
     }
 
     public function reject(Request $request, User $user)
@@ -67,10 +82,21 @@ class UserVerificationController extends Controller
             'reason' => 'required|string|max:500'
         ]);
 
-        // For now, we'll just delete the user. In production, you might want to keep a record
+        $userName = $user->name;
+        $reason = $request->reason;
+
+        // Send rejection notification email
+        try {
+            $user->notify(new \App\Notifications\AccountRejected($reason));
+            logger()->info('Account rejection notification sent', ['user_id' => $user->id, 'email' => $user->email]);
+        } catch (\Throwable $e) {
+            logger()->warning('Failed to send account rejection notification', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+        }
+
+        // Delete the user after sending notification
         $user->delete();
 
         return redirect()->route('admin.user-verification.index')
-            ->with('success', 'Pendaftaran user ditolak dan data telah dihapus.');
+            ->with('success', "Pendaftaran user {$userName} ditolak dan notifikasi telah dikirim ke email.");
     }
 }

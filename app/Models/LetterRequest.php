@@ -18,7 +18,6 @@ class LetterRequest extends Model
         'form_data',
         'status',
         'rejection_reason',
-        'letter_file',
         'submitted_at',
         'rt_processed_at',
         'rw_processed_at',
@@ -95,6 +94,17 @@ class LetterRequest extends Model
             return $this->user->name;
         } elseif ($this->subject_type === 'family_member' && $this->subject) {
             return $this->subject->name;
+        }
+
+        return 'Tidak diketahui';
+    }
+
+    public function getSubjectNikAttribute()
+    {
+        if ($this->subject_type === 'self') {
+            return $this->user->nik;
+        } elseif ($this->subject_type === 'family_member' && $this->subject) {
+            return $this->subject->nik;
         }
 
         return 'Tidak diketahui';

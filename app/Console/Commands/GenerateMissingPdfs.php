@@ -27,35 +27,8 @@ class GenerateMissingPdfs extends Command
      */
     public function handle(PdfService $pdfService)
     {
-        $this->info('Searching for approved letters without PDF files...');
-
-        $missingPdfLetters = LetterRequest::where('status', 'approved_final')
-            ->whereNull('letter_file')
-            ->get();
-
-        if ($missingPdfLetters->isEmpty()) {
-            $this->info('No letters found that need PDF generation.');
-            return 0;
-        }
-
-        $this->info("Found {$missingPdfLetters->count()} letters that need PDF generation.");
-
-        $bar = $this->output->createProgressBar($missingPdfLetters->count());
-        $bar->start();
-
-        foreach ($missingPdfLetters as $letter) {
-            try {
-                $pdfService->generateLetterPdf($letter);
-                $bar->advance();
-            } catch (\Exception $e) {
-                $this->error("\nFailed to generate PDF for letter {$letter->request_number}: " . $e->getMessage());
-            }
-        }
-
-        $bar->finish();
-        $this->newLine();
-        $this->info('PDF generation completed!');
-
+        $this->warn('This command is deprecated: the application now generates PDFs on-demand and does not persist PDF files.');
+        $this->info('If you still need to generate PDF files for archiving, consider using a custom script that calls the PdfService and writes files locally.');
         return 0;
     }
 }

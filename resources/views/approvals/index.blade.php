@@ -1,121 +1,85 @@
-<x-sidebar-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <span>{{ auth()->user()->isRT() ? 'Persetujuan RT' : 'Persetujuan RW' }}</span>
+@extends('layouts.app-bootstrap')
+
+@section('title', 'Persetujuan Surat')
+
+@section('content')
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="card bg-primary bg-gradient text-white mb-4">
+            <div class="card-body">
+                <h1 class="h4 mb-0"><i class="fas fa-check-double me-2"></i>Daftar Surat Menunggu {{ auth()->user()->isRT() ? 'Persetujuan RT' : 'Persetujuan RW' }}</h1>
+                <p class="mb-0 small">Total: {{ $requests->total() }} surat menunggu persetujuan</p>
+            </div>
         </div>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
-                <div class="mb-4 bg-green-50 border border-green-200 rounded-md p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">
-                                {{ session('success') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            @endif
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-            @if (session('error'))
-                <div class="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-red-800">
-                                {{ session('error') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900">
-                            Daftar Surat Menunggu {{ auth()->user()->isRT() ? 'Persetujuan RT' : 'Persetujuan RW' }}
-                        </h3>
-                        <p class="mt-1 text-sm text-gray-600">
-                            Total: {{ $requests->total() }} surat menunggu persetujuan
-                        </p>
-                    </div>
-
-                    @if($requests->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                @if($requests->count() > 0)
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Nomor Pengajuan</th>
+                                    <th scope="col">Pemohon</th>
+                                    <th scope="col">Jenis Surat</th>
+                                    <th scope="col">Tanggal</th>
+                                    <th scope="col">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($requests as $request)
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Nomor Pengajuan
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Pemohon
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Jenis Surat
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Tanggal Pengajuan
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Aksi
-                                        </th>
+                                        <td class="font-monospace">{{ $request->request_number }}</td>
+                                        <td>
+                                            @if($request->subject_type === 'family_member' && $request->subject)
+                                                <div>{{ $request->subject->name }}</div>
+                                                <div class="small text-muted">{{ $request->subject->relationship_label }} - Diajukan oleh {{ $request->user->name }}</div>
+                                            @else
+                                                <div>{{ $request->user->name }}</div>
+                                                <div class="small text-muted">NIK: {{ $request->user->nik }}</div>
+                                            @endif
+                                        </td>
+                                        <td>{{ $request->letterType->name }}</td>
+                                        <td>{{ $request->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>
+                                            <a href="{{ route('approvals.show', $request) }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-search me-1"></i> Review
+                                            </a>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($requests as $request)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $request->request_number }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">{{ $request->user->name }}</div>
-                                                <div class="text-sm text-gray-500">{{ $request->user->rt_rw }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">{{ $request->letterType->name }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $request->created_at->format('d/m/Y H:i') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('approvals.show', $request) }}" 
-                                                   class="text-indigo-600 hover:text-indigo-900">
-                                                    Review
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
 
-                        <div class="mt-6">
+                    @if($requests->hasPages())
+                        <div class="mt-3">
                             {{ $requests->links() }}
                         </div>
-                    @else
-                        <div class="text-center py-12">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada surat menunggu persetujuan</h3>
-                            <p class="mt-1 text-sm text-gray-500">Semua surat telah diproses.</p>
-                        </div>
                     @endif
-                </div>
+                @else
+                    <div class="text-center py-5">
+                        <div class="display-4 text-success mb-3">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 class="mb-2">Tidak ada surat menunggu persetujuan</h3>
+                        <p class="text-muted">Semua surat telah diproses.</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
-</x-sidebar-layout>
+@endsection

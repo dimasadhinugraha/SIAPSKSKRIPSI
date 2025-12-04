@@ -1,125 +1,189 @@
-<x-sidebar-layout>
-    <x-slot name="header">
-        <span>{{ __('Verifikasi User') }}
-        </span>
-    </x-slot>
+@extends('layouts.app-bootstrap')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
-                <div class="mb-4 bg-green-50 border border-green-200 rounded-md p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">
-                                {{ session('success') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            @endif
+@section('title', 'Verifikasi User')
 
-            @if (session('error'))
-                <div class="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-red-800">
-                                {{ session('error') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            @endif
+@push('styles')
+<style>
+    @media (max-width: 768px) {
+        .stats-card .card-body {
+            padding: 0.75rem;
+        }
+        .stats-card .icon-box {
+            padding: 0.5rem !important;
+        }
+        .stats-card .icon-box i {
+            font-size: 1.25rem !important;
+        }
+        .stats-card h3 {
+            font-size: 1.25rem;
+        }
+        .stats-card p {
+            font-size: 0.7rem;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .table {
+            font-size: 0.85rem;
+        }
+        .btn-sm {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+    }
+</style>
+@endpush
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900">Daftar User Menunggu Verifikasi</h3>
-                        <p class="mt-1 text-sm text-gray-600">
-                            Total: {{ $pendingUsers->total() }} user menunggu verifikasi
-                        </p>
-                    </div>
-
-                    @if($pendingUsers->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Nama
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Email
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            NIK
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            RT/RW
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Tanggal Daftar
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Aksi
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($pendingUsers as $user)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
-                                                <div class="text-sm text-gray-500">{{ $user->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">{{ $user->email }}</div>
-                                                <div class="text-sm text-gray-500">{{ $user->phone }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $user->nik }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $user->rt_rw }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $user->created_at->format('d/m/Y H:i') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('admin.user-verification.show', $user) }}" 
-                                                   class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                                    Detail
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="mt-6">
-                            {{ $pendingUsers->links() }}
-                        </div>
-                    @else
-                        <div class="text-center py-12">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada user menunggu verifikasi</h3>
-                            <p class="mt-1 text-sm text-gray-500">Semua user telah diverifikasi.</p>
-                        </div>
-                    @endif
+@section('content')
+<div class="container-fluid">
+    <div class="card bg-primary bg-gradient text-white mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h4 mb-0 text-white"><i class="fas fa-user-check me-2"></i>Verifikasi User</h1>
+                    <p class="mb-0 small">Kelola dan verifikasi pendaftaran user baru</p>
                 </div>
             </div>
         </div>
     </div>
-</x-sidebar-layout>
+
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <!-- Statistics Cards -->
+    <div class="row g-2 g-md-3 mb-3 mb-md-4">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm h-100 stats-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded p-2 p-md-3 icon-box">
+                                <i class="fas fa-users fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="ms-2 ms-md-3">
+                            <p class="text-muted mb-0 small">Total Pengajuan</p>
+                            <h3 class="mb-0">{{ $stats['total'] }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm h-100 stats-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded p-2 p-md-3 icon-box">
+                                <i class="fas fa-clock fa-2x text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="ms-2 ms-md-3">
+                            <p class="text-muted mb-0 small">Menunggu Review</p>
+                            <h3 class="mb-0">{{ $stats['pending'] }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm h-100 stats-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded p-2 p-md-3 icon-box">
+                                <i class="fas fa-check-circle fa-2x text-success"></i>
+                            </div>
+                        </div>
+                        <div class="ms-2 ms-md-3">
+                            <p class="text-muted mb-0 small">Disetujui</p>
+                            <h3 class="mb-0">{{ $stats['verified'] }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm h-100 stats-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-danger bg-opacity-10 rounded p-2 p-md-3 icon-box">
+                                <i class="fas fa-times-circle fa-2x text-danger"></i>
+                            </div>
+                        </div>
+                        <div class="ms-2 ms-md-3">
+                            <p class="text-muted mb-0 small">Ditolak</p>
+                            <h3 class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if($pendingUsers->count() > 0)
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>NIK</th>
+                                <th>RT/RW</th>
+                                <th>Tanggal Daftar</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($pendingUsers as $user)
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold">{{ $user->name }}</div>
+                                        <div class="small text-muted">{{ $user->biodata ? ($user->biodata->gender == 'L' ? 'Laki-laki' : 'Perempuan') : '-' }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold">{{ $user->email ?? '-' }}</div>
+                                        <div class="small text-muted">{{ $user->biodata->phone ?? '-' }}</div>
+                                    </td>
+                                    <td class="text-muted">{{ $user->nik }}</td>
+                                    <td class="text-muted">{{ $user->biodata->rt_rw ?? '-' }}</td>
+                                    <td class="text-muted small">{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                                    <td>
+                                        <a href="{{ route('admin.user-verification.show', $user) }}" class="btn btn-sm btn-outline-primary">Detail</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                @if($pendingUsers->hasPages())
+                    <div class="mt-3">
+                        {{ $pendingUsers->links() }}
+                    </div>
+                @endif
+            @else
+                <div class="text-center p-5">
+                    <i class="fas fa-user-check display-4 text-muted mb-3"></i>
+                    <h4 class="mb-2">Tidak ada user menunggu verifikasi</h4>
+                    <p class="text-muted mb-3">Semua user telah diverifikasi.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+@endsection

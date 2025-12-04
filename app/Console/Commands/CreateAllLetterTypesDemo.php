@@ -67,10 +67,10 @@ class CreateAllLetterTypesDemo extends Command
                 'final_processed_at' => now(),
             ]);
 
-            // Generate PDF
+            // Generate PDF in-memory (on-demand). We do not persist PDF files by default.
             try {
-                $filename = $pdfService->generateLetterPdf($letterRequest);
-                $this->info("✅ PDF generated: {$filename}");
+                $pdfBinary = $pdfService->generateLetterPdfBinary($letterRequest);
+                $this->info("✅ PDF generated in-memory (size: " . strlen($pdfBinary) . " bytes)");
             } catch (\Exception $e) {
                 $this->error("❌ PDF generation failed: " . $e->getMessage());
             }

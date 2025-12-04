@@ -71,7 +71,7 @@ class LetterRequestController extends Controller
             STR_PAD_LEFT
         );
 
-        LetterRequest::create([
+        $letterRequest = LetterRequest::create([
             'request_number' => $requestNumber,
             'user_id' => auth()->user()->id, // Use user()->id instead of auth()->id()
             'subject_type' => $request->subject_type,
@@ -81,74 +81,46 @@ class LetterRequestController extends Controller
             'status' => 'pending_rt',
         ]);
 
+        // Send notification to RT/RW
+        try {
+            $requester = auth()->user();
+            // Kirim notifikasi hanya ke RT/RW yang sesuai wilayah pemohon
+            $rtRwUsers = \App\Models\User::whereIn('role', ['rt', 'rw'])
+                ->where('rw', $requester->rw)
+                ->where(function($query) use ($requester) {
+                    // Untuk RT, harus sama RT dan RW nya
+                    // Untuk RW, cukup sama RW nya
+                    $query->where('role', 'rw')
+                          ->orWhere(function($q) use ($requester) {
+                              $q->where('role', 'rt')
+                                ->where('rt', $requester->rt);
+                          });
+                })
+                ->get();
+                
+            foreach ($rtRwUsers as $rtRw) {
+                $rtRw->notify(new \App\Notifications\NewLetterRequestNotification($letterRequest));
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('Failed to send letter request notification', ['error' => $e->getMessage()]);
+        }
+
         return redirect()->route('letter-requests.index')
             ->with('success', 'Pengajuan surat berhasil dibuat dengan nomor: ' . $requestNumber);
     }
 
-    public function show(LetterRequest $letterRequest)
+    public function show(LetterRequest $letterRequest, QrCodeService $qrCodeService)
     {
-        // Debug: Show detailed information
-        $currentUser = auth()->user();
-        $currentUserId = $currentUser->id; // Use user()->id instead of auth()->id()
-        $letterUserId = $letterRequest->user_id;
-
-        // Temporary debug view to see what's happening
-        if (request()->has('debug')) {
-            dd([
-                'current_user_id' => $currentUserId,
-                'current_user_id_type' => gettype($currentUserId),
-                'letter_user_id' => $letterUserId,
-                'letter_user_id_type' => gettype($letterUserId),
-                'current_user_name' => $currentUser->name,
-                'letter_user_name' => $letterRequest->user->name,
-                'letter_request_id' => $letterRequest->id,
-                'letter_request_number' => $letterRequest->request_number,
-                'comparison_loose' => $letterUserId == $currentUserId,
-                'comparison_strict_string' => (string)$letterUserId === (string)$currentUserId,
-                'comparison_strict_int' => (int)$letterUserId === (int)$currentUserId,
-            ]);
-        }
-
-        // For now, let's be more permissive and check by name as well
-        $isOwner = false;
-
-        // Check by user ID
-        if ($letterUserId == $currentUserId) {
-            $isOwner = true;
-        } elseif ((string)$letterUserId === (string)$currentUserId) {
-            $isOwner = true;
-        } elseif ((int)$letterUserId === (int)$currentUserId) {
-            $isOwner = true;
-        }
-
-        // Also check by user name as fallback
-        if (!$isOwner && $letterRequest->user && $currentUser) {
-            if ($letterRequest->user->name === $currentUser->name) {
-                $isOwner = true;
-            }
-        }
-
-        // Temporary: Allow access for debugging
-        // TODO: Fix ownership check after identifying the issue
-        if (!$isOwner) {
-            // For now, let's allow access but log the issue
-            \Log::warning('Letter access ownership mismatch', [
-                'letter_user_id' => $letterUserId,
-                'current_user_id' => $currentUserId,
-                'letter_user_name' => $letterRequest->user ? $letterRequest->user->name : 'Unknown',
-                'current_user_name' => $currentUser->name,
-                'letter_id' => $letterRequest->id
-            ]);
-
-            // Temporarily allow access for all verified users
-            if (!$currentUser->is_verified) {
-                abort(403, 'Akun Anda belum terverifikasi.');
-            }
-        }
+        $this->authorize('view', $letterRequest);
 
         $letterRequest->load(['letterType', 'approvals.approver', 'subject']);
 
-        return view('letter-requests.show', compact('letterRequest'));
+        $qrCodeBase64 = null;
+        if ($letterRequest->isApproved()) {
+            $qrCodeBase64 = $qrCodeService->generateQrCodeBase64($letterRequest);
+        }
+
+        return view('letter-requests.show', compact('letterRequest', 'qrCodeBase64'));
     }
 
     public function download(LetterRequest $letterRequest)
@@ -194,18 +166,16 @@ class LetterRequestController extends Controller
             abort(403, 'Surat belum disetujui dan tidak dapat didownload. Status: ' . $letterRequest->status);
         }
 
-        if (!$letterRequest->letter_file) {
-            return redirect()->back()->with('error', 'File surat belum tersedia.');
-        }
+        // Generate PDF on-demand (do not rely on stored file)
+        $pdfService = new \App\Services\PdfService();
+        $pdfBinary = $pdfService->generateLetterPdfBinary($letterRequest);
 
-        $filePath = storage_path('app/public/' . $letterRequest->letter_file);
-        if (!file_exists($filePath)) {
-            return redirect()->back()->with('error', 'File surat tidak ditemukan di server.');
-        }
+        $filename = 'Surat_' . $letterRequest->request_number . '.pdf';
 
-        return response()->download(
-            $filePath,
-            'Surat_' . $letterRequest->request_number . '.pdf'
-        );
+        return response()->streamDownload(function () use ($pdfBinary) {
+            echo $pdfBinary;
+        }, $filename, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }

@@ -63,20 +63,21 @@ class TestPdfGeneration extends Command
 
         $this->info("Letter request created with ID: {$letterRequest->id}");
 
-        // Generate PDF
+        // Generate PDF binary (on-demand). We do not persist to storage by default.
         try {
-            $this->info('Generating PDF...');
-            $filename = $pdfService->generateLetterPdf($letterRequest);
-            $this->info("PDF generated successfully: {$filename}");
+            $this->info('Generating PDF (in-memory)...');
+            $pdfBinary = $pdfService->generateLetterPdfBinary($letterRequest);
+            $this->info('PDF generated in-memory, size: ' . strlen($pdfBinary) . ' bytes');
 
-            // Check if file exists
-            $fullPath = storage_path('app/public/' . $filename);
-            if (file_exists($fullPath)) {
-                $this->info("PDF file exists at: {$fullPath}");
-                $this->info("File size: " . filesize($fullPath) . " bytes");
-            } else {
-                $this->error("PDF file not found at: {$fullPath}");
+            // Optional: write a temp file for quick manual checking (doesn't update DB)
+            $tempPath = storage_path('app/temp');
+            if (!file_exists($tempPath)) {
+                mkdir($tempPath, 0755, true);
             }
+            $fileName = 'test_letter_' . $letterRequest->id . '.pdf';
+            $fullPath = $tempPath . DIRECTORY_SEPARATOR . $fileName;
+            file_put_contents($fullPath, $pdfBinary);
+            $this->info("Temporary PDF written to: {$fullPath}");
 
         } catch (\Exception $e) {
             $this->error('PDF generation failed: ' . $e->getMessage());

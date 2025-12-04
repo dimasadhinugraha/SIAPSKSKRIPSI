@@ -1,0 +1,233 @@
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+.wrapper {
+    display: flex;
+}
+
+#sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: #fff;
+    transition: all 0.3s;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+#sidebar.expand {
+    width: 70px;
+}
+
+#sidebar.expand .sidebar-logo,
+#sidebar.expand .sidebar-link span {
+    display: none;
+}
+
+.toggle-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.sidebar-logo {
+    padding: 1rem;
+}
+
+.sidebar-logo a {
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.sidebar-nav {
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-item {
+    padding: 0.5rem 1rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.sidebar-link i {
+    margin-right: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.main {
+    flex: 1;
+    transition: all 0.3s;
+}
+
+/* News Section Styles */
+.news-carousel {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.carousel-item {
+    height: 400px;
+}
+
+.carousel-item img {
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-caption {
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    text-align: left;
+}
+
+.news-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 100%;
+}
+
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.news-card img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.news-card .card-body {
+    padding: 1.5rem;
+}
+
+.news-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.btn-read-more {
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-read-more:hover {
+    transform: translateX(5px);
+}
+
+.section-title {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--secondary-color);
+    border-radius: 2px;
+}
+
+.modal-body img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+}
+
+.modal-body {
+    text-align: center;
+}
+
+.news-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+
+/* Mobile Off-canvas Sidebar */
+@media (max-width: 768px) {
+    #sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1050;
+        transform: translateX(-100%);
+        width: 250px; /* Keep original width for mobile view */
+    }
+
+    #sidebar.expand {
+        transform: translateX(0);
+        width: 250px; /* Ensure it's full width when expanded */
+    }
+
+    /* Override desktop shrink behavior for mobile */
+    #sidebar.expand .sidebar-logo,
+    #sidebar.expand .sidebar-link span {
+        display: inline; 
+    }
+    .main {
+        padding-left: 0; /* Main content doesn't shift */
+    }
+    
+    .modal-body img {
+        max-height: 300px;
+    }
+
+    /* --- Overlay Styles for Mobile Only --- */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}

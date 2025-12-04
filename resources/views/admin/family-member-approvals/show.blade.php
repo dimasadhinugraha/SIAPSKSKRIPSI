@@ -1,384 +1,320 @@
-<x-sidebar-layout>
-    <x-slot name="header">
-        🔍 Review Anggota Keluarga
-    </x-slot>
+@extends('layouts.app-bootstrap')
 
-    <!-- Page Header -->
-    <div class="bg-white shadow-sm border-b border-gray-200 mb-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-6">
+@section('content')
+<div class="container-fluid px-4">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    <!-- Header Card -->
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">🔍 Review Anggota Keluarga</h1>
-                    <p class="text-gray-600 mt-1">{{ $familyMember->name }} - {{ $familyMember->relationship_label }}</p>
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Review Anggota Keluarga</h5>
+                    <small>Detail dan verifikasi data anggota keluarga</small>
                 </div>
-                <div class="flex items-center space-x-3">
+                <div>
                     @if($familyMember->approval_status === 'pending')
-                        <form action="{{ route('admin.family-member-approvals.approve', $familyMember) }}" method="POST" class="inline">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit"
-                                    onclick="return confirm('Setujui anggota keluarga ini?')"
-                                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Setujui
-                            </button>
-                        </form>
+                        <span class="badge bg-warning text-dark">Menunggu Review</span>
+                    @elseif($familyMember->approval_status === 'approved')
+                        <span class="badge bg-success">Disetujui</span>
+                    @else
+                        <span class="badge bg-danger">Ditolak</span>
                     @endif
-
-                    <a href="{{ route('admin.family-member-approvals.index') }}"
-                       class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                        </svg>
-                        Kembali
-                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h4 class="mb-1">{{ $familyMember->name }}</h4>
+                    <p class="text-muted mb-2">{{ $familyMember->relationship_label }}</p>
+                    <p class="mb-1"><strong>NIK:</strong> {{ $familyMember->nik }}</p>
+                    <p class="mb-0"><strong>Pengaju:</strong> {{ $familyMember->user ? $familyMember->user->name : 'Tidak ada' }}</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-1"><small class="text-muted">Diajukan:</small> {{ $familyMember->created_at->format('d M Y, H:i') }}</p>
+                    @if($familyMember->approved_at)
+                        <p class="mb-2">
+                            <small class="text-muted">
+                                @if($familyMember->approval_status === 'approved')
+                                    Disetujui:
+                                @else
+                                    Ditolak:
+                                @endif
+                            </small>
+                            {{ $familyMember->approved_at->format('d M Y, H:i') }}
+                        </p>
+                    @endif
+                    <div class="mt-3">
+                        @if($familyMember->approval_status === 'pending')
+                            <form action="{{ route('admin.family-member-approvals.approve', $familyMember) }}" method="POST" class="d-inline me-2">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" onclick="return confirm('Setujui anggota keluarga ini?')" 
+                                        class="btn btn-success">
+                                    <i class="fas fa-check me-1"></i> Setujui
+                                </button>
+                            </form>
+                        @endif
+                        <a href="{{ route('admin.family-member-approvals.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Kembali
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="py-8">
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            @if(session('success'))
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                            </svg>
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Data Pribadi -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-user me-2"></i>Data Pribadi</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Nama Lengkap</label>
+                            <strong>{{ $familyMember->name }}</strong>
                         </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">NIK</label>
+                            <strong>{{ $familyMember->nik }}</strong>
                         </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Jenis Kelamin</label>
+                            <strong>
+                                @if($familyMember->gender === 'L')
+                                    <i class="fas fa-mars text-primary"></i> Laki-laki
+                                @else
+                                    <i class="fas fa-venus text-danger"></i> Perempuan
+                                @endif
+                            </strong>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Hubungan Keluarga</label>
+                            <span class="badge bg-primary">{{ $familyMember->relationship_label }}</span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Tempat Lahir</label>
+                            <strong>{{ $familyMember->place_of_birth }}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Tanggal Lahir</label>
+                            <strong>{{ $familyMember->date_of_birth->format('d M Y') }} ({{ $familyMember->date_of_birth->age }} tahun)</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Tambahan -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Data Tambahan</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Agama</label>
+                            <strong>{{ ucfirst($familyMember->religion) }}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Status Perkawinan</label>
+                            <strong>{{ ucfirst($familyMember->marital_status) }}</strong>
+                        </div>
+                        @if($familyMember->education)
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Pendidikan</label>
+                                <strong>{{ strtoupper($familyMember->education) }}</strong>
+                            </div>
+                        @endif
+                        @if($familyMember->occupation)
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Pekerjaan</label>
+                                <strong>{{ $familyMember->occupation }}</strong>
+                            </div>
+                        @endif
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Kewarganegaraan</label>
+                            <strong>{{ $familyMember->nationality }}</strong>
+                        </div>
+                        @if($familyMember->father_name)
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Nama Ayah</label>
+                                <strong>{{ $familyMember->father_name }}</strong>
+                            </div>
+                        @endif
+                        @if($familyMember->mother_name)
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Nama Ibu</label>
+                                <strong>{{ $familyMember->mother_name }}</strong>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    @if($familyMember->notes)
+                        <div class="mt-3">
+                            <label class="text-muted small d-block">Catatan</label>
+                            <div class="alert alert-info mb-0">{{ $familyMember->notes }}</div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Data Pengaju -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-user-tie me-2"></i>Data Pengaju</h6>
+                </div>
+                <div class="card-body">
+                    @if($familyMember->user)
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Nama Pengaju</label>
+                                <strong>{{ $familyMember->user->name }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Email</label>
+                                <strong>{{ $familyMember->user->email }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">NIK Kepala Keluarga</label>
+                                <strong>{{ $familyMember->user->nik }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Status Verifikasi</label>
+                                @if($familyMember->user->is_verified)
+                                    <span class="badge bg-success">Terverifikasi</span>
+                                @else
+                                    <span class="badge bg-warning text-dark">Belum Terverifikasi</span>
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        <div class="alert alert-warning mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Data pengaju tidak tersedia
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Dokumen Pendukung -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>Dokumen Pendukung</h6>
+                </div>
+                <div class="card-body text-center">
+                    @if($familyMember->supporting_document)
+                        <a href="{{ Storage::url($familyMember->supporting_document) }}" 
+                           target="_blank" 
+                           class="btn btn-outline-primary w-100">
+                            <i class="fas fa-download me-2"></i>Download Dokumen
+                        </a>
+                    @else
+                        <p class="text-muted mb-0">Tidak ada dokumen</p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Actions -->
+            @if($familyMember->approval_status === 'pending')
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Aksi Review</h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Approve Form -->
+                        <form action="{{ route('admin.family-member-approvals.approve', $familyMember) }}" method="POST" class="mb-3">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" 
+                                    onclick="return confirm('Setujui anggota keluarga ini?')"
+                                    class="btn btn-success w-100">
+                                <i class="fas fa-check me-2"></i>Setujui Pengajuan
+                            </button>
+                        </form>
+
+                        <!-- Reject Form -->
+                        <form action="{{ route('admin.family-member-approvals.reject', $familyMember) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <div class="mb-3">
+                                <label for="rejection_reason" class="form-label">
+                                    Alasan Penolakan <span class="text-danger">*</span>
+                                </label>
+                                <textarea name="rejection_reason" 
+                                          id="rejection_reason" 
+                                          rows="3" 
+                                          required
+                                          class="form-control"
+                                          placeholder="Jelaskan alasan penolakan..."></textarea>
+                            </div>
+                            <button type="submit" 
+                                    onclick="return confirm('Tolak anggota keluarga ini?')"
+                                    class="btn btn-danger w-100">
+                                <i class="fas fa-times me-2"></i>Tolak Pengajuan
+                            </button>
+                        </form>
                     </div>
                 </div>
             @endif
 
-            <!-- Status Header -->
-            <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg mb-6 overflow-hidden">
-                <div class="px-6 py-8 text-white">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                                    <span class="text-white text-2xl font-bold">
-                                        {{ strtoupper(substr($familyMember->name, 0, 2)) }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="ml-6">
-                                <h1 class="text-3xl font-bold">{{ $familyMember->name }}</h1>
-                                <p class="text-blue-100 text-lg">{{ $familyMember->relationship_label }}</p>
-                                <p class="text-blue-200 text-sm">NIK: {{ $familyMember->nik }}</p>
-                                <p class="text-blue-200 text-sm">Pengaju: {{ $familyMember->user->name }}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="mb-4">
-                                <span class="px-4 py-2 rounded-full text-sm font-semibold {{ $familyMember->status_badge_color }}">
-                                    @if($familyMember->approval_status === 'pending')
-                                        ⏳ {{ $familyMember->approval_status_label }}
-                                    @elseif($familyMember->approval_status === 'approved')
-                                        ✅ {{ $familyMember->approval_status_label }}
-                                    @else
-                                        ❌ {{ $familyMember->approval_status_label }}
-                                    @endif
-                                </span>
-                            </div>
-                            <p class="text-blue-100 text-sm">Diajukan: {{ $familyMember->created_at->format('d F Y, H:i') }}</p>
-                            @if($familyMember->approved_at)
-                                <p class="text-blue-100 text-sm">
-                                    @if($familyMember->approval_status === 'approved')
-                                        Disetujui: {{ $familyMember->approved_at->format('d F Y, H:i') }}
-                                    @else
-                                        Ditolak: {{ $familyMember->approved_at->format('d F Y, H:i') }}
-                                    @endif
-                                </p>
-                            @endif
-                        </div>
-                    </div>
+            <!-- Riwayat Status -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-history me-2"></i>Riwayat Status</h6>
                 </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Main Content -->
-                <div class="lg:col-span-2 space-y-6">
-                    <!-- Data Pribadi -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <div class="px-6 py-4 bg-gray-50 border-b">
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                👤 Data Pribadi
-                            </h3>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="d-flex mb-3">
+                            <div class="me-3">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-plus text-primary"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <strong class="d-block">Pengajuan Dibuat</strong>
+                                <small class="text-muted">{{ $familyMember->created_at->format('d M Y, H:i') }}</small>
+                            </div>
                         </div>
-                        <div class="p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Nama Lengkap</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->name }}</p>
+
+                        @if($familyMember->approved_at)
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <div class="bg-{{ $familyMember->approval_status === 'approved' ? 'success' : 'danger' }} bg-opacity-10 rounded-circle p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-{{ $familyMember->approval_status === 'approved' ? 'check' : 'times' }} text-{{ $familyMember->approval_status === 'approved' ? 'success' : 'danger' }}"></i>
+                                    </div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">NIK</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->nik }}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Jenis Kelamin</label>
-                                    <p class="text-lg font-semibold text-gray-900">
-                                        @if($familyMember->gender === 'L')
-                                            👨 {{ $familyMember->gender_label }}
-                                        @else
-                                            👩 {{ $familyMember->gender_label }}
+                                    <strong class="d-block">
+                                        {{ $familyMember->approval_status === 'approved' ? 'Disetujui' : 'Ditolak' }}
+                                        @if($familyMember->approver)
+                                            oleh {{ $familyMember->approver->name }}
                                         @endif
-                                    </p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Hubungan Keluarga</label>
-                                    <span class="px-3 py-1 text-sm font-semibold rounded-full 
-                                        @if($familyMember->relationship === 'kepala_keluarga') bg-blue-100 text-blue-800
-                                        @elseif(in_array($familyMember->relationship, ['istri', 'suami'])) bg-green-100 text-green-800
-                                        @elseif($familyMember->relationship === 'anak') bg-purple-100 text-purple-800
-                                        @else bg-gray-100 text-gray-800 @endif">
-                                        {{ $familyMember->relationship_label }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Tempat Lahir</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->place_of_birth }}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Tanggal Lahir</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->formatted_date_of_birth }} ({{ $familyMember->age }} tahun)</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Data Tambahan -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <div class="px-6 py-4 bg-gray-50 border-b">
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                📋 Data Tambahan
-                            </h3>
-                        </div>
-                        <div class="p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Agama</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->religion_label }}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Status Perkawinan</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->marital_status_label }}</p>
-                                </div>
-                                @if($familyMember->education)
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-1">Pendidikan</label>
-                                        <p class="text-lg font-semibold text-gray-900">{{ $familyMember->education_label }}</p>
-                                    </div>
-                                @endif
-                                @if($familyMember->occupation)
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-1">Pekerjaan</label>
-                                        <p class="text-lg font-semibold text-gray-900">{{ $familyMember->occupation }}</p>
-                                    </div>
-                                @endif
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Kewarganegaraan</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->nationality }}</p>
-                                </div>
-                                @if($familyMember->father_name)
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-1">Nama Ayah</label>
-                                        <p class="text-lg font-semibold text-gray-900">{{ $familyMember->father_name }}</p>
-                                    </div>
-                                @endif
-                                @if($familyMember->mother_name)
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-1">Nama Ibu</label>
-                                        <p class="text-lg font-semibold text-gray-900">{{ $familyMember->mother_name }}</p>
-                                    </div>
-                                @endif
-                            </div>
-                            
-                            @if($familyMember->notes)
-                                <div class="mt-6">
-                                    <label class="block text-sm font-medium text-gray-500 mb-2">Catatan</label>
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        <p class="text-gray-900">{{ $familyMember->notes }}</p>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Data Pengaju -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <div class="px-6 py-4 bg-gray-50 border-b">
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                👨‍💼 Data Pengaju
-                            </h3>
-                        </div>
-                        <div class="p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Nama Pengaju</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->user->name }}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->user->email }}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">RT/RW</label>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $familyMember->user->rt_rw }}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Status Verifikasi</label>
-                                    <span class="px-3 py-1 text-sm font-semibold rounded-full {{ $familyMember->user->is_verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                        {{ $familyMember->user->is_verified ? '✅ Terverifikasi' : '⏳ Belum Terverifikasi' }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sidebar -->
-                <div class="space-y-6">
-                    <!-- Dokumen Pendukung -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <div class="px-6 py-4 bg-gray-50 border-b">
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                📄 Dokumen Pendukung
-                            </h3>
-                        </div>
-                        <div class="p-6">
-                            @if($familyMember->supporting_document)
-                                <div class="text-center">
-                                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                    </div>
-                                    <p class="text-sm text-gray-600 mb-4">Dokumen telah diupload</p>
-                                    <a href="{{ route('admin.family-member-approvals.download-document', $familyMember) }}" 
-                                       class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                        Download Dokumen
-                                    </a>
-                                </div>
-                            @else
-                                <div class="text-center text-gray-500">
-                                    <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                    </div>
-                                    <p class="text-sm">Tidak ada dokumen</p>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    @if($familyMember->approval_status === 'pending')
-                        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                            <div class="px-6 py-4 bg-gray-50 border-b">
-                                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                    ⚡ Aksi Review
-                                </h3>
-                            </div>
-                            <div class="p-6 space-y-4">
-                                <!-- Approve Form -->
-                                <form action="{{ route('admin.family-member-approvals.approve', $familyMember) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" 
-                                            onclick="return confirm('Setujui anggota keluarga ini?')"
-                                            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors inline-flex items-center justify-center">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                        Setujui Pengajuan
-                                    </button>
-                                </form>
-
-                                <!-- Reject Form -->
-                                <form action="{{ route('admin.family-member-approvals.reject', $familyMember) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <div class="mb-3">
-                                        <label for="rejection_reason" class="block text-sm font-medium text-gray-700 mb-2">
-                                            Alasan Penolakan <span class="text-red-500">*</span>
-                                        </label>
-                                        <textarea name="rejection_reason" 
-                                                  id="rejection_reason" 
-                                                  rows="3" 
-                                                  required
-                                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                                                  placeholder="Jelaskan alasan penolakan..."></textarea>
-                                    </div>
-                                    <button type="submit" 
-                                            onclick="return confirm('Tolak anggota keluarga ini?')"
-                                            class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors inline-flex items-center justify-center">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                        Tolak Pengajuan
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Status History -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <div class="px-6 py-4 bg-gray-50 border-b">
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                                📊 Riwayat Status
-                            </h3>
-                        </div>
-                        <div class="p-6">
-                            <div class="space-y-4">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                        <span class="text-blue-600 text-sm">📝</span>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-gray-900">Pengajuan Dibuat</p>
-                                        <p class="text-xs text-gray-500">{{ $familyMember->created_at->format('d F Y, H:i') }}</p>
-                                    </div>
-                                </div>
-
-                                @if($familyMember->approved_at)
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 w-8 h-8 {{ $familyMember->approval_status === 'approved' ? 'bg-green-100' : 'bg-red-100' }} rounded-full flex items-center justify-center">
-                                            <span class="{{ $familyMember->approval_status === 'approved' ? 'text-green-600' : 'text-red-600' }} text-sm">
-                                                {{ $familyMember->approval_status === 'approved' ? '✅' : '❌' }}
-                                            </span>
+                                    </strong>
+                                    <small class="text-muted d-block">{{ $familyMember->approved_at->format('d M Y, H:i') }}</small>
+                                    @if($familyMember->rejection_reason)
+                                        <div class="alert alert-danger alert-sm mt-2 mb-0">
+                                            <small>{{ $familyMember->rejection_reason }}</small>
                                         </div>
-                                        <div class="ml-3">
-                                            <p class="text-sm font-medium text-gray-900">
-                                                {{ $familyMember->approval_status === 'approved' ? 'Disetujui' : 'Ditolak' }}
-                                                @if($familyMember->approver)
-                                                    oleh {{ $familyMember->approver->name }}
-                                                @endif
-                                            </p>
-                                            <p class="text-xs text-gray-500">{{ $familyMember->approved_at->format('d F Y, H:i') }}</p>
-                                            @if($familyMember->rejection_reason)
-                                                <p class="text-xs text-red-600 mt-1">{{ $familyMember->rejection_reason }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</x-sidebar-layout>
+</div>
+@endsection

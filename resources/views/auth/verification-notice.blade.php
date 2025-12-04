@@ -86,8 +86,11 @@
     </div>
 
     <div class="mt-6 flex items-center justify-center">
-        <a href="{{ route('login') }}" class="text-sm text-indigo-600 hover:text-indigo-500">
-            Kembali ke halaman login
-        </a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="text-sm text-indigo-600 hover:text-indigo-500 bg-transparent border-0 p-0">
+                Logout &amp; Kembali ke halaman login
+            </button>
+        </form>
     </div>
 </x-guest-layout>

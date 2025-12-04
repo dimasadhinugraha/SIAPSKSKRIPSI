@@ -21,7 +21,13 @@ class VerifiedMiddleware
 
         $user = auth()->user();
 
-        if (!$user->is_verified) {
+        // Admins don't need to be verified through this flow
+        if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
+            return $next($request);
+        }
+
+        // Check users.is_verified (admin approval)
+        if (isset($user->is_verified) && ! $user->is_verified) {
             return redirect()->route('verification.notice');
         }
 

@@ -11,25 +11,32 @@ class PdfService
 {
     public function generateLetterPdf(LetterRequest $letterRequest): string
     {
+        // Backwards-compat behavior changed: generate and return PDF binary
         $letterRequest->load(['user', 'letterType', 'approvals.approver', 'subject']);
 
-        // Generate PDF content
         $html = $this->generateLetterHtml($letterRequest);
 
-        // Create PDF
         $pdf = Pdf::loadHTML($html);
         $pdf->setPaper('A4', 'portrait');
 
-        // Generate filename
-        $filename = 'letters/' . $letterRequest->request_number . '_' . time() . '.pdf';
+        // Return PDF binary content. We no longer persist files by default.
+        return $pdf->output();
+    }
 
-        // Save PDF to storage
-        Storage::disk('public')->put($filename, $pdf->output());
+    /**
+     * Generate PDF binary content without saving to storage.
+     * Use this for on-demand streaming downloads.
+     */
+    public function generateLetterPdfBinary(LetterRequest $letterRequest): string
+    {
+        $letterRequest->load(['user', 'letterType', 'approvals.approver', 'subject']);
 
-        // Update letter request with file path
-        $letterRequest->update(['letter_file' => $filename]);
+        $html = $this->generateLetterHtml($letterRequest);
 
-        return $filename;
+        $pdf = Pdf::loadHTML($html);
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->output();
     }
     
     private function generateLetterHtml(LetterRequest $letterRequest): string
@@ -38,6 +45,19 @@ class PdfService
         $letterType = $letterRequest->letterType;
         $formData = $letterRequest->form_data;
         $subjectDetails = $letterRequest->subject_details;
+
+        // Ensure subjectDetails is an array with fallback to user data to avoid null offsets
+        if (!$subjectDetails || !is_array($subjectDetails)) {
+            $subjectDetails = [
+                'name' => $user->name ?? 'Tidak Diketahui',
+                'nik' => $user->nik ?? '-',
+                'gender' => $user->gender ?? 'L',
+                'birth_date' => $user->birth_date ?? null,
+                'birth_place' => $user->birth_place ?? null,
+                'address' => $user->address ?? '-',
+                'relationship' => 'Pemohon'
+            ];
+        }
 
         // Generate QR Code for digital signature
         $qrCodeService = new \App\Services\QrCodeService();
@@ -59,6 +79,20 @@ class PdfService
             'hubungan' => $subjectDetails['relationship'],
             'created_at' => $letterRequest->created_at,
         ], $formData ?? []);
+
+        // Use a dedicated compact template for Surat Keterangan Domisili to keep it 1 page.
+        // Match more robustly: if name contains "domisili" (case-insensitive) or template equals 'keterangan-domisili'.
+        $isDomisili = false;
+        if (!empty($letterType->name) && str_contains(strtolower($letterType->name), 'domisili')) {
+            $isDomisili = true;
+        }
+        if (!empty($letterType->template) && $letterType->template === 'keterangan-domisili') {
+            $isDomisili = true;
+        }
+
+        if ($isDomisili && view()->exists('surat.keterangan-domisili')) {
+            return view('surat.keterangan-domisili', compact('letterRequest', 'user', 'letterType', 'formData', 'qrCodeBase64', 'subjectDetails'))->render();
+        }
 
         // Use specific template if available, otherwise use generic template
         $templateName = $letterType->template ?? 'pdf.letter-template';

@@ -43,6 +43,25 @@ class ChatController extends Controller
         return view('chat.index', compact('users'));
     }
 
+    public function getChatWithUser(User $user)
+    {
+        $currentUser = auth()->user();
+        $chat = Chat::createPrivateChat($currentUser->id, $user->id, "Chat dengan {$user->name}");
+
+        $chat->markAsRead($currentUser->id);
+
+        $messages = $chat->messages()->with('user')->get();
+
+        return response()->json([
+            'chat_id' => $chat->id,
+            'user' => [
+                'name' => $user->name,
+                'initials' => $user->initials,
+            ],
+            'messages' => $messages,
+        ]);
+    }
+
     public function show(Chat $chat)
     {
         $user = auth()->user();
@@ -95,19 +114,22 @@ class ChatController extends Controller
         return redirect()->route('chat.show', $chat)->with('success', 'Chat berhasil dibuat.');
     }
 
-    public function sendMessage(Request $request, Chat $chat)
+    public function sendMessage(Request $request)
     {
         $user = auth()->user();
+
+        $request->validate([
+            'chat_id' => 'required|exists:chats,id',
+            'message' => 'required_without:file|string|max:1000',
+            'file' => 'nullable|file|max:10240', // 10MB max
+        ]);
+
+        $chat = Chat::find($request->chat_id);
 
         // Check if user is participant
         if (!$chat->isParticipant($user->id)) {
             abort(403, 'Anda tidak memiliki akses ke chat ini.');
         }
-
-        $request->validate([
-            'message' => 'required_without:file|string|max:1000',
-            'file' => 'nullable|file|max:10240', // 10MB max
-        ]);
 
         $messageData = [
             'chat_id' => $chat->id,

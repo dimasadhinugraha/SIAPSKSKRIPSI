@@ -1,216 +1,253 @@
-<x-sidebar-layout>
-    <x-slot name="title">Profil Saya</x-slot>
-    <x-slot name="header">
-        👤 Profil Saya
-    </x-slot>
+@extends('layouts.app-bootstrap')
 
-    <div class="py-4">
-        <div class="w-full mx-auto px-2 sm:px-4 lg:px-6">
-            <!-- Compact Profile Header -->
-            <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-lg shadow-lg p-4 mb-4">
-                <div class="flex items-center space-x-4">
-                    <!-- Compact Avatar -->
-                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                        <span class="text-xl font-bold text-green-600">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
-                        </span>
+@section('title', 'Profil Saya')
+
+@section('content')
+    <div class="container-fluid">
+        <!-- Profile Header -->
+        <div class="card bg-success bg-gradient text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <img src="{{ auth()->user()->biodata && auth()->user()->biodata->profile_photo ? Storage::url(auth()->user()->biodata->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=random' }}"
+                             alt="Profile" class="rounded-circle" style="width: 64px; height: 64px; object-fit: cover; border: 2px solid white;">
                     </div>
-
-                    <!-- Compact Basic Info -->
-                    <div class="flex-1">
-                        <h1 class="text-lg font-bold text-white mb-1">{{ auth()->user()->name }}</h1>
-                        <div class="flex flex-col space-y-1 text-green-100 text-sm">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
-                                </svg>
-                                <span class="text-xs">{{ auth()->user()->email }}</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                <span class="text-xs">{{ auth()->user()->rt_rw }}</span>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white bg-opacity-20 text-white">
-                                {{ auth()->user()->role_label }}
-                            </span>
-                            @if(auth()->user()->is_verified)
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500 text-white ml-2">
-                                    ✓ Terverifikasi
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-500 text-white ml-2">
-                                    ⏳ Menunggu Verifikasi
-                                </span>
-                            @endif
+                    <div class="flex-grow-1 ms-3">
+                        <h1 class="h4 mb-0">{{ auth()->user()->name }}</h1>
+                        <div class="d-flex flex-column text-white-75 small">
+                            <span class="mb-1"><i class="fas fa-envelope fa-fw me-2"></i>{{ auth()->user()->email ?? '-' }}</span>
+                            <span><i class="fas fa-map-marker-alt fa-fw me-2"></i>{{ auth()->user()->biodata->rt_rw ?? '-' }}</span>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Biodata Cards -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Personal Information -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                            Informasi Personal
-                        </h3>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">NIK</label>
-                                <p class="text-gray-900 font-mono">{{ auth()->user()->nik ?? '-' }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Nama Lengkap</label>
-                                <p class="text-gray-900">{{ auth()->user()->name }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
-                                <p class="text-gray-900">{{ auth()->user()->email }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Nomor Telepon</label>
-                                <p class="text-gray-900">{{ auth()->user()->phone ?? '-' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Address Information -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            Informasi Alamat
-                        </h3>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">RT/RW</label>
-                                <p class="text-gray-900">{{ auth()->user()->rt_rw }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Alamat Lengkap</label>
-                                <p class="text-gray-900">{{ auth()->user()->address ?? 'Belum diisi' }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Desa</label>
-                                <p class="text-gray-900">{{ config('app.village_name', 'Nama Desa') }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Kecamatan</label>
-                                <p class="text-gray-900">{{ config('app.district_name', 'Nama Kecamatan') }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Account Information -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                            </svg>
-                            Informasi Akun
-                        </h3>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Role/Peran</label>
-                                <p class="text-gray-900">{{ auth()->user()->role_label }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Status Verifikasi</label>
-                                <div class="flex items-center">
-                                    @if(auth()->user()->is_verified)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            Terverifikasi
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            Menunggu Verifikasi
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Tanggal Bergabung</label>
-                                <p class="text-gray-900">{{ auth()->user()->created_at->format('d F Y') }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Terakhir Login</label>
-                                <p class="text-gray-900">{{ auth()->user()->updated_at->diffForHumans() }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Statistics -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                            Statistik Aktivitas
-                        </h3>
-                    </div>
-                    <div class="p-6">
-                        @php
-                            $letterRequests = auth()->user()->letterRequests()->count();
-                            $familyMembers = auth()->user()->familyMembers()->count();
-                        @endphp
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="text-center p-4 bg-blue-50 rounded-lg">
-                                <div class="text-2xl font-bold text-blue-600">{{ $letterRequests }}</div>
-                                <div class="text-sm text-blue-800">Pengajuan Surat</div>
-                            </div>
-                            <div class="text-center p-4 bg-green-50 rounded-lg">
-                                <div class="text-2xl font-bold text-green-600">{{ $familyMembers }}</div>
-                                <div class="text-sm text-green-800">Anggota Keluarga</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Note -->
-            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <div>
-                        <h4 class="text-sm font-medium text-blue-900 mb-1">Informasi Penting</h4>
-                        <p class="text-sm text-blue-800">
-                            Data profil ini bersifat read-only dan tidak dapat diubah oleh user.
-                            Jika ada kesalahan data atau perlu perubahan, silakan hubungi administrator desa.
-                        </p>
+                    <div class="text-end">
+                        <span class="badge bg-light text-success fs-6">{{ auth()->user()->role_label }}</span>
+                        @if(auth()->user()->is_verified)
+                            <span class="badge bg-light text-primary fs-6 ms-2">✓ Terverifikasi</span>
+                        @else
+                            <span class="badge bg-warning text-dark fs-6 ms-2">Menunggu Verifikasi</span>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
+
+        @if(session('status'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>{{ session('status') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        <!-- Biodata Cards -->
+        <div class="row">
+            <!-- Profile Photo Upload -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-camera fa-fw me-2 text-primary"></i>
+                        <h5 class="mb-0">Foto Profil</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <img src="{{ auth()->user()->biodata && auth()->user()->biodata->profile_photo ? Storage::url(auth()->user()->biodata->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=random&size=200' }}"
+                                 alt="Profile" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #dee2e6;">
+                        </div>
+                        
+                        <form action="{{ route('profile.upload-photo') }}" method="POST" enctype="multipart/form-data" id="uploadPhotoForm">
+                            @csrf
+                            <div class="mb-3">
+                                <input type="file" name="profile_photo" id="profile_photo" class="form-control" accept="image/jpeg,image/png,image/jpg" onchange="previewImage(event)">
+                                <small class="text-muted">Format: JPG, JPEG, PNG. Max: 2MB</small>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-upload me-2"></i>Upload Foto
+                                </button>
+                                @if(auth()->user()->biodata && auth()->user()->biodata->profile_photo)
+                                <button type="button" class="btn btn-outline-danger" onclick="deletePhoto()">
+                                    <i class="fas fa-trash me-2"></i>Hapus Foto
+                                </button>
+                                @endif
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-user fa-fw me-2 text-primary"></i>
+                        <h5 class="mb-0">Informasi Personal</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">NIK</div>
+                            <div class="col-sm-7 font-monospace">{{ auth()->user()->nik ?? '-' }}</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">Nama Lengkap</div>
+                            <div class="col-sm-7">{{ auth()->user()->name }}</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">Email</div>
+                            <div class="col-sm-7">{{ auth()->user()->email ?? '-' }}</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">Nomor Telepon</div>
+                            <div class="col-sm-7">{{ auth()->user()->biodata->phone ?? '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Information -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-home fa-fw me-2 text-success"></i>
+                        <h5 class="mb-0">Informasi Alamat</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">RT/RW</div>
+                            <div class="col-sm-7">{{ auth()->user()->biodata->rt_rw ?? '-' }}</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">Alamat Lengkap</div>
+                            <div class="col-sm-7">{{ auth()->user()->biodata->address ?? 'Belum diisi' }}</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">Desa</div>
+                            <div class="col-sm-7">{{ config('app.village_name', 'Ciasmara') }}</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">Kecamatan</div>
+                            <div class="col-sm-7">{{ config('app.district_name', 'Pamijahan') }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-shield-alt fa-fw me-2 text-purple"></i>
+                        <h5 class="mb-0">Informasi Akun</h5>
+                    </div>
+                    <div class="card-body">
+                         <div class="row">
+                            <div class="col-sm-5 text-muted">Role/Peran</div>
+                            <div class="col-sm-7">{{ auth()->user()->role_label }}</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">Status Verifikasi</div>
+                            <div class="col-sm-7">
+                                @if(auth()->user()->is_verified)
+                                    <span class="badge bg-success">Terverifikasi</span>
+                                @else
+                                    <span class="badge bg-warning">Menunggu Verifikasi</span>
+                                @endif
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">Tanggal Bergabung</div>
+                            <div class="col-sm-7">{{ auth()->user()->created_at->format('d F Y') }}</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5 text-muted">Terakhir Diperbarui</div>
+                            <div class="col-sm-7">{{ auth()->user()->updated_at->diffForHumans() }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Statistics -->
+             <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-chart-bar fa-fw me-2 text-info"></i>
+                        <h5 class="mb-0">Statistik Aktivitas</h5>
+                    </div>
+                    <div class="card-body">
+                         @php
+                            $letterRequests = auth()->user()->letterRequests()->count();
+                            $familyMembers = auth()->user()->familyMembers()->count();
+                        @endphp
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <div class="h2 fw-bold text-primary">{{ $letterRequests }}</div>
+                                    <div class="text-muted small">Pengajuan Surat</div>
+                                </div>
+                            </div>
+                             <div class="col-6">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <div class="h2 fw-bold text-success">{{ $familyMembers }}</div>
+                                    <div class="text-muted small">Anggota Keluarga</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Note -->
+        <div class="alert alert-info mt-4">
+            <h4 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Informasi Penting</h4>
+            <p>
+                Data profil ini bersifat read-only dan tidak dapat diubah oleh user.
+                Jika ada kesalahan data atau perlu perubahan, silakan hubungi administrator desa.
+            </p>
+        </div>
     </div>
-</x-sidebar-layout>
+
+    <!-- Delete Photo Form -->
+    <form id="deletePhotoForm" action="{{ route('profile.delete-photo') }}" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
+    @push('scripts')
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.querySelector('.rounded-circle.mb-3');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function deletePhoto() {
+            if (confirm('Apakah Anda yakin ingin menghapus foto profil?')) {
+                document.getElementById('deletePhotoForm').submit();
+            }
+        }
+    </script>
+    @endpush
+@endsection

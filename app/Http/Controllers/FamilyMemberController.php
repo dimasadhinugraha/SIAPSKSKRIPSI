@@ -89,7 +89,13 @@ class FamilyMemberController extends Controller
             'supporting_document.max' => 'Ukuran dokumen maksimal 2MB'
         ]);
 
-        $validated['user_id'] = Auth::id();
+        // Use numeric primary key (id). Auth::id() may have been overridden to return NIK,
+        // so explicitly read the original DB primary key value to avoid inserting the NIK
+        // into the `family_members.user_id` foreign key (which references `users.id`).
+        $user = Auth::user();
+        $userId = $user->getOriginal('id') ?? $user->id;
+        // Ensure we store an integer id when possible
+        $validated['user_id'] = is_numeric($userId) ? (int) $userId : $user->id;
         $validated['nationality'] = $validated['nationality'] ?? 'WNI';
         $validated['approval_status'] = 'pending'; // Default status
 
@@ -102,6 +108,12 @@ class FamilyMemberController extends Controller
         }
 
         FamilyMember::create($validated);
+
+        // If the form requested to add another, redirect back to create form
+        if ($request->has('add_another') && $request->input('add_another')) {
+            return redirect()->route('family-members.create')
+                ->with('success', 'Anggota keluarga berhasil ditambahkan! Anda dapat menambahkan anggota keluarga baru.');
+        }
 
         return redirect()->route('family-members.index')
             ->with('success', 'Anggota keluarga berhasil ditambahkan! Menunggu persetujuan admin.');

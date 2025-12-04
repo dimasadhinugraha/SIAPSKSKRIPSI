@@ -18,7 +18,15 @@ class NewsManagementController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('admin.news.index', compact('news'));
+        // Statistics
+        $stats = [
+            'total' => News::count(),
+            'published' => News::where('status', 'published')->count(),
+            'draft' => News::where('status', 'draft')->count(),
+            'today' => News::whereDate('created_at', today())->count(),
+        ];
+
+        return view('admin.news.index', compact('news', 'stats'));
     }
 
     public function create()

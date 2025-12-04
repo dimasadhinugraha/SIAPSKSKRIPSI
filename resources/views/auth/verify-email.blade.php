@@ -1,31 +1,43 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+@extends('layouts.public-bootstrap')
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-        </div>
-    @endif
+@section('title', 'Minta Verifikasi Email')
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+@section('content')
+<div class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Minta Link Verifikasi Email</h4>
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
+                        @if(session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
+
+                        <form action="{{ route('verify.email.send') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Alamat Email</label>
+                                <input type="email" name="email" id="email" class="form-control" required placeholder="Masukkan email yang terdaftar">
+                            </div>
+
+                            <div class="d-flex justify-content-end">
+                                <a href="{{ route('login') }}" class="btn btn-link me-2">Kembali ke Login</a>
+                                <button class="btn btn-primary">Kirim Link Verifikasi</button>
+                            </div>
+                        </form>
+
+                        <hr class="my-3">
+                        <p class="small text-muted">Jika Anda mengalami kesulitan menerima email verifikasi, mohon hubungi admin desa atau periksa folder spam. Pastikan juga konfigurasi mail di server sudah benar.</p>
+                    </div>
+                </div>
             </div>
-        </form>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                {{ __('Log Out') }}
-            </button>
-        </form>
+        </div>
     </div>
-</x-guest-layout>
+</div>
+@endsection
