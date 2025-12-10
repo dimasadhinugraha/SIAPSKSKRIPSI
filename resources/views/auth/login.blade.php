@@ -171,7 +171,7 @@
                                     <input type="checkbox" class="form-check-input" name="remember" id="remember">
                                     <label class="form-check-label" for="remember">Ingat saya</label>
                                 </div>
-                                <a href="#" class="text-decoration-none">Lupa password?</a>
+                                <a href="{{ route('password.request') }}" class="text-decoration-none">Lupa password?</a>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100 py-2 mb-4 fw-semibold">

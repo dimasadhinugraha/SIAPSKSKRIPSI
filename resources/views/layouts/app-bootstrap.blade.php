@@ -206,6 +206,12 @@
                         </ul>
                     </li>
                      <li class="sidebar-item">
+                        <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                            <i class="fas fa-users fa-fw"></i>
+                            <span>Manajemen Pengguna</span>
+                        </a>
+                    </li>
+                     <li class="sidebar-item">
                         <a href="{{ route('admin.news.index') }}" class="sidebar-link {{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
                             <i class="fas fa-newspaper fa-fw"></i>
                             <span>Manajemen Berita</span>

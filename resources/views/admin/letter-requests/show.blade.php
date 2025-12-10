@@ -20,7 +20,7 @@
 
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">{{ $letterRequest->letterType->name }}</h5>
+            <h5 class="card-title mb-0">{{ $letterRequest->letterType?->name ?? 'Jenis Surat Tidak Ditemukan' }}</h5>
             @php
                 $statusBadges = [
                     'pending_rt' => 'bg-warning text-dark',
@@ -41,15 +41,15 @@
                     <h6 class="mb-3">Data Pemohon</h6>
                     <dl class="row">
                         <dt class="col-sm-4 text-muted">Nama</dt>
-                        <dd class="col-sm-8">{{ $letterRequest->user->name }}</dd>
+                        <dd class="col-sm-8">{{ $letterRequest->user?->name ?? '-' }}</dd>
                         <dt class="col-sm-4 text-muted">NIK</dt>
-                        <dd class="col-sm-8">{{ $letterRequest->user->nik }}</dd>
+                        <dd class="col-sm-8">{{ $letterRequest->user?->nik ?? '-' }}</dd>
                         <dt class="col-sm-4 text-muted">Alamat</dt>
-                        <dd class="col-sm-8">{{ $letterRequest->user->address }}</dd>
+                        <dd class="col-sm-8">{{ $letterRequest->user?->address ?? '-' }}</dd>
                         <dt class="col-sm-4 text-muted">RT/RW</dt>
-                        <dd class="col-sm-8">{{ $letterRequest->user->rt_rw }}</dd>
+                        <dd class="col-sm-8">{{ $letterRequest->user?->rt_rw ?? '-' }}</dd>
                         <dt class="col-sm-4 text-muted">No. HP</dt>
-                        <dd class="col-sm-8">{{ $letterRequest->user->phone }}</dd>
+                        <dd class="col-sm-8">{{ $letterRequest->user?->phone ?? '-' }}</dd>
                     </dl>
                 </div>
 
@@ -59,24 +59,24 @@
                     @if($letterRequest->subject && $letterRequest->subject->id !== $letterRequest->user->id)
                         <dl class="row">
                             <dt class="col-sm-4 text-muted">Nama</dt>
-                            <dd class="col-sm-8">{{ $letterRequest->subject->name }}</dd>
+                            <dd class="col-sm-8">{{ $letterRequest->subject?->name ?? '-' }}</dd>
                             <dt class="col-sm-4 text-muted">NIK</dt>
-                            <dd class="col-sm-8">{{ $letterRequest->subject->nik }}</dd>
+                            <dd class="col-sm-8">{{ $letterRequest->subject?->nik ?? '-' }}</dd>
                             <dt class="col-sm-4 text-muted">Hubungan</dt>
-                            <dd class="col-sm-8">{{ $letterRequest->subject->relationship_label }}</dd>
+                            <dd class="col-sm-8">{{ $letterRequest->subject?->relationship_label ?? '-' }}</dd>
                             <dt class="col-sm-4 text-muted">Jenis Kelamin</dt>
-                            <dd class="col-sm-8">{{ $letterRequest->subject->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}</dd>
+                            <dd class="col-sm-8">{{ $letterRequest->subject?->gender === 'L' ? 'Laki-laki' : ($letterRequest->subject?->gender === 'P' ? 'Perempuan' : '-') }}</dd>
                             <dt class="col-sm-4 text-muted">Tgl. Lahir</dt>
-                            <dd class="col-sm-8">{{ $letterRequest->subject->birth_date ? $letterRequest->subject->birth_date->format('d/m/Y') : '-' }}</dd>
+                            <dd class="col-sm-8">{{ $letterRequest->subject?->birth_date ? $letterRequest->subject->birth_date->format('d/m/Y') : '-' }}</dd>
                         </dl>
                     @else
                         <dl class="row">
                             <dt class="col-sm-4 text-muted">Subjek</dt>
                             <dd class="col-sm-8">Diri Sendiri</dd>
                             <dt class="col-sm-4 text-muted">Jenis Kelamin</dt>
-                            <dd class="col-sm-8">{{ $letterRequest->user->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}</dd>
+                            <dd class="col-sm-8">{{ $letterRequest->user?->gender === 'L' ? 'Laki-laki' : ($letterRequest->user?->gender === 'P' ? 'Perempuan' : '-') }}</dd>
                             <dt class="col-sm-4 text-muted">Tgl. Lahir</dt>
-                            <dd class="col-sm-8">{{ $letterRequest->user->birth_date ? $letterRequest->user->birth_date->format('d/m/Y') : '-' }}</dd>
+                            <dd class="col-sm-8">{{ $letterRequest->user?->birth_date ? $letterRequest->user->birth_date->format('d/m/Y') : '-' }}</dd>
                         </dl>
                     @endif
                 </div>
@@ -90,8 +90,8 @@
                         @foreach($letterRequest->approvals as $approval)
                             <div class="list-group-item list-group-item-action">
                                 <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1">{{ $approval->approver->name }} ({{ $approval->approver->role_name }})</h6>
-                                    <small class="text-muted">{{ $approval->processed_at->diffForHumans() }}</small>
+                                    <h6 class="mb-1">{{ $approval->approver?->name ?? 'User Tidak Ditemukan' }} ({{ $approval->approver?->role_name ?? '-' }})</h6>
+                                    <small class="text-muted">{{ $approval->processed_at?->diffForHumans() ?? '-' }}</small>
                                 </div>
                                 <p class="mb-1">{{ $approval->notes ?? 'Tidak ada catatan.' }}</p>
                                 <span class="badge {{ $approval->status === 'approved' ? 'bg-success' : 'bg-danger' }}">

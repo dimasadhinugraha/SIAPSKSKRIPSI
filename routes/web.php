@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\Admin\UserVerificationController;
+use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\LetterRequestController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\NewsController;
@@ -126,6 +127,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/user-verification/{user}', [UserVerificationController::class, 'show'])->name('user-verification.show');
     Route::patch('/user-verification/{user}/verify', [UserVerificationController::class, 'verify'])->name('user-verification.verify');
     Route::delete('/user-verification/{user}/reject', [UserVerificationController::class, 'reject'])->name('user-verification.reject');
+
+    // User management
+    Route::resource('users', UserManagementController::class);
+    Route::post('users/{user}/toggle-verification', [UserManagementController::class, 'toggleVerification'])->name('users.toggle-verification');
+    Route::post('users/{user}/toggle-approval', [UserManagementController::class, 'toggleApproval'])->name('users.toggle-approval');
 
     // News management
     Route::resource('news', NewsManagementController::class);

@@ -168,10 +168,10 @@
                                 <tr>
                                     <td class="fw-medium">{{ $request->request_number }}</td>
                                     <td>
-                                        <div>{{ $request->user->name }}</div>
-                                        <small class="text-muted">{{ $request->user->nik }}</small>
+                                        <div>{{ $request->user?->name ?? '-' }}</div>
+                                        <small class="text-muted">{{ $request->user?->nik ?? '-' }}</small>
                                     </td>
-                                    <td>{{ $request->letterType->name }}</td>
+                                    <td>{{ $request->letterType?->name ?? '-' }}</td>
                                     <td>
                                         @php
                                             $statusBadges = [
