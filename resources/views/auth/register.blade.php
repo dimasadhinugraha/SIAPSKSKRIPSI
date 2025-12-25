@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            padding-top: 76px;
+            
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -105,36 +105,6 @@
                         <form action="{{ route('register') }}" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
                             @csrf
                             
-                            <!-- Pilihan Jenis Pendaftaran -->
-                            <div class="card mb-4 border-0 bg-light">
-                                <div class="card-header bg-transparent border-0 pt-3">
-                                    <h5 class="mb-0 fw-bold">
-                                        <i class="fas fa-users me-2"></i>
-                                        Jenis Pendaftaran
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-12 mb-3">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="radio" name="registration_type" id="new_family" value="new_family" checked>
-                                                <label class="form-check-label fw-bold" for="new_family">
-                                                    Kepala Keluarga Baru
-                                                </label>
-                                                <div class="form-text">Anda adalah kepala keluarga dan akan mendaftarkan keluarga baru</div>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="registration_type" id="existing_family" value="existing_family">
-                                                <label class="form-check-label fw-bold" for="existing_family">
-                                                    Anggota Keluarga
-                                                </label>
-                                                <div class="form-text">Anda adalah anggota keluarga yang sudah terdaftar</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
                             <!-- Identitas Diri -->
                             <div class="card mb-4 border-0 bg-light">
                                 <div class="card-header bg-transparent border-0 pt-3">
@@ -162,8 +132,8 @@
                                         <!-- Tanggal Lahir -->
                                         <div class="col-md-6 mb-3">
                                             <label for="birth_date" class="form-label">Tanggal Lahir</label>
-                                            <input type="date" class="form-control" id="birth_date" name="birth_date" value="{{ old('birth_date') }}" required>
-                                            <div class="invalid-feedback">Tanggal lahir harus diisi.</div>
+                                            <input type="date" class="form-control" id="birth_date" name="birth_date" value="{{ old('birth_date') }}" required max="{{ date('Y-m-d', strtotime('-18 years')) }}">
+                                            <div class="invalid-feedback">Tanggal lahir harus diisi dan minimal berumur 18 tahun.</div>
                                         </div>
 
                                         <!-- Jenis Kelamin -->
@@ -175,6 +145,21 @@
                                                 <option value="P" {{ old('gender') == 'P' ? 'selected' : '' }}>Perempuan</option>
                                             </select>
                                             <div class="invalid-feedback">Jenis kelamin harus dipilih.</div>
+                                        </div>
+
+                                        <!-- Agama -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="agama" class="form-label">Agama</label>
+                                            <select class="form-select" id="agama" name="agama" required>
+                                                <option value="" disabled {{ old('agama') ? '' : 'selected' }}>Pilih Agama...</option>
+                                                <option value="Islam" {{ old('agama') == 'Islam' ? 'selected' : '' }}>Islam</option>
+                                                <option value="Kristen" {{ old('agama') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
+                                                <option value="Katolik" {{ old('agama') == 'Katolik' ? 'selected' : '' }}>Katolik</option>
+                                                <option value="Hindu" {{ old('agama') == 'Hindu' ? 'selected' : '' }}>Hindu</option>
+                                                <option value="Buddha" {{ old('agama') == 'Buddha' ? 'selected' : '' }}>Buddha</option>
+                                                <option value="Konghucu" {{ old('agama') == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
+                                            </select>
+                                            <div class="invalid-feedback">Agama harus dipilih.</div>
                                         </div>
 
                                         <!-- Alamat -->
@@ -203,76 +188,49 @@
                                     </h5>
                                 </div>
                                 <div class="card-body">
-                                    <!-- Pencarian Keluarga (hanya untuk anggota keluarga) -->
-                                    <div id="family_search_section" class="row" style="display: none;">
-                                        <div class="col-12 mb-3">
-                                            <label for="family_search" class="form-label">Cari Keluarga Anda <span class="text-danger">*</span></label>
-                                            <div class="position-relative">
-                                                <input type="text" class="form-control" id="family_search" placeholder="Ketik nama kepala keluarga atau nama keluarga..." autocomplete="off">
-                                                <input type="hidden" name="family_id" id="family_id">
-                                                <div id="family_search_results" class="list-group position-absolute w-100 shadow-lg" style="display: none; z-index: 1050; max-height: 350px; overflow-y: auto; top: 100%; margin-top: 2px;"></div>
-                                            </div>
-                                            <div class="form-text">
-                                                <i class="fas fa-info-circle me-1"></i>
-                                                Ketik nama kepala keluarga (minimal 3 karakter) untuk mencari keluarga Anda
-                                            </div>
-                                        </div>
-                                        <div id="selected_family_info" class="col-12 mb-3" style="display: none;">
-                                            <div class="alert alert-success alert-dismissible fade show">
-                                                <button type="button" class="btn-close" id="clear_family_selection"></button>
-                                                <h6 class="alert-heading mb-2">
-                                                    <i class="fas fa-check-circle me-2"></i>Keluarga Terpilih
-                                                </h6>
-                                                <div id="family_info_content"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Form untuk Kepala Keluarga Baru -->
-                                    <div id="new_family_section" class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="family_name" class="form-label">Nama Keluarga <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control new-family-required" id="family_name" name="family_name" value="{{ old('family_name') }}" placeholder="Contoh: Keluarga Wijaya">
-                                            <div class="invalid-feedback">Nama keluarga harus diisi.</div>
-                                        </div>
-
+                                    <div class="row">
                                         <!-- Nomor KK -->
                                         <div class="col-md-6 mb-3">
                                             <label for="kk_number" class="form-label">Nomor Kartu Keluarga (KK) <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control new-family-required" id="kk_number" name="kk_number" value="{{ old('kk_number') }}" placeholder="16 digit nomor KK" pattern="[0-9]{16}" maxlength="16">
+                                            <input type="text" class="form-control" id="kk_number" name="kk_number" value="{{ old('kk_number') }}" placeholder="16 digit nomor KK" required pattern="[0-9]{16}" maxlength="16">
                                             <div class="invalid-feedback">Nomor KK harus 16 digit angka.</div>
                                         </div>
                                         
-                                        <!-- RT/RW -->
-                                        <div class="col-md-6 mb-3">
-                                            <label for="rt_rw" class="form-label">Pilih RT/RW Anda <span class="text-danger">*</span></label>
-                                            <select class="form-select new-family-required" id="rt_rw" name="rt_rw">
-                                                <option value="" disabled selected>Pilih dari daftar...</option>
-                                                @if(isset($rws) && $rws->count() > 0 && isset($rts))
-                                                    @foreach($rws as $rw)
-                                                        <optgroup label="{{ optional($rw->biodata)->rt_rw }}">
-                                                            @foreach($rts->where('biodata.rw_id', $rw->id) as $rt)
-                                                                <option value="{{ optional($rt->biodata)->rt_rw }}" {{ old('rt_rw') == optional($rt->biodata)->rt_rw ? 'selected' : '' }}>
-                                                                    {{ optional($rt->biodata)->rt_rw }}
-                                                                </option>
-                                                            @endforeach
-                                                        </optgroup>
+                                        <!-- RT dan RW terpisah -->
+                                        <div class="col-md-3 mb-3">
+                                            <label for="rt" class="form-label">RT <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="rt" name="rt" required>
+                                                <option value="" disabled {{ old('rt') ? '' : 'selected' }}>Pilih RT...</option>
+                                                @if(isset($rtUsers) && $rtUsers->count() > 0)
+                                                    @foreach($rtUsers as $rt)
+                                                        <option value="{{ $rt['number'] }}" {{ old('rt') == $rt['number'] ? 'selected' : '' }}>
+                                                            RT {{ str_pad($rt['number'], 3, '0', STR_PAD_LEFT) }}
+                                                        </option>
                                                     @endforeach
-                                                @else
-                                                    <option value="" disabled>Tidak ada data RT/RW tersedia.</option>
                                                 @endif
                                             </select>
-                                            <div class="invalid-feedback">Anda harus memilih RT/RW.</div>
+                                            <div class="invalid-feedback">Anda harus memilih RT.</div>
                                         </div>
-                                    </div>
 
-                                    <!-- Info untuk anggota keluarga (data otomatis terisi) -->
-                                    <div id="existing_family_data" class="row" style="display: none;">
-                                        <div class="col-12">
-                                            <div class="alert alert-success">
-                                                <i class="fas fa-info-circle me-2"></i>
-                                                Data keluarga (Alamat, Nomor KK, RT/RW) akan otomatis terisi dari keluarga yang Anda pilih.
-                                            </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="rw" class="form-label">RW <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="rw" name="rw" required>
+                                                <option value="" disabled {{ old('rw') ? '' : 'selected' }}>Pilih RW...</option>
+                                                @if(isset($rwUsers) && $rwUsers->count() > 0)
+                                                    @foreach($rwUsers as $rw)
+                                                        <option value="{{ $rw['number'] }}" {{ old('rw') == $rw['number'] ? 'selected' : '' }}>
+                                                            RW {{ str_pad($rw['number'], 3, '0', STR_PAD_LEFT) }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            <div class="invalid-feedback">Anda harus memilih RW.</div>
+                                            @if((!isset($rtUsers) || $rtUsers->count() == 0) && (!isset($rwUsers) || $rwUsers->count() == 0))
+                                                <small class="text-danger">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Belum ada RT/RW yang terdaftar. Silakan hubungi admin.
+                                                </small>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -326,15 +284,21 @@
                                         <!-- KTP -->
                                         <div class="col-md-6 mb-3">
                                             <label for="ktp_photo" class="form-label">Foto KTP</label>
-                                            <input type="file" class="form-control" id="ktp_photo" name="ktp_photo" accept="image/*" required>
+                                            <input type="file" class="form-control" id="ktp_photo" name="ktp_photo" accept="image/*" required onchange="previewImage(this, 'ktpPreview')">
                                             <div class="invalid-feedback">Upload foto KTP.</div>
+                                            <div class="mt-2" id="ktpPreviewContainer" style="display: none;">
+                                                <img id="ktpPreview" src="" alt="Preview KTP" class="img-thumbnail" style="max-height: 200px; width: auto;">
+                                            </div>
                                         </div>
 
                                         <!-- KK -->
                                         <div class="col-md-6 mb-3">
                                             <label for="kk_photo" class="form-label">Foto Kartu Keluarga</label>
-                                            <input type="file" class="form-control" id="kk_photo" name="kk_photo" accept="image/*" required>
+                                            <input type="file" class="form-control" id="kk_photo" name="kk_photo" accept="image/*" required onchange="previewImage(this, 'kkPreview')">
                                             <div class="invalid-feedback">Upload foto Kartu Keluarga.</div>
+                                            <div class="mt-2" id="kkPreviewContainer" style="display: none;">
+                                                <img id="kkPreview" src="" alt="Preview KK" class="img-thumbnail" style="max-height: 200px; width: auto;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -361,212 +325,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Registration type toggle
-        const newFamilyRadio = document.getElementById('new_family');
-        const existingFamilyRadio = document.getElementById('existing_family');
-        const newFamilySection = document.getElementById('new_family_section');
-        const familySearchSection = document.getElementById('family_search_section');
-        const existingFamilyData = document.getElementById('existing_family_data');
-        const addressField = document.getElementById('address');
-
-        function toggleRegistrationType() {
-            if (newFamilyRadio.checked) {
-                // Kepala Keluarga Baru
-                newFamilySection.style.display = 'flex';
-                familySearchSection.style.display = 'none';
-                existingFamilyData.style.display = 'none';
-                addressField.removeAttribute('readonly');
-                
-                // Set required for new family fields
-                document.querySelectorAll('.new-family-required').forEach(field => {
-                    field.setAttribute('required', 'required');
-                });
-            } else {
-                // Anggota Keluarga
-                newFamilySection.style.display = 'none';
-                familySearchSection.style.display = 'flex';
-                existingFamilyData.style.display = 'block';
-                addressField.setAttribute('readonly', 'readonly');
-                
-                // Remove required from new family fields
-                document.querySelectorAll('.new-family-required').forEach(field => {
-                    field.removeAttribute('required');
-                });
-            }
-        }
-
-        newFamilyRadio.addEventListener('change', toggleRegistrationType);
-        existingFamilyRadio.addEventListener('change', toggleRegistrationType);
-
-        // Family search functionality
-        const familySearchInput = document.getElementById('family_search');
-        const familySearchResults = document.getElementById('family_search_results');
-        const familyIdInput = document.getElementById('family_id');
-        const selectedFamilyInfo = document.getElementById('selected_family_info');
-        const familyInfoContent = document.getElementById('family_info_content');
-
-        let searchTimeout;
-
-        familySearchInput.addEventListener('input', function() {
-            const query = this.value.trim();
-            
-            clearTimeout(searchTimeout);
-            
-            if (query.length < 3) {
-                familySearchResults.style.display = 'none';
-                return;
-            }
-
-            searchTimeout = setTimeout(() => {
-                fetch(`/api/families/search?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.data.length > 0) {
-                            displaySearchResults(data.data);
-                        } else {
-                            familySearchResults.innerHTML = '<div class="p-3 text-muted">Keluarga tidak ditemukan</div>';
-                            familySearchResults.style.display = 'block';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        familySearchResults.innerHTML = '<div class="p-3 text-danger">Terjadi kesalahan saat mencari</div>';
-                        familySearchResults.style.display = 'block';
-                    });
-            }, 300);
-        });
-
-        function displaySearchResults(families) {
-            if (families.length === 0) {
-                familySearchResults.innerHTML = `
-                    <div class="list-group-item text-center text-muted py-3">
-                        <i class="fas fa-search me-2"></i>Keluarga tidak ditemukan
-                    </div>
-                `;
-                familySearchResults.style.display = 'block';
-                return;
-            }
-
-            let html = '';
-            families.forEach((family, index) => {
-                html += `
-                    <button type="button" class="list-group-item list-group-item-action family-result-item border-0 ${index > 0 ? 'border-top' : ''}" data-family-id="${family.id}">
-                        <div class="d-flex w-100 align-items-start">
-                            <div class="flex-shrink-0 me-3">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                    <h6 class="mb-0 fw-bold">${family.family_name}</h6>
-                                    <small class="badge bg-info text-dark">${family.rt_rw}</small>
-                                </div>
-                                <p class="mb-1 small text-muted">
-                                    <i class="fas fa-user me-1"></i>
-                                    <strong>Kepala Keluarga:</strong> ${family.head_of_family_name}
-                                </p>
-                                <p class="mb-0 small text-muted">
-                                    <i class="fas fa-id-card me-1"></i>
-                                    <strong>No. KK:</strong> ${family.kk_number}
-                                </p>
-                            </div>
-                            <div class="flex-shrink-0 ms-2">
-                                <i class="fas fa-chevron-right text-muted"></i>
-                            </div>
-                        </div>
-                    </button>
-                `;
-            });
-            
-            familySearchResults.innerHTML = html;
-            familySearchResults.style.display = 'block';
-
-            // Add click handlers
-            document.querySelectorAll('.family-result-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const familyId = this.getAttribute('data-family-id');
-                    selectFamily(familyId);
-                });
-            });
-        }
-
-        function selectFamily(familyId) {
-            fetch(`/api/families/${familyId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const family = data.data;
-                        
-                        // Set family ID
-                        familyIdInput.value = family.id;
-                        
-                        // Auto-fill address
-                        addressField.value = family.address;
-                        addressField.setAttribute('readonly', 'readonly');
-                        
-                        // Display selected family info with better styling
-                        familyInfoContent.innerHTML = `
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <small class="text-muted d-block">Nama Keluarga</small>
-                                    <strong>${family.family_name}</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <small class="text-muted d-block">RT/RW</small>
-                                    <strong>${family.rt_rw}</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <small class="text-muted d-block">Nomor KK</small>
-                                    <strong>${family.kk_number}</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <small class="text-muted d-block">Kepala Keluarga</small>
-                                    <strong>${family.head_of_family_name}</strong>
-                                </div>
-                                <div class="col-12">
-                                    <small class="text-muted d-block">Alamat</small>
-                                    <strong>${family.address}</strong>
-                                </div>
-                            </div>
-                        `;
-                        
-                        selectedFamilyInfo.style.display = 'block';
-                        familySearchResults.style.display = 'none';
-                        familySearchInput.value = family.head_of_family_name + ' - ' + family.family_name;
-                        familySearchInput.setAttribute('readonly', 'readonly');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan saat memilih keluarga');
-                });
-        }
-
-        // Clear family selection
-        document.addEventListener('DOMContentLoaded', function() {
-            const clearFamilyBtn = document.getElementById('clear_family_selection');
-            if (clearFamilyBtn) {
-                clearFamilyBtn.addEventListener('click', function() {
-                    familyIdInput.value = '';
-                    familySearchInput.value = '';
-                    familySearchInput.removeAttribute('readonly');
-                    addressField.value = '';
-                    addressField.removeAttribute('readonly');
-                    selectedFamilyInfo.style.display = 'none';
-                    familySearchInput.focus();
-                });
-            }
-        });
-
-        // Close search results when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!familySearchInput.contains(e.target) && !familySearchResults.contains(e.target)) {
-                familySearchResults.style.display = 'none';
-            }
-        });
-
         // Form validation
         (() => {
             'use strict'
@@ -586,18 +344,29 @@
                         confirmation.setCustomValidity('');
                     }
 
-                    // Additional validation for existing family
-                    if (existingFamilyRadio.checked && !familyIdInput.value) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        alert('Silakan pilih keluarga Anda dari hasil pencarian');
-                        return false;
-                    }
-
                     form.classList.add('was-validated')
                 }, false)
             })
         })()
+
+        // Image preview function
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            const container = document.getElementById(previewId + 'Container');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    container.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                container.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>

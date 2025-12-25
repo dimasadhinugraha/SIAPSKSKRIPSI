@@ -15,6 +15,7 @@ class Biodata extends Model
         // 'nik', // Moved to users table
         'kk_number',
         'gender',
+        'agama',
         'birth_date',
         'address',
         'phone',

@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\Admin\UserVerificationController;
 use App\Http\Controllers\Admin\UserManagementController;
@@ -10,6 +9,7 @@ use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\Admin\NewsManagementController;
 use App\Http\Controllers\Admin\FamilyMemberApprovalController;
+use App\Http\Controllers\Admin\RtRwManagementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QrVerificationController;
 use App\Http\Controllers\WelcomeController;
@@ -31,10 +31,6 @@ Route::get('/verify-email', [VerificationController::class, 'showVerifyEmailForm
 Route::post('/verify-email/send', [VerificationController::class, 'sendVerificationEmail'])->name('verify.email.send');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-
-// Override default register routes
-Route::get('/register', [RegisterController::class, 'create'])->name('register');
-Route::post('/register', [RegisterController::class, 'store']);
 
 // Verification routes
 Route::get('/verification-notice', [VerificationController::class, 'notice'])->name('verification.notice');
@@ -135,6 +131,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // News management
     Route::resource('news', NewsManagementController::class);
+
+    // RT/RW management
+    Route::get('rt-rw', [RtRwManagementController::class, 'index'])->name('rt-rw.index');
+    Route::get('rt-rw/create', [RtRwManagementController::class, 'create'])->name('rt-rw.create');
+    Route::post('rt-rw', [RtRwManagementController::class, 'store'])->name('rt-rw.store');
+    Route::get('rt-rw/{id}/edit', [RtRwManagementController::class, 'edit'])->name('rt-rw.edit');
+    Route::put('rt-rw/{id}', [RtRwManagementController::class, 'update'])->name('rt-rw.update');
+    Route::delete('rt-rw/{id}', [RtRwManagementController::class, 'destroy'])->name('rt-rw.destroy');
 
     // Letter requests management
     Route::get('/letter-requests', [App\Http\Controllers\Admin\LetterRequestManagementController::class, 'index'])->name('letter-requests.index');

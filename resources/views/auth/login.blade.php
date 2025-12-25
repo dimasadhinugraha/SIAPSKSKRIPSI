@@ -11,7 +11,6 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            padding-top: 76px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -161,8 +160,11 @@
                                     <span class="input-group-text border-end-0">
                                         <i class="fas fa-lock text-muted"></i>
                                     </span>
-                                    <input type="password" name="password" class="form-control border-start-0" id="password"
+                                    <input type="password" name="password" class="form-control border-start-0 border-end-0" id="password"
                                         placeholder="Masukkan password" required autocomplete="current-password">
+                                    <span class="input-group-text border-start-0" style="cursor: pointer;" onclick="togglePassword()">
+                                        <i class="fas fa-eye text-muted" id="togglePasswordIcon"></i>
+                                    </span>
                                 </div>
                             </div>
 
@@ -195,6 +197,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePasswordIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
         // Close mobile menu when clicking outside
         document.addEventListener('click', function(e) {
             const navbarCollapse = document.querySelector('.navbar-collapse');

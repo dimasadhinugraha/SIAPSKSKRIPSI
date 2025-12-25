@@ -141,6 +141,7 @@
     @endif
   </div>
 </section>
+@endsection
 
 @push('scripts')
 <script>

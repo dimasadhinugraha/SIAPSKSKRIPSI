@@ -84,13 +84,13 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <div class="bg-danger bg-opacity-10 rounded p-3">
-                                <i class="fas fa-times-circle fa-2x text-danger"></i>
+                            <div class="bg-info bg-opacity-10 rounded p-3">
+                                <i class="fas fa-calendar-day fa-2x text-info"></i>
                             </div>
                         </div>
                         <div class="ms-3">
-                            <p class="text-muted mb-0 small">Ditolak</p>
-                            <h3 class="mb-0">0</h3>
+                            <p class="text-muted mb-0 small">Hari Ini</p>
+                            <h3 class="mb-0">{{ $stats['today'] }}</h3>
                         </div>
                     </div>
                 </div>

@@ -45,11 +45,11 @@
                         <dt class="col-sm-4 text-muted">NIK</dt>
                         <dd class="col-sm-8">{{ $letterRequest->user?->nik ?? '-' }}</dd>
                         <dt class="col-sm-4 text-muted">Alamat</dt>
-                        <dd class="col-sm-8">{{ $letterRequest->user?->address ?? '-' }}</dd>
+                        <dd class="col-sm-8">{{ $letterRequest->user?->biodata?->address ?? '-' }}</dd>
                         <dt class="col-sm-4 text-muted">RT/RW</dt>
-                        <dd class="col-sm-8">{{ $letterRequest->user?->rt_rw ?? '-' }}</dd>
+                        <dd class="col-sm-8">{{ $letterRequest->user?->biodata?->rt_rw ?? '-' }}</dd>
                         <dt class="col-sm-4 text-muted">No. HP</dt>
-                        <dd class="col-sm-8">{{ $letterRequest->user?->phone ?? '-' }}</dd>
+                        <dd class="col-sm-8">{{ $letterRequest->user?->biodata?->phone ?? '-' }}</dd>
                     </dl>
                 </div>
 
@@ -74,9 +74,9 @@
                             <dt class="col-sm-4 text-muted">Subjek</dt>
                             <dd class="col-sm-8">Diri Sendiri</dd>
                             <dt class="col-sm-4 text-muted">Jenis Kelamin</dt>
-                            <dd class="col-sm-8">{{ $letterRequest->user?->gender === 'L' ? 'Laki-laki' : ($letterRequest->user?->gender === 'P' ? 'Perempuan' : '-') }}</dd>
+                            <dd class="col-sm-8">{{ $letterRequest->user?->biodata?->gender === 'L' ? 'Laki-laki' : ($letterRequest->user?->biodata?->gender === 'P' ? 'Perempuan' : '-') }}</dd>
                             <dt class="col-sm-4 text-muted">Tgl. Lahir</dt>
-                            <dd class="col-sm-8">{{ $letterRequest->user?->birth_date ? $letterRequest->user->birth_date->format('d/m/Y') : '-' }}</dd>
+                            <dd class="col-sm-8">{{ $letterRequest->user?->biodata?->birth_date ? $letterRequest->user->biodata->birth_date->format('d/m/Y') : '-' }}</dd>
                         </dl>
                     @endif
                 </div>

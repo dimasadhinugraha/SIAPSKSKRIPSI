@@ -90,10 +90,10 @@
                                     <tr>
                                         <td class="font-monospace">{{ $request->request_number }}</td>
                                         <td>
-                                            <div>{{ $request->user->name }}</div>
-                                            <div class="small text-muted">{{ $request->user->rt_rw }}</div>
+                                            <div>{{ $request->user->name ?? 'N/A' }}</div>
+                                            <div class="small text-muted">{{ $request->user->rt_rw ?? '-' }}</div>
                                         </td>
-                                        <td>{{ $request->letterType->name }}</td>
+                                        <td>{{ $request->letterType->name ?? 'N/A' }}</td>
                                         <td>
                                             @php
                                                 $statusColors = [

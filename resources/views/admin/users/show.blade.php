@@ -89,40 +89,72 @@
                             </div>
                             
                             <div class="row mb-2">
+                                <div class="col-md-4"><strong>Role:</strong></div>
+                                <div class="col-md-8">{{ ucfirst($user->role) }}</div>
+                            </div>
+                            
+                            <hr class="my-3">
+                            <h5 class="mb-3">Data Pribadi</h5>
+                            
+                            <div class="row mb-2">
                                 <div class="col-md-4"><strong>NIK:</strong></div>
                                 <div class="col-md-8">{{ $user->nik ?? '-' }}</div>
                             </div>
                             
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong>Jenis Kelamin:</strong></div>
-                                <div class="col-md-8">{{ $user->gender == 'L' ? 'Laki-laki' : ($user->gender == 'P' ? 'Perempuan' : '-') }}</div>
+                                <div class="col-md-8">
+                                    @if($user->biodata && $user->biodata->gender)
+                                        {{ $user->biodata->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                    @else
+                                        {{ $user->gender == 'L' ? 'Laki-laki' : ($user->gender == 'P' ? 'Perempuan' : '-') }}
+                                    @endif
+                                </div>
                             </div>
                             
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong>Tanggal Lahir:</strong></div>
                                 <div class="col-md-8">
-                                    {{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)->format('d F Y') : '-' }}
+                                    @if($user->biodata && $user->biodata->birth_date)
+                                        {{ \Carbon\Carbon::parse($user->biodata->birth_date)->format('d F Y') }}
+                                    @elseif($user->birth_date)
+                                        {{ \Carbon\Carbon::parse($user->birth_date)->format('d F Y') }}
+                                    @else
+                                        -
+                                    @endif
                                 </div>
                             </div>
                             
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong>Alamat:</strong></div>
-                                <div class="col-md-8">{{ $user->address ?? '-' }}</div>
+                                <div class="col-md-8">
+                                    {{ $user->biodata?->address ?? $user->address ?? '-' }}
+                                </div>
                             </div>
                             
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong>RT/RW:</strong></div>
-                                <div class="col-md-8">RT {{ $user->rt ?? '-' }} / RW {{ $user->rw ?? '-' }}</div>
+                                <div class="col-md-8">
+                                    @if($user->biodata && $user->biodata->rt_rw)
+                                        {{ $user->biodata->rt_rw }}
+                                    @else
+                                        RT {{ $user->rt ?? '-' }} / RW {{ $user->rw ?? '-' }}
+                                    @endif
+                                </div>
                             </div>
                             
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong>No. Telepon:</strong></div>
-                                <div class="col-md-8">{{ $user->phone ?? '-' }}</div>
+                                <div class="col-md-8">
+                                    {{ $user->biodata?->phone ?? $user->phone ?? '-' }}
+                                </div>
                             </div>
                             
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong>No. KK:</strong></div>
-                                <div class="col-md-8">{{ $user->kk_number ?? '-' }}</div>
+                                <div class="col-md-8">
+                                    {{ $user->biodata?->kk_number ?? $user->kk_number ?? '-' }}
+                                </div>
                             </div>
                             
                             <div class="row mb-2">
@@ -140,28 +172,32 @@
             </div>
 
             <!-- Documents -->
-            @if($user->ktp_photo || $user->kk_photo)
+            @php
+                $ktpPhoto = $user->biodata?->ktp_photo ?? $user->ktp_photo;
+                $kkPhoto = $user->biodata?->kk_photo ?? $user->kk_photo;
+            @endphp
+            @if($ktpPhoto || $kkPhoto)
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-light">
                         <h5 class="mb-0"><i class="fas fa-file-image me-2"></i>Dokumen</h5>
                     </div>
                     <div class="card-body p-4">
                         <div class="row">
-                            @if($user->ktp_photo)
+                            @if($ktpPhoto)
                                 <div class="col-md-6 mb-3">
                                     <h6>Foto KTP</h6>
-                                    <a href="{{ Storage::url($user->ktp_photo) }}" target="_blank">
-                                        <img src="{{ Storage::url($user->ktp_photo) }}" 
+                                    <a href="{{ Storage::url($ktpPhoto) }}" target="_blank">
+                                        <img src="{{ Storage::url($ktpPhoto) }}" 
                                              alt="KTP" class="img-fluid img-thumbnail">
                                     </a>
                                 </div>
                             @endif
                             
-                            @if($user->kk_photo)
+                            @if($kkPhoto)
                                 <div class="col-md-6 mb-3">
                                     <h6>Foto KK</h6>
-                                    <a href="{{ Storage::url($user->kk_photo) }}" target="_blank">
-                                        <img src="{{ Storage::url($user->kk_photo) }}" 
+                                    <a href="{{ Storage::url($kkPhoto) }}" target="_blank">
+                                        <img src="{{ Storage::url($kkPhoto) }}" 
                                              alt="KK" class="img-fluid img-thumbnail">
                                     </a>
                                 </div>

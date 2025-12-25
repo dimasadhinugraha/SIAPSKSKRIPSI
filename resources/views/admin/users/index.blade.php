@@ -199,7 +199,15 @@
                                 </td>
                                 <td class="px-4 border-top">
                                     <div>{{ $user->email }}</div>
-                                    <small class="text-muted">RT {{ $user->rt ?? '-' }}/RW {{ $user->rw ?? '-' }}</small>
+                                    <small class="text-muted">
+                                        @if($user->biodata && $user->biodata->rt_rw)
+                                            {{ $user->biodata->rt_rw }}
+                                        @elseif($user->biodata && $user->biodata->address)
+                                            {{ Str::limit($user->biodata->address, 30) }}
+                                        @else
+                                            -
+                                        @endif
+                                    </small>
                                 </td>
                                 <td class="px-4 border-top">
                                     <div>

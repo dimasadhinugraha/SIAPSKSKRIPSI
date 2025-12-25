@@ -10,7 +10,7 @@ class LetterRequestManagementController extends Controller
 {
     public function index(Request $request)
     {
-        $query = LetterRequest::with(['user', 'letterType', 'approvals.approver', 'subject']);
+        $query = LetterRequest::with(['user.biodata', 'letterType', 'approvals.approver', 'subject']);
 
         // Filter by status
         if ($request->filled('status')) {
@@ -54,7 +54,7 @@ class LetterRequestManagementController extends Controller
 
     public function show(LetterRequest $letterRequest)
     {
-        $letterRequest->load(['user', 'letterType', 'approvals.approver', 'subject']);
+        $letterRequest->load(['user.biodata', 'letterType', 'approvals.approver', 'subject']);
         
         return view('admin.letter-requests.show', compact('letterRequest'));
     }

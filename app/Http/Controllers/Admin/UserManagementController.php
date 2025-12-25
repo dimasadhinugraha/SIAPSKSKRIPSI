@@ -18,7 +18,7 @@ class UserManagementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::with('biodata:id,user_id,profile_photo');
+        $query = User::with('biodata:id,user_id,profile_photo,rt_rw,address');
 
         // Filter by role
         if ($request->has('role') && $request->role !== '') {
@@ -141,9 +141,6 @@ class UserManagementController extends Controller
                 'rw' => $rw,
                 'ktp_photo' => $ktpPath,
                 'kk_photo' => $kkPath,
-                'is_verified' => true,
-                'verified_at' => now(),
-                'verified_by' => auth()->id(),
             ]);
 
             DB::commit();

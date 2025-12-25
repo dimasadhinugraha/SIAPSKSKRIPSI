@@ -10,7 +10,11 @@ use Illuminate\Support\Str;
 
 class NewsManagementController extends Controller
 {
-    // Middleware will be applied via routes
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('role:admin');
+    }
 
     public function index()
     {
@@ -59,7 +63,7 @@ class NewsManagementController extends Controller
             'category' => $request->category,
             'status' => $request->status,
             'featured_image' => $featuredImagePath,
-            'author_id' => auth()->id(),
+            'author_id' => auth()->user()->id,
             'published_at' => $request->status === 'published'
                 ? ($request->published_at ? $request->published_at : now())
                 : null,

@@ -7,6 +7,9 @@ use App\Models\LetterType;
 use App\Services\QrCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Modles\User;
+use App\Notifications\NewLetterRequestNotification;
+use App\Services\PdfService;
 
 class LetterRequestController extends Controller
 {
@@ -84,22 +87,42 @@ class LetterRequestController extends Controller
         // Send notification to RT/RW
         try {
             $requester = auth()->user();
-            // Kirim notifikasi hanya ke RT/RW yang sesuai wilayah pemohon
-            $rtRwUsers = \App\Models\User::whereIn('role', ['rt', 'rw'])
-                ->where('rw', $requester->rw)
-                ->where(function($query) use ($requester) {
-                    // Untuk RT, harus sama RT dan RW nya
-                    // Untuk RW, cukup sama RW nya
-                    $query->where('role', 'rw')
-                          ->orWhere(function($q) use ($requester) {
-                              $q->where('role', 'rt')
-                                ->where('rt', $requester->rt);
-                          });
-                })
-                ->get();
+            
+            // Get requester's RT and RW from biodata
+            if ($requester->biodata) {
+                $rtId = $requester->biodata->rt_id;
+                $rwId = $requester->biodata->rw_id;
                 
-            foreach ($rtRwUsers as $rtRw) {
-                $rtRw->notify(new \App\Notifications\NewLetterRequestNotification($letterRequest));
+                $notifiedUsers = collect();
+                
+                // Send to RT
+                if ($rtId) {
+                    $rtUser = User::find($rtId);
+                    if ($rtUser && $rtUser->role === 'rt') {
+                        $notifiedUsers->push($rtUser);
+                    }
+                }
+                
+                // Send to RW
+                if ($rwId) {
+                    $rwUser = User::find($rwId);
+                    if ($rwUser && $rwUser->role === 'rw' && !$notifiedUsers->contains('id', $rwUser->id)) {
+                        $notifiedUsers->push($rwUser);
+                    }
+                }
+                
+                // Send notifications (Email + Database + WhatsApp)
+                $whatsapp = app(\App\Services\WhatsAppService::class);
+                
+                foreach ($notifiedUsers as $user) {
+                    // Email + Database notification
+                    $user->notify(new NewLetterRequestNotification($letterRequest));
+                    
+                    // WhatsApp notification (if configured and user has phone)
+                    if ($whatsapp->isConfigured() && $user->phone) {
+                        $whatsapp->sendNewLetterNotification($user, $letterRequest);
+                    }
+                }
             }
         } catch (\Throwable $e) {
             \Log::warning('Failed to send letter request notification', ['error' => $e->getMessage()]);
@@ -167,7 +190,7 @@ class LetterRequestController extends Controller
         }
 
         // Generate PDF on-demand (do not rely on stored file)
-        $pdfService = new \App\Services\PdfService();
+        $pdfService = new PdfService();
         $pdfBinary = $pdfService->generateLetterPdfBinary($letterRequest);
 
         $filename = 'Surat_' . $letterRequest->request_number . '.pdf';

@@ -17,21 +17,20 @@ class ApprovalController extends Controller
         $user = auth()->user();
 
         if ($user->isRT()) {
-            // RT hanya lihat surat dari warga di wilayahnya
-            $requests = LetterRequest::with(['user', 'letterType', 'subject'])
+            // RT hanya lihat surat dari warga yang rt_id nya sama dengan user ini
+            $requests = LetterRequest::with(['user.biodata', 'letterType', 'subject'])
                 ->where('status', 'pending_rt')
-                ->whereHas('user', function($query) use ($user) {
-                    $query->where('rt', $user->rt)
-                          ->where('rw', $user->rw);
+                ->whereHas('user.biodata', function($query) use ($user) {
+                    $query->where('rt_id', $user->id);
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
         } elseif ($user->isRW()) {
-            // RW hanya lihat surat dari warga di wilayahnya
-            $requests = LetterRequest::with(['user', 'letterType', 'subject'])
+            // RW hanya lihat surat dari warga yang rw_id nya sama dengan user ini
+            $requests = LetterRequest::with(['user.biodata', 'letterType', 'subject'])
                 ->where('status', 'pending_rw')
-                ->whereHas('user', function($query) use ($user) {
-                    $query->where('rw', $user->rw);
+                ->whereHas('user.biodata', function($query) use ($user) {
+                    $query->where('rw_id', $user->id);
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
@@ -142,6 +141,8 @@ class ApprovalController extends Controller
                 'status' => 'pending_rw',
                 'rt_processed_at' => now(),
             ]);
+            
+            $message = 'Surat berhasil disetujui. Menunggu persetujuan RW.';
         } elseif ($approvalLevel === 'rw') {
             $letterRequest->update([
                 'status' => 'approved_final',
@@ -149,12 +150,29 @@ class ApprovalController extends Controller
                 'final_processed_at' => now(),
             ]);
 
-            // PDFs are generated on-demand when a user/admin requests download.
-            // No pre-generation or storage happens here.
+            // Send notification to user that their letter is approved
+            try {
+                // Email + Database notification
+                $letterRequest->user->notify(new \App\Notifications\LetterApprovedNotification($letterRequest));
+                
+                // WhatsApp notification
+                $whatsapp = app(\App\Services\WhatsAppService::class);
+                if ($whatsapp->isConfigured() && $letterRequest->user->phone) {
+                    $whatsapp->sendLetterApprovedNotification($letterRequest->user, $letterRequest);
+                }
+            } catch (\Throwable $e) {
+                \Log::warning('Failed to send letter approved notification', [
+                    'letter_request_id' => $letterRequest->id,
+                    'user_id' => $letterRequest->user_id,
+                    'error' => $e->getMessage()
+                ]);
+            }
+
+            $message = 'Surat berhasil disetujui. Notifikasi telah dikirim ke pemohon.';
         }
 
         return redirect()->route('approvals.index')
-            ->with('success', 'Surat berhasil disetujui.');
+            ->with('success', $message ?? 'Surat berhasil disetujui.');
     }
 
     public function reject(Request $request, LetterRequest $letterRequest)

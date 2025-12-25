@@ -99,7 +99,7 @@ class PdfService
 
         // Check if specific template exists in surat directory
         if ($letterType->template && view()->exists('surat.' . $letterType->template)) {
-            return view('surat.' . $letterType->template, compact('surat', 'qrCodeBase64', 'letterRequest'))->render();
+            return view('surat.' . $letterType->template, compact('letterRequest', 'user', 'letterType', 'formData', 'qrCodeBase64', 'subjectDetails'))->render();
         }
 
         // Fallback to generic template

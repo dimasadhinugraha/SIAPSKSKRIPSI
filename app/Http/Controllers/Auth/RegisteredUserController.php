@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Biodata;
+use App\Models\FamilyMember;
+use App\Models\RtRw;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,9 +23,36 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $rws = User::where('role', 'rw')->with('biodata')->get();
-        $rts = User::where('role', 'rt')->with('biodata')->get();
-        return view('auth.register', compact('rws', 'rts'));
+        // Get RT and RW users
+        $rtUsers = User::where('role', 'rt')
+            ->orderBy('email')
+            ->get()
+            ->map(function($user) {
+                preg_match('/rt(\d+)@/', $user->email, $matches);
+                $rtNumber = isset($matches[1]) ? (int)ltrim($matches[1], '0') : 0;
+                return [
+                    'number' => $rtNumber,
+                    'name' => $user->name,
+                ];
+            })
+            ->sortBy('number')
+            ->values();
+
+        $rwUsers = User::where('role', 'rw')
+            ->orderBy('email')
+            ->get()
+            ->map(function($user) {
+                preg_match('/rw(\d+)@/', $user->email, $matches);
+                $rwNumber = isset($matches[1]) ? (int)ltrim($matches[1], '0') : 0;
+                return [
+                    'number' => $rwNumber,
+                    'name' => $user->name,
+                ];
+            })
+            ->sortBy('number')
+            ->values();
+        
+        return view('auth.register', compact('rtUsers', 'rwUsers'));
     }
 
     /**
@@ -36,16 +65,18 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'nik' => ['required', 'string', 'size:16', 'unique:users,nik', 'regex:/^[0-9]{16}$/'],
-            'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'gender' => ['required', 'in:L,P'],
+            'agama' => ['required', 'string', 'in:Islam,Kristen,Katolik,Hindu,Buddha,Konghucu'],
             'birth_date' => ['required', 'date', 'before:today'],
             'address' => ['required', 'string', 'max:500'],
             'phone' => ['required', 'string', 'max:15'],
             'kk_number' => ['required', 'string', 'size:16'],
-            'rt_rw' => ['required', 'string', 'max:20'],
-            'ktp_photo' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
-            'kk_photo' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'rt' => ['required', 'integer', 'min:1'],
+            'rw' => ['required', 'integer', 'min:1'],
+            'ktp_photo' => ['required', 'image', 'mimes:jpeg,png,jpg'],
+            'kk_photo' => ['required', 'image', 'mimes:jpeg,png,jpg'],
         ]);
 
         // Handle file uploads
@@ -60,56 +91,70 @@ class RegisteredUserController extends Controller
             $kkPath = $request->file('kk_photo')->store('documents/kk', 'public');
         }
 
-        // Validate that the provided RT/RW exists as an account (role rt or rw)
-        $rtRwExists = User::whereIn('role', ['rt', 'rw'])
-            ->whereHas('biodata', function ($query) use ($request) {
-                $query->where('rt_rw', $request->rt_rw);
-            })
-            ->exists();
+        // Check: apakah NIK tersebut sudah terdaftar dalam anggota keluarga di KK yang sama?
+        $existsInKK = FamilyMember::where('nik', $request->nik)
+            ->whereHas('user', function ($q) use ($request) {
+                $q->where('kk_number', $request->kk_number);
+            })->exists();
 
-        if (! $rtRwExists) {
+        if (! $existsInKK) {
             return back()->withInput($request->except(['password', 'password_confirmation']))
-                ->withErrors(['rt_rw' => 'RT/RW yang Anda masukkan tidak ditemukan. Pastikan Anda memilih RT/RW yang valid.']);
+                ->withErrors(['kk_number' => 'NIK tidak ditemukan dalam Kartu Keluarga yang Anda masukkan. Pastikan NIK dan No. KK benar atau tambahkan anggota keluarga terlebih dahulu.']);
         }
 
-        // Resolve RT and RW user ids from the provided rt_rw string
-        $rtId = null;
-        $rwId = null;
-        $parts = explode('/', $request->rt_rw);
-        $rtPart = isset($parts[0]) ? trim($parts[0]) : null;
-        $rwPart = isset($parts[1]) ? trim($parts[1]) : null;
+        // Cari user RT dan RW berdasarkan nomor
+        $rtUser = User::where('role', 'rt')
+            ->where('email', 'rt' . str_pad($request->rt, 3, '0', STR_PAD_LEFT) . '@siappsk.local')
+            ->first();
+            
+        $rwUser = User::where('role', 'rw')
+            ->where('email', 'rw' . str_pad($request->rw, 3, '0', STR_PAD_LEFT) . '@siappsk.local')
+            ->first();
 
-        if ($rtPart) {
-            $rtUser = User::where('role', 'rt')->whereHas('biodata', function ($q) use ($rtPart) {
-                $q->where('rt_rw', 'like', "%{$rtPart}%");
-            })->first();
-            if ($rtUser) $rtId = $rtUser->id;
+        if (!$rtUser) {
+            return back()->withInput($request->except(['password', 'password_confirmation']))
+                ->withErrors(['rt' => 'RT yang Anda pilih tidak tersedia.']);
         }
 
-        if ($rwPart) {
-            $rwUser = User::where('role', 'rw')->whereHas('biodata', function ($q) use ($rwPart) {
-                $q->where('rt_rw', 'like', "%{$rwPart}%");
-            })->first();
-            if ($rwUser) $rwId = $rwUser->id;
+        if (!$rwUser) {
+            return back()->withInput($request->except(['password', 'password_confirmation']))
+                ->withErrors(['rw' => 'RW yang Anda pilih tidak tersedia.']);
         }
 
+        // Bentuk string rt_rw seperti "001/001"
+        $rtRwString = sprintf('%03d/%03d', $request->rt, $request->rw);
+
+        // Create user
         $user = User::create([
             'name' => $request->name,
             'nik' => $request->nik,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user',
-        ]);
-
-        $user->biodata()->create([
             'gender' => $request->gender,
             'birth_date' => $request->birth_date,
             'address' => $request->address,
             'phone' => $request->phone,
             'kk_number' => $request->kk_number,
-            'rt_rw' => $request->rt_rw,
-            'rt_id' => $rtId,
-            'rw_id' => $rwId,
+            'rt' => $request->rt,
+            'rw' => $request->rw,
+            'ktp_photo' => $ktpPath,
+            'kk_photo' => $kkPath,
+            'role' => 'user',
+            'is_verified' => false,
+            'is_approved' => false,
+        ]);
+
+        // Create biodata with rt_id and rw_id
+        $user->biodata()->create([
+            'gender' => $request->gender,
+            'agama' => $request->agama,
+            'birth_date' => $request->birth_date,
+            'address' => $request->address,
+            'phone' => $request->phone,
+            'kk_number' => $request->kk_number,
+            'rt_rw' => $rtRwString,
+            'rt_id' => $rtUser->id,
+            'rw_id' => $rwUser->id,
             'ktp_photo' => $ktpPath,
             'kk_photo' => $kkPath,
         ]);
@@ -118,11 +163,17 @@ class RegisteredUserController extends Controller
         try {
             Auth::login($user);
         } catch (\Throwable $e) {
-            // fallback: log the exception and continue to redirect to notice which may require login
             Log::warning('Failed to auto-login new user after registration', ['error' => $e->getMessage()]);
         }
 
         event(new Registered($user));
+
+        // Send email verification notification
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            Log::warning('Failed to send verification email to new user', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+        }
 
         // Redirect to verification notice (user is logged in so notice can be shown)
         return redirect()->route('verification.notice');

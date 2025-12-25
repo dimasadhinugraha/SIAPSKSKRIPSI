@@ -218,6 +218,12 @@
                         </a>
                     </li>
                      <li class="sidebar-item">
+                        <a href="{{ route('admin.rt-rw.index') }}" class="sidebar-link {{ request()->routeIs('admin.rt-rw.*') ? 'active' : '' }}">
+                            <i class="fas fa-map-marked-alt fa-fw"></i>
+                            <span>Manajemen RT/RW</span>
+                        </a>
+                    </li>
+                     <li class="sidebar-item">
                         <a href="{{ route('admin.letter-requests.index') }}" class="sidebar-link {{ request()->routeIs('admin.letter-requests.*') ? 'active' : '' }}">
                             <i class="fas fa-file-signature fa-fw"></i>
                             <span>Manajemen Surat</span>
