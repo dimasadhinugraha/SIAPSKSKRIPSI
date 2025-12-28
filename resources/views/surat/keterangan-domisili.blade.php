@@ -5,140 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surat Keterangan Domisili</title>
     <style>
-        * {
+        .letter-content * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        body {
+        .letter-content {
             font-family: 'Times New Roman', Times, serif;
             font-size: 12pt;
             line-height: 1.6;
             color: #000;
             background-color: #fff;
-            padding: 2cm 2.5cm;
         }
         
-        .header {
+        .letter-content .header {
             text-align: center;
             margin-bottom: 30px;
         }
         
-        .logo {
+        .letter-content .logo {
             width: 100px;
             height: 120px;
             margin: 0 auto 10px;
         }
         
-        .header h2 {
+        .letter-content .header h2 {
             font-size: 14pt;
             font-weight: bold;
             margin: 5px 0;
             text-transform: uppercase;
         }
         
-        .header h1 {
+        .letter-content .header h1 {
             font-size: 16pt;
             font-weight: bold;
             margin: 5px 0;
             text-transform: uppercase;
         }
         
-        .header p {
+        .letter-content .header p {
             font-size: 10pt;
             margin: 2px 0;
             font-style: italic;
         }
         
-        .divider {
+        .letter-content .divider {
             border-bottom: 3px solid #000;
             margin: 15px 0 20px 0;
         }
         
-        .title {
+        .letter-content .title {
             text-align: center;
             margin: 25px 0;
         }
         
-        .title h3 {
+        .letter-content .title h3 {
             font-size: 14pt;
             font-weight: bold;
             text-decoration: underline;
             margin-bottom: 5px;
         }
         
-        .title p {
+        .letter-content .title p {
             font-size: 11pt;
         }
         
-        .content {
+        .letter-content .content {
             text-align: justify;
             margin: 20px 0;
         }
         
-        .content p {
+        .letter-content .content p {
             margin-bottom: 15px;
         }
         
-        .data-table {
+        .letter-content .data-table {
             margin: 20px 0 20px 40px;
         }
         
-        .data-table table {
+        .letter-content .data-table table {
             width: 100%;
             border-collapse: collapse;
         }
         
-        .data-table td {
+        .letter-content .data-table td {
             padding: 3px 0;
             vertical-align: top;
         }
         
-        .data-table td:first-child {
+        .letter-content .data-table td:first-child {
             width: 150px;
         }
         
-        .data-table td:nth-child(2) {
+        .letter-content .data-table td:nth-child(2) {
             width: 20px;
             text-align: center;
         }
         
-        .footer {
+        .letter-content .footer {
             margin-top: 40px;
         }
         
-        .footer-text {
+        .letter-content .footer-text {
             text-align: justify;
             margin-bottom: 30px;
         }
         
-        .signature {
+        .letter-content .signature {
             margin-top: 20px;
             text-align: center;
         }
         
-        .signature-right {
+        .letter-content .signature-right {
             float: right;
             width: 250px;
             text-align: center;
         }
         
-        .signature p {
+        .letter-content .signature p {
             margin: 5px 0;
         }
         
-        .signature .name {
+        .letter-content .signature .name {
             margin-top: 70px;
             font-weight: bold;
             text-decoration: underline;
         }
         
-        .clear {
+        .letter-content .clear {
             clear: both;
         }
         
-        .stamp-box {
+        .letter-content .stamp-box {
             width: 80px;
             height: 80px;
             border: 2px solid #000;
@@ -231,15 +230,12 @@
         $letterNumber = '400.12.2.1/' . $letterRequest->request_number . '/' . $romanMonth . '/' . $currentYear;
     @endphp
 
+    <div class="letter-content">
     <div class="header">
         <table width="100%" style="margin-bottom: 10px;">
             <tr>
                 <td width="60" style="vertical-align: top;">
-                    @if(file_exists(public_path('images/ciasmara.png')))
-                        <img src="{{ public_path('images/ciasmara.png') }}" width="100px" height="360px" alt="Logo" class="logo">
-                    @else
-                        <div style="width: 60px; height: 60px; border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 8pt;">LOGO</div>
-                    @endif
+                    <img src="{{ $logoSrc ?? '/images/ciasmara.png' }}" width="100px" height="360px" alt="Logo" class="logo">
                 </td>
                 <td style="text-align: center; vertical-align: middle;">
                     <h2>PEMERINTAH KABUPATEN BOGOR</h2>
@@ -312,6 +308,7 @@
             <p class="name" style="padding-top: 100px;"><u>JUNAEDI,S.AP</u></p>
         </div>
         <div class="clear"></div>
+    </div>
     </div>
 
 </body>

@@ -125,7 +125,7 @@
                                 <td class="px-4 border-top">{{ $user->email }}</td>
                                 <td class="px-4 border-top">{{ $user->biodata->phone ?? '-' }}</td>
                                 <td class="px-4 border-top">
-                                    @if($user->is_verified && $user->is_approved)
+                                    @if($user->hasVerifiedEmail() && $user->is_approved)
                                         <span class="badge bg-success">Aktif</span>
                                     @else
                                         <span class="badge bg-warning">Pending</span>
@@ -161,6 +161,12 @@
                 <table class="table table-hover table-borderless mb-0">
                     <thead class="table-light">
                         <tr>
+                            <th class="py-3 px-4">No</th>
+                            <th class="py-3 px-4">RT</th>
+                            <th class="py-3 px-4">Nama</th>
+                            <th class="py-3 px-4">Email</th>
+                            <th class="py-3 px-4">Telepon</th>
+                            <th class="py-3 px-4">Status</th>
                             <th class="py-3 px-4 text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -182,7 +188,7 @@
                                 <td class="px-4 border-top">{{ $user->email }}</td>
                                 <td class="px-4 border-top">{{ $user->biodata->phone ?? '-' }}</td>
                                 <td class="px-4 border-top">
-                                    @if($user->is_verified && $user->is_approved)
+                                    @if($user->hasVerifiedEmail() && $user->is_approved)
                                         <span class="badge bg-success">Aktif</span>
                                     @else
                                         <span class="badge bg-warning">Pending</span>
@@ -191,13 +197,7 @@
                                 <td class="px-4 border-top text-center">
                                     <a href="{{ route('admin.rt-rw.edit', $user->id) }}" class="btn btn-sm btn-outline-primary" title="Edit">
                                         <i class="fas fa-edit"></i>
-                                    </a>"px-4 border-top">{{ $user->biodata->phone ?? '-' }}</td>
-                                <td class="px-4 border-top">
-                                    @if($user->is_verified && $user->is_approved)
-                                        <span class="badge bg-success">Aktif</span>
-                                    @else
-                                        <span7class="badge bg-warning">Pending</span>
-                                    @endif
+                                    </a>
                                 </td>
                             </tr>
                         @empty

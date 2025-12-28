@@ -31,8 +31,8 @@
                         <strong>Info Akun:</strong><br>
                         Email: <span class="fw-bold">{{ $user->email }}</span><br>
                         Role: <span class="fw-bold">{{ $user->role === 'rt' ? 'Ketua RT' : 'Ketua RW' }}</span><br>
-                        Status: <span class="badge {{ $user->is_verified && $user->is_approved ? 'bg-success' : 'bg-warning' }}">
-                            {{ $user->is_verified && $user->is_approved ? 'Aktif' : 'Pending' }}
+                        Status: <span class="badge {{ $user->hasVerifiedEmail() && $user->is_approved ? 'bg-success' : 'bg-warning' }}">
+                            {{ $user->hasVerifiedEmail() && $user->is_approved ? 'Aktif' : 'Pending' }}
                         </span>
                     </div>
 

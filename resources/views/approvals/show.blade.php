@@ -76,6 +76,35 @@
                 </div>
             </div>
 
+            <!-- Letter Preview -->
+            @if($letterRequest->letterType->template)
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-muted mb-0">Preview Surat</h6>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="togglePreview()">
+                            <i class="fas fa-eye me-1"></i>
+                            <span id="previewToggleText">Tampilkan Preview</span>
+                        </button>
+                    </div>
+                    <div id="letterPreview" style="display: none;">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-0" style="background-color: #f5f5f5;">
+                                <div class="d-flex justify-content-center py-4">
+                                    <div style="width: 21cm; min-height: 29.7cm; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 2cm 2.5cm; overflow: auto;">
+                                        @include('surat.' . $letterRequest->letterType->template, [
+                                            'formData' => $letterRequest->form_data,
+                                            'user' => $letterRequest->user,
+                                            'subject' => $letterRequest->subject,
+                                            'letterRequest' => $letterRequest
+                                        ])
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <!-- Approval History -->
             @if($letterRequest->approvals->count() > 0)
                 <div class="mt-4">
@@ -179,4 +208,18 @@
 
 @push('scripts')
 <script src="{{ asset('js/approval-modal.js') }}"></script>
+<script>
+function togglePreview() {
+    const preview = document.getElementById('letterPreview');
+    const toggleText = document.getElementById('previewToggleText');
+    
+    if (preview.style.display === 'none') {
+        preview.style.display = 'block';
+        toggleText.textContent = 'Sembunyikan Preview';
+    } else {
+        preview.style.display = 'none';
+        toggleText.textContent = 'Tampilkan Preview';
+    }
+}
+</script>
 @endpush

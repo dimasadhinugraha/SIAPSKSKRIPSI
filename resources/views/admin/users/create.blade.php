@@ -196,9 +196,9 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="is_verified" 
-                                           name="is_verified" value="1" {{ old('is_verified', '1') ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="is_verified">
+                                    <input class="form-check-input" type="checkbox" id="email_verified" 
+                                           name="email_verified" value="1" {{ old('email_verified', '1') ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="email_verified">
                                         Akun Terverifikasi
                                     </label>
                                 </div>

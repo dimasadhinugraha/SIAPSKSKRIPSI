@@ -211,7 +211,7 @@
                                 </td>
                                 <td class="px-4 border-top">
                                     <div>
-                                        @if($user->is_verified)
+                                        @if($user->hasVerifiedEmail())
                                             <span class="badge bg-success-soft text-success d-inline-flex align-items-center">
                                                 <i class="fas fa-check-circle me-1"></i> Terverifikasi
                                             </span>

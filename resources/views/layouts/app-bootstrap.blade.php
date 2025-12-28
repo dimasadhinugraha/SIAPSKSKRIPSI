@@ -323,7 +323,7 @@
                                 $notifications = [];
                                 
                                 if(Auth::user()->isAdmin()) {
-                                    $unreadCount += \App\Models\User::where('is_verified', false)->where('role', 'user')->count();
+                                    $unreadCount += \App\Models\User::whereNull('email_verified_at')->where('role', 'user')->count();
                                     $unreadCount += \App\Models\FamilyMember::where('approval_status', 'pending')->count();
                                 } elseif(Auth::user()->isRT() || Auth::user()->isRW()) {
                                     $unreadCount = Auth::user()->unreadNotifications->count();
@@ -345,7 +345,7 @@
                             
                             @if(Auth::user()->isAdmin())
                                 @php
-                                    $pendingUsers = \App\Models\User::where('is_verified', false)->where('role', 'user')->take(3)->get();
+                                    $pendingUsers = \App\Models\User::whereNull('email_verified_at')->where('role', 'user')->take(3)->get();
                                     $pendingMembers = \App\Models\FamilyMember::where('approval_status', 'pending')->take(3)->get();
                                 @endphp
                                 

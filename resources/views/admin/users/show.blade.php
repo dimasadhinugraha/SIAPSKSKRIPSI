@@ -67,7 +67,7 @@
                                     <span class="badge bg-secondary">User</span>
                                 @endif
                                 
-                                @if($user->is_verified)
+                                @if($user->hasVerifiedEmail())
                                     <span class="badge bg-success">Terverifikasi</span>
                                 @else
                                     <span class="badge bg-warning">Belum Verifikasi</span>
@@ -290,9 +290,9 @@
                         <div class="col-md-6 mb-2">
                             <form action="{{ route('admin.users.toggle-verification', $user) }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-{{ $user->is_verified ? 'secondary' : 'success' }} w-100">
-                                    <i class="fas fa-{{ $user->is_verified ? 'times' : 'check' }}-circle me-2"></i>
-                                    {{ $user->is_verified ? 'Batalkan Verifikasi' : 'Verifikasi Akun' }}
+                                <button type="submit" class="btn btn-{{ $user->hasVerifiedEmail() ? 'secondary' : 'success' }} w-100">
+                                    <i class="fas fa-{{ $user->hasVerifiedEmail() ? 'times' : 'check' }}-circle me-2"></i>
+                                    {{ $user->hasVerifiedEmail() ? 'Batalkan Verifikasi' : 'Verifikasi Akun' }}
                                 </button>
                             </form>
                         </div>

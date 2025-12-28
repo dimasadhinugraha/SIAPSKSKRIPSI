@@ -14,12 +14,12 @@ class RwUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create 5 RW users
-        for ($i = 1; $i <= 5; $i++) {
+        // Create 8 RW users
+        for ($i = 1; $i <= 8; $i++) {
             $user = User::create([
                 'name' => 'RW ' . $i,
                 'email' => 'rw' . $i . '@ciasmara.desa.id',
-                'nik' => '123456789012345' . $i,
+                'nik' => '1234567890' . str_pad($i, 6, '0', STR_PAD_LEFT),
                 'password' => Hash::make('password'),
                 'role' => 'rw',
             ]);
@@ -32,8 +32,6 @@ class RwUserSeeder extends Seeder
                 'address' => 'Alamat RW ' . $i,
                 'phone' => '0812000000' . $i,
                 'kk_number' => '32010101010000' . $i,
-                'is_verified' => true,
-                'verified_at' => now(),
             ]);
         }
     }

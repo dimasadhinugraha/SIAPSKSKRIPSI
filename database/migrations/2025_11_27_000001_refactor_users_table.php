@@ -22,13 +22,13 @@ return new class extends Migration
             $columnsToDrop = [
                 // 'name', // Keep for display and identification
                 // 'nik', // Keep for authentication
+                // 'is_verified', // Keep for user verification status
+                // 'kk_number', // Keep for family card number
                 'gender',
                 'birth_date',
                 'address',
                 'phone',
                 'rt_rw',
-                'kk_number',
-                'is_verified',
                 'verified_at',
                 'verified_by',
                 'rt_id',

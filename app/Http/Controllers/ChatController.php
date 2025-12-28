@@ -16,7 +16,7 @@ class ChatController extends Controller
 
         // Get all verified users except current user
         $users = User::where('id', '!=', $user->id)
-            ->where('is_verified', true)
+            ->whereNotNull('email_verified_at')
             ->orderBy('name')
             ->get();
 
@@ -182,7 +182,7 @@ class ChatController extends Controller
     public function create()
     {
         $users = User::where('id', '!=', auth()->id())
-            ->where('is_verified', true)
+            ->whereNotNull('email_verified_at')
             ->orderBy('name')
             ->get();
 

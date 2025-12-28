@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            if (! Schema::hasColumn('users', 'is_approved')) {
-                $table->boolean('is_approved')->default(false)->after('remember_token');
+            if (Schema::hasColumn('users', 'is_verified')) {
+                $table->dropColumn('is_verified');
             }
         });
     }
@@ -24,9 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            if (Schema::hasColumn('users', 'is_approved')) {
-                $table->dropColumn('is_approved');
-            }
+            $table->boolean('is_verified')->default(false)->after('remember_token');
         });
     }
 };

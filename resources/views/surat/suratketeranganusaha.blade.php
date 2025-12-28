@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surat Keterangan Usaha</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.6; color: #000; background-color: #fff; padding: 2cm 2.5cm; }
+        .letter-content * { margin: 0; padding: 0; box-sizing: border-box; }
+        .letter-content { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.6; color: #000; background-color: #fff; }
         .header { text-align: center; margin-bottom: 30px; }
         .logo { width: 100px; height: 120px; margin: 0 auto 10px; }
         .header h2 { font-size: 14pt; font-weight: bold; margin: 5px 0; text-transform: uppercase; }
@@ -58,15 +58,13 @@
         $statusUsaha = $formData['status_usaha'] ?? 'Aktif';
     @endphp
 
+    <div class="letter-content">
+
     <div class="header">
         <table width="100%" style="margin-bottom: 10px;">
             <tr>
                 <td width="60" style="vertical-align: top;">
-                    @if(file_exists(public_path('images/ciasmara.png')))
-                        <img src="{{ public_path('images/ciasmara.png') }}" width="100px" height="120px" alt="Logo" class="logo">
-                    @else
-                        <div style="width: 60px; height: 60px; border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 8pt;">LOGO</div>
-                    @endif
+                    <img src="{{ $logoSrc ?? '/images/ciasmara.png' }}" width="100px" height="120px" alt="Logo" class="logo">
                 </td>
                 <td style="text-align: center; vertical-align: middle;">
                     <h2>PEMERINTAH KABUPATEN BOGOR</h2>
@@ -116,6 +114,7 @@
              <p class="name" style="padding-top: 100px;"><u>JUNAEDI,S.AP</u></p>
         </div>
         <div class="clear"></div>
+    </div>
     </div>
 </body>
 </html>

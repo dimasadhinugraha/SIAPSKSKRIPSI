@@ -52,20 +52,23 @@ class LoginRequest extends FormRequest
         // At this point the user is authenticated via session
         $user = Auth::user();
 
-        // Require email verification first
-        if (method_exists($user, 'hasVerifiedEmail') && ! $user->hasVerifiedEmail()) {
-            Auth::logout();
-            throw ValidationException::withMessages([
-                'email' => 'Silakan verifikasi email Anda terlebih dahulu. Cek inbox untuk tautan verifikasi.',
-            ]);
-        }
+        // Skip verification for RT and RW roles
+        if (!in_array($user->role, ['rt', 'rw'])) {
+            // Require email verification first
+            if (!$user->hasVerifiedEmail()) {
+                Auth::logout();
+                throw ValidationException::withMessages([
+                    'email' => 'Silakan verifikasi email Anda terlebih dahulu. Cek inbox untuk tautan verifikasi.',
+                ]);
+            }
 
-        // Require admin approval on users table
-        if (isset($user->is_approved) && ! $user->is_approved) {
-            Auth::logout();
-            throw ValidationException::withMessages([
-                'email' => 'Akun Anda masih menunggu persetujuan admin. Silakan tunggu pemberitahuan lewat email.',
-            ]);
+            // Require admin approval on users table
+            if (isset($user->is_approved) && ! $user->is_approved) {
+                Auth::logout();
+                throw ValidationException::withMessages([
+                    'email' => 'Akun Anda masih menunggu persetujuan admin. Silakan tunggu pemberitahuan lewat email.',
+                ]);
+            }
         }
 
         RateLimiter::clear($this->throttleKey());

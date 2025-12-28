@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('birth_date')->after('gender');
             $table->text('address')->after('birth_date');
             $table->string('phone', 15)->after('address');
-            $table->string('kk_number', 16)->after('phone'); // Nomor Kartu Keluarga
+            $table->string('kk_number', 16)->nullable()->after('phone'); // Nomor Kartu Keluarga
             $table->string('ktp_photo')->nullable()->after('kk_number'); // Path to KTP photo
             $table->string('kk_photo')->nullable()->after('ktp_photo'); // Path to KK photo
             $table->enum('role', ['user', 'rt', 'rw', 'admin'])->default('user')->after('kk_photo');

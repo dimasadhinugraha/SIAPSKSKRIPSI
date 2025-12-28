@@ -25,7 +25,7 @@
     </div>
     @endif
 
-    @if($user->is_verified && $user->is_approved)
+    @if($user->hasVerifiedEmail() && $user->is_approved)
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="fas fa-check-circle me-2"></i>
         <strong>Akun Telah Diverifikasi!</strong> User ini sudah terverifikasi dan dapat menggunakan semua fitur sistem.
@@ -60,7 +60,7 @@
                         </span>
                     @endif
                     
-                    @if($user->is_verified && $user->is_approved)
+                    @if($user->hasVerifiedEmail() && $user->is_approved)
                         <span class="badge bg-success">
                             <i class="fas fa-check-circle me-1"></i>Akun Disetujui
                         </span>
@@ -162,7 +162,7 @@
         </div>
 
         <!-- Card Footer with Actions -->
-        @if(!($user->is_verified && $user->is_approved))
+        @if(!($user->hasVerifiedEmail() && $user->is_approved))
         <div class="card-footer bg-light">
             <div class="d-flex justify-content-between align-items-center">
                 <div>

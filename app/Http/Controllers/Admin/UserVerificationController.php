@@ -14,7 +14,7 @@ class UserVerificationController extends Controller
     {
         // Tampilkan user yang belum diverifikasi admin ATAU yang belum verify email
         $pendingUsers = User::where(function($query) {
-                $query->where('is_verified', false)
+                $query->whereNull('email_verified_at')
                       ->orWhereNull('email_verified_at');
             })
             ->where('role', 'user')
@@ -24,8 +24,8 @@ class UserVerificationController extends Controller
 
         // Statistics
         $stats = [
-            'pending' => User::where('is_verified', false)->where('role', 'user')->count(),
-            'verified' => User::where('is_verified', true)->where('role', 'user')->count(),
+            'pending' => User::whereNull('email_verified_at')->where('role', 'user')->count(),
+            'verified' => User::whereNotNull('email_verified_at')->where('role', 'user')->count(),
             'total' => User::where('role', 'user')->count(),
             'today' => User::where('role', 'user')->whereDate('created_at', today())->count(),
         ];
@@ -41,7 +41,7 @@ class UserVerificationController extends Controller
 
     public function verify(Request $request, User $user)
     {
-        if ($user->is_verified) {
+        if ($user->hasVerifiedEmail()) {
             return redirect()->route('admin.user-verification.index')
                 ->with('error', 'User sudah terverifikasi.');
         }
@@ -53,16 +53,15 @@ class UserVerificationController extends Controller
         }
 
         // Mark email/admin verification and approval
-        $user->is_verified = true;
+        $user->email_verified_at = now();
         $user->is_approved = true;
         $user->save();
 
         // Log for debugging
         \Log::info('User verified', [
             'user_id' => $user->id,
-            'is_verified' => $user->is_verified,
-            'is_approved' => $user->is_approved,
-            'email_verified_at' => $user->email_verified_at
+            'email_verified_at' => $user->email_verified_at,
+            'is_approved' => $user->is_approved
         ]);
 
         // Send activation notification to the user

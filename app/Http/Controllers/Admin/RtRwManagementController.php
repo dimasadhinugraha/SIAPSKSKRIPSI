@@ -82,7 +82,7 @@ class RtRwManagementController extends Controller
             'email' => $email,
             'password' => \Hash::make($request->password),
             'role' => $role,
-            'is_verified' => true,
+            'email_verified_at' => now(),
             'is_approved' => true,
             'email_verified_at' => now(),
         ]);

@@ -38,9 +38,9 @@ class UserManagementController extends Controller
         // Filter by status
         if ($request->has('status') && $request->status !== '') {
             if ($request->status === 'verified') {
-                $query->where('is_verified', true);
+                $query->whereNotNull('email_verified_at');
             } elseif ($request->status === 'not_verified') {
-                $query->where('is_verified', false);
+                $query->whereNull('email_verified_at');
             } elseif ($request->status === 'approved') {
                 $query->where('is_approved', true);
             } elseif ($request->status === 'not_approved') {
@@ -57,7 +57,7 @@ class UserManagementController extends Controller
             'rt' => User::where('role', 'rt')->count(),
             'rw' => User::where('role', 'rw')->count(),
             'user' => User::where('role', 'user')->count(),
-            'verified' => User::where('is_verified', true)->count(),
+            'verified' => User::whereNotNull('email_verified_at')->count(),
         ];
 
         return view('admin.users.index', compact('users', 'statistics'));
@@ -102,7 +102,7 @@ class UserManagementController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => $request->role,
-                'is_verified' => true, // Auto-verified by admin
+                'email_verified_at' => now(), // Auto-verified by admin
                 'is_approved' => true, // Auto-approved by admin
                 'email_verified_at' => now(),
             ]);
@@ -194,7 +194,7 @@ class UserManagementController extends Controller
             'phone' => ['required', 'string', 'max:15'],
             'kk_number' => ['nullable', 'string', 'size:16'],
             'rt_rw' => ['nullable', 'string'],
-            'is_verified' => ['boolean'],
+            'email_verified' => ['boolean'],
             'is_approved' => ['boolean'],
             'ktp_photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'kk_photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
@@ -209,7 +209,7 @@ class UserManagementController extends Controller
                 'nik' => $request->nik,
                 'email' => $request->email,
                 'role' => $request->role,
-                'is_verified' => $request->boolean('is_verified'),
+                'email_verified_at' => $request->boolean('email_verified') ? now() : null,
                 'is_approved' => $request->boolean('is_approved'),
             ];
 
@@ -315,12 +315,13 @@ class UserManagementController extends Controller
      */
     public function toggleVerification(User $user)
     {
+        $newVerificationStatus = $user->hasVerifiedEmail() ? null : now();
+        
         $user->update([
-            'is_verified' => !$user->is_verified,
-            'email_verified_at' => !$user->is_verified ? null : now(),
+            'email_verified_at' => $newVerificationStatus,
         ]);
 
-        $status = $user->is_verified ? 'diverifikasi' : 'dibatalkan verifikasinya';
+        $status = $user->hasVerifiedEmail() ? 'diverifikasi' : 'dibatalkan verifikasinya';
         return back()->with('success', "User berhasil {$status}!");
     }
 

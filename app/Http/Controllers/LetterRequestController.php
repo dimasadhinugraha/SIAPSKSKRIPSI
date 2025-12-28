@@ -7,7 +7,7 @@ use App\Models\LetterType;
 use App\Services\QrCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Modles\User;
+use App\Models\User;
 use App\Notifications\NewLetterRequestNotification;
 use App\Services\PdfService;
 
@@ -93,6 +93,13 @@ class LetterRequestController extends Controller
                 $rtId = $requester->biodata->rt_id;
                 $rwId = $requester->biodata->rw_id;
                 
+                \Log::info('Letter request notification check', [
+                    'requester_id' => $requester->id,
+                    'requester_name' => $requester->name,
+                    'rt_id' => $rtId,
+                    'rw_id' => $rwId,
+                ]);
+                
                 $notifiedUsers = collect();
                 
                 // Send to RT
@@ -100,6 +107,9 @@ class LetterRequestController extends Controller
                     $rtUser = User::find($rtId);
                     if ($rtUser && $rtUser->role === 'rt') {
                         $notifiedUsers->push($rtUser);
+                        \Log::info('RT user notified', ['rt_user_id' => $rtUser->id, 'rt_user_name' => $rtUser->name]);
+                    } else {
+                        \Log::warning('RT user not found or invalid role', ['rt_id' => $rtId]);
                     }
                 }
                 
@@ -108,6 +118,9 @@ class LetterRequestController extends Controller
                     $rwUser = User::find($rwId);
                     if ($rwUser && $rwUser->role === 'rw' && !$notifiedUsers->contains('id', $rwUser->id)) {
                         $notifiedUsers->push($rwUser);
+                        \Log::info('RW user notified', ['rw_user_id' => $rwUser->id, 'rw_user_name' => $rwUser->name]);
+                    } else {
+                        \Log::warning('RW user not found or invalid role', ['rw_id' => $rwId]);
                     }
                 }
                 
@@ -117,12 +130,15 @@ class LetterRequestController extends Controller
                 foreach ($notifiedUsers as $user) {
                     // Email + Database notification
                     $user->notify(new NewLetterRequestNotification($letterRequest));
+                    \Log::info('Notification sent', ['to_user_id' => $user->id, 'to_user_name' => $user->name]);
                     
                     // WhatsApp notification (if configured and user has phone)
                     if ($whatsapp->isConfigured() && $user->phone) {
                         $whatsapp->sendNewLetterNotification($user, $letterRequest);
                     }
                 }
+            } else {
+                \Log::warning('Requester has no biodata', ['user_id' => $requester->id]);
             }
         } catch (\Throwable $e) {
             \Log::warning('Failed to send letter request notification', ['error' => $e->getMessage()]);
@@ -180,7 +196,7 @@ class LetterRequestController extends Controller
             ]);
 
             // Temporarily allow access for all verified users
-            if (!$currentUser->is_verified) {
+            if (!$currentUser->hasVerifiedEmail()) {
                 abort(403, 'Akun Anda belum terverifikasi.');
             }
         }

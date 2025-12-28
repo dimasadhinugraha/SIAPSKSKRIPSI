@@ -21,9 +21,17 @@ class RoleMiddleware
 
         $user = auth()->user();
 
-        // Check if user is verified
-        if (!$user->is_verified) {
-            return redirect()->route('verification.notice');
+        // Skip verification check for RT, RW, and admin roles
+        if (!in_array($user->role, ['rt', 'rw', 'admin'])) {
+            // Check if user's email is verified
+            if (!$user->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
+            }
+            
+            // Check if user is approved by admin
+            if (isset($user->is_approved) && !$user->is_approved) {
+                return redirect()->route('verification.notice');
+            }
         }
 
         // Check if user has required role

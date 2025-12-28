@@ -164,7 +164,7 @@
                         <div class="row">
                             <div class="col-sm-5 text-muted">Status Verifikasi</div>
                             <div class="col-sm-7">
-                                @if(auth()->user()->is_verified)
+                                @if(auth()->user()->hasVerifiedEmail())
                                     <span class="badge bg-success">Terverifikasi</span>
                                 @else
                                     <span class="badge bg-warning">Menunggu Verifikasi</span>

@@ -35,8 +35,6 @@ class DatabaseSeeder extends Seeder
             'address' => 'Kantor Desa Ciasmara',
             'phone' => '081234567890',
             'kk_number' => '1234567890123456',
-            'is_verified' => true,
-            'verified_at' => now(),
         ]);
 
         // Create RW and RT Users from Seeders
@@ -62,9 +60,6 @@ class DatabaseSeeder extends Seeder
             'rt_rw' => 'RT 01/RW 01',
             'rt_id' => 7, // Link to the first created RT user (ID 7)
             'rw_id' => 2, // Link to the first created RW user (ID 2)
-            'is_verified' => true,
-            'verified_at' => now(),
-            'verified_by' => $adminUser->id,
         ]);
 
         // Create Letter Types
@@ -76,7 +71,7 @@ class DatabaseSeeder extends Seeder
                     'kampung' => 'text',
                     'keperluan' => 'text'
                 ],
-                'template' => 'suratketerangandomisili',
+                'template' => 'keterangan-domisili',
                 'is_active' => true,
             ],
             [

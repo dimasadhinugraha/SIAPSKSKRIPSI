@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('biodatas', function (Blueprint $table) {
             if (! Schema::hasColumn('biodatas', 'is_active')) {
-                $table->boolean('is_active')->default(false)->after('is_verified');
+                $table->boolean('is_active')->default(false);
             }
         });
     }

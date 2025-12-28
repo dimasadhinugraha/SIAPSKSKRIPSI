@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Surat Keterangan Kelahiran</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.4; color: #000; background-color: #fff; padding: 1.5cm 2cm; }
+        .letter-content * { margin: 0; padding: 0; box-sizing: border-box; }
+        .letter-content { font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.4; color: #000; background-color: #fff; }
         .header { text-align: center; margin-bottom: 20px; }
         .logo { width: 100px; height: 120px; margin: 0 auto 10px; }
         .header h2 { font-size: 13pt; font-weight: bold; margin: 3px 0; text-transform: uppercase; }
@@ -30,6 +30,7 @@
     </style>
 </head>
 <body>
+    <div class="letter-content">
     @php
         $lastApproval = $letterRequest->approvals()->where('status', 'approved')->orderBy('updated_at', 'desc')->first();
         $approvalDate = $lastApproval && $lastApproval->updated_at ? \Carbon\Carbon::parse($lastApproval->updated_at)->locale('id') : \Carbon\Carbon::now()->locale('id');
@@ -76,11 +77,7 @@
         <table width="100%" style="margin-bottom: 8px;">
             <tr>
                 <td width="50" style="vertical-align: top;">
-                    @if(file_exists(public_path('images/ciasmara.png')))
-                        <img src="{{ public_path('images/ciasmara.png') }}" width="90px" height="110px" alt="Logo" class="logo">
-                    @else
-                        <div style="width: 50px; height: 50px; border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 7pt;">LOGO</div>
-                    @endif
+                    <img src="{{ $logoSrc ?? '/images/ciasmara.png' }}" width="90px" height="110px" alt="Logo" class="logo">
                 </td>
                 <td style="text-align: center; vertical-align: middle;">
                     <h2>PEMERINTAH KABUPATEN BOGOR</h2>
@@ -140,6 +137,7 @@
              <p class="name" style="padding-top: 100px;"><u>JUNAEDI,S.AP</u></p>
         </div>
         <div class="clear"></div>
+    </div>
     </div>
 </body>
 </html>

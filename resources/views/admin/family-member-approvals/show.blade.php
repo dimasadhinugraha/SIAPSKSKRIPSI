@@ -190,7 +190,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="text-muted small d-block">Status Verifikasi</label>
-                                @if($familyMember->user->is_verified)
+                                @if($familyMember->user->hasVerifiedEmail())
                                     <span class="badge bg-success">Terverifikasi</span>
                                 @else
                                     <span class="badge bg-warning text-dark">Belum Terverifikasi</span>

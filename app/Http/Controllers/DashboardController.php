@@ -16,7 +16,7 @@ class DashboardController extends Controller
 
         if ($user->isAdmin()) {
             $stats = [
-                'pending_users' => User::where('is_verified', false)->count(),
+                'pending_users' => User::whereNull('email_verified_at')->count(),
                 'total_users' => User::where('role', 'user')->count(),
                 'total_letters' => LetterRequest::count(),
                 'pending_letters' => LetterRequest::whereIn('status', ['pending_rt', 'pending_rw'])->count(),

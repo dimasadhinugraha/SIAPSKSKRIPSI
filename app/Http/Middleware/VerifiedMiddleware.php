@@ -21,13 +21,18 @@ class VerifiedMiddleware
 
         $user = auth()->user();
 
-        // Admins don't need to be verified through this flow
-        if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
+        // Skip verification for RT and RW roles
+        if (in_array($user->role, ['rt', 'rw', 'admin'])) {
             return $next($request);
         }
 
-        // Check users.is_verified (admin approval)
-        if (isset($user->is_verified) && ! $user->is_verified) {
+        // Check email verification
+        if (!$user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
+        // Check admin approval
+        if (isset($user->is_approved) && !$user->is_approved) {
             return redirect()->route('verification.notice');
         }
 

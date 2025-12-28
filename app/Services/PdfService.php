@@ -17,6 +17,8 @@ class PdfService
         $html = $this->generateLetterHtml($letterRequest);
 
         $pdf = Pdf::loadHTML($html);
+        // Allow loading images/styles via absolute URLs (e.g. asset('images/ciasmara.png'))
+        $pdf->setOption('isRemoteEnabled', true);
         $pdf->setPaper('A4', 'portrait');
 
         // Return PDF binary content. We no longer persist files by default.
@@ -34,6 +36,8 @@ class PdfService
         $html = $this->generateLetterHtml($letterRequest);
 
         $pdf = Pdf::loadHTML($html);
+        // Allow loading images/styles via absolute URLs (e.g. asset('images/ciasmara.png'))
+        $pdf->setOption('isRemoteEnabled', true);
         $pdf->setPaper('A4', 'portrait');
 
         return $pdf->output();
@@ -45,6 +49,13 @@ class PdfService
         $letterType = $letterRequest->letterType;
         $formData = $letterRequest->form_data;
         $subjectDetails = $letterRequest->subject_details;
+
+        // For PDF generation, embed logo as data URI so it doesn't depend on APP_URL or filesystem access.
+        $logoSrc = null;
+        $logoLocalPath = public_path('images/ciasmara.png');
+        if (is_string($logoLocalPath) && file_exists($logoLocalPath)) {
+            $logoSrc = 'data:image/png;base64,' . base64_encode(file_get_contents($logoLocalPath));
+        }
 
         // Ensure subjectDetails is an array with fallback to user data to avoid null offsets
         if (!$subjectDetails || !is_array($subjectDetails)) {
@@ -91,7 +102,7 @@ class PdfService
         }
 
         if ($isDomisili && view()->exists('surat.keterangan-domisili')) {
-            return view('surat.keterangan-domisili', compact('letterRequest', 'user', 'letterType', 'formData', 'qrCodeBase64', 'subjectDetails'))->render();
+            return view('surat.keterangan-domisili', compact('letterRequest', 'user', 'letterType', 'formData', 'qrCodeBase64', 'subjectDetails', 'logoSrc'))->render();
         }
 
         // Use specific template if available, otherwise use generic template
@@ -99,11 +110,11 @@ class PdfService
 
         // Check if specific template exists in surat directory
         if ($letterType->template && view()->exists('surat.' . $letterType->template)) {
-            return view('surat.' . $letterType->template, compact('letterRequest', 'user', 'letterType', 'formData', 'qrCodeBase64', 'subjectDetails'))->render();
+            return view('surat.' . $letterType->template, compact('letterRequest', 'user', 'letterType', 'formData', 'qrCodeBase64', 'subjectDetails', 'logoSrc'))->render();
         }
 
         // Fallback to generic template
-        return view('pdf.letter-template', compact('letterRequest', 'user', 'letterType', 'formData', 'qrCodeBase64', 'subjectDetails'))->render();
+        return view('pdf.letter-template', compact('letterRequest', 'user', 'letterType', 'formData', 'qrCodeBase64', 'subjectDetails', 'logoSrc'))->render();
     }
 
     private function createPlaceholderQrCode(LetterRequest $letterRequest): string

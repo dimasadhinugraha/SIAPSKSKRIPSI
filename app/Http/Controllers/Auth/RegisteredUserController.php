@@ -91,24 +91,24 @@ class RegisteredUserController extends Controller
             $kkPath = $request->file('kk_photo')->store('documents/kk', 'public');
         }
 
-        // Check: apakah NIK tersebut sudah terdaftar dalam anggota keluarga di KK yang sama?
-        $existsInKK = FamilyMember::where('nik', $request->nik)
-            ->whereHas('user', function ($q) use ($request) {
-                $q->where('kk_number', $request->kk_number);
-            })->exists();
+        // Optional: Check if NIK exists in family members (commented out to allow direct registration)
+        // $existsInKK = FamilyMember::where('nik', $request->nik)
+        //     ->whereHas('user', function ($q) use ($request) {
+        //         $q->where('kk_number', $request->kk_number);
+        //     })->exists();
 
-        if (! $existsInKK) {
-            return back()->withInput($request->except(['password', 'password_confirmation']))
-                ->withErrors(['kk_number' => 'NIK tidak ditemukan dalam Kartu Keluarga yang Anda masukkan. Pastikan NIK dan No. KK benar atau tambahkan anggota keluarga terlebih dahulu.']);
-        }
+        // if (! $existsInKK) {
+        //     return back()->withInput($request->except(['password', 'password_confirmation']))
+        //         ->withErrors(['kk_number' => 'NIK tidak ditemukan dalam Kartu Keluarga yang Anda masukkan. Pastikan NIK dan No. KK benar atau tambahkan anggota keluarga terlebih dahulu.']);
+        // }
 
         // Cari user RT dan RW berdasarkan nomor
         $rtUser = User::where('role', 'rt')
-            ->where('email', 'rt' . str_pad($request->rt, 3, '0', STR_PAD_LEFT) . '@siappsk.local')
+            ->where('email', 'rt' . str_pad($request->rt, 2, '0', STR_PAD_LEFT) . '@ciasmara.desa.id')
             ->first();
             
         $rwUser = User::where('role', 'rw')
-            ->where('email', 'rw' . str_pad($request->rw, 3, '0', STR_PAD_LEFT) . '@siappsk.local')
+            ->where('email', 'rw' . str_pad($request->rw, 1, '0', STR_PAD_LEFT) . '@ciasmara.desa.id')
             ->first();
 
         if (!$rtUser) {
@@ -140,7 +140,7 @@ class RegisteredUserController extends Controller
             'ktp_photo' => $ktpPath,
             'kk_photo' => $kkPath,
             'role' => 'user',
-            'is_verified' => false,
+            'email_verified_at' => null,
             'is_approved' => false,
         ]);
 

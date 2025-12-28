@@ -22,9 +22,6 @@ class Biodata extends Model
         'rt_rw',
         'rt_id',
         'rw_id',
-        'is_verified',
-        'verified_at',
-        'verified_by',
         'ktp_photo',
         'kk_photo',
         'profile_photo',
@@ -37,7 +34,6 @@ class Biodata extends Model
      */
     protected $casts = [
         'birth_date' => 'date',
-        'verified_at' => 'datetime',
     ];
 
     /**
